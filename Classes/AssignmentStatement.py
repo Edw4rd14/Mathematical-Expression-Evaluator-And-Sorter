@@ -7,6 +7,8 @@
 
 # Import Module
 from DataStructures.HashTable import HashTable
+from DataStructures.ParseTree import ParseTree
+import re
 
 # AssignmentStatement Class
 class AssignmentStatement(HashTable):
@@ -14,6 +16,7 @@ class AssignmentStatement(HashTable):
     def __init__(self):
         # Initialize HashTable Class
         super().__init__()
+        self.regex = r"^[a-zA-Z]+$"
     
     # Option 1: Add/modify assignment statement
     def add_modify_statement(self):
@@ -23,13 +26,16 @@ class AssignmentStatement(HashTable):
             statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
             # If '=' is in statement, which is the correct format we expect
             if '=' in statement:
-                # Split the statement by '='
                 try:
+                    # Split the statement by '='
                     key, value = statement.split('=')
                     # Check if key or value is empty, if it is not empty, add to HashTable and break out of option 1
-                    if key.strip() and value.strip():
-                        self[key.strip()] = value.strip()
-                        break
+                    if key and value:
+                        if re.match(self.regex, key):
+                            self[key] = value
+                            break
+                        else:
+                            print("\nInvalid format! Variable names should only contain letters. Please try again or CRTL+C to return back to main menu.\n")
                     # Else if it is empty, throw error message
                     else:
                         print("\nInvalid format! Left-hand side and right-hand side of statement should not be empty. Please try again or CRTL+C to return back to main menu.\n")
@@ -39,6 +45,14 @@ class AssignmentStatement(HashTable):
             else:
                 print("\nInvalid format! Please enter statement in a format such as a=(1+2) OR CRTL+C to exit back to main menu.\n")
     
+    # Option 2: Display current assignment statements
     def display_statements(self):
-        print('a')
-    
+        print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
+        for key in self.keys: 
+            try:
+                value = self[key]
+                tree = ParseTree(expression=value)
+                print(f'{key}={value}=> {tree.evaluate()}')
+            except:
+                pass
+

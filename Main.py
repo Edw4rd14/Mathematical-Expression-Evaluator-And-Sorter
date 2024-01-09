@@ -52,7 +52,7 @@ class Main(AssignmentStatement):
         self._start_banner()
         # While loop for menu
         while True:
-            try:
+            # try:
                 # Prompt users for choice
                 self._menu()
                 # If user options are between 1 and 6
@@ -73,17 +73,17 @@ class Main(AssignmentStatement):
                 # Else print error message (user option is not valid)
                 else:
                     print("Only options between 1 and 6 are available. Please try again.")
-            # Handle ValueError (user choice is not integer)
-            except ValueError as ve:
-                print(ve)
-                print("\nInput must be an integer. Please try again.\n")
-            # Handle Keyboard Interrupt (CRTL + C)
-            except KeyboardInterrupt:
-                print(f"\n{self._exit}")
-                break
-            # Handle errors
-            except Exception as e:
-                print(e)
+            # # Handle ValueError (user choice is not integer)
+            # except ValueError as ve:
+            #     print(ve) # REMOVEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+            #     print("\nInput must be an integer. Please try again.\n")
+            # # Handle Keyboard Interrupt (CRTL + C)
+            # except KeyboardInterrupt:
+            #     print(f"\n{self._exit}")
+            #     break
+            # # Handle errors
+            # except Exception as e:
+            #     print(e)
 
 # Instantiate Main class
 main = Main()

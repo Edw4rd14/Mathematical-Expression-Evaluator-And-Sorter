@@ -82,8 +82,8 @@ class HashTable:
     # Get item from Hashtable
     def __getitem__(self,key):
         index = self._hash_function(key)
-        if self.table[index]:
-            for k, v in self.table[index]:
+        if self.keys[index]:
+            for k, v in zip(self.keys,self.buckets):
                 if k == key:
                     return v
         return None
