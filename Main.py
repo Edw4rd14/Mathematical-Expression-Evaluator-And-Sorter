@@ -10,16 +10,24 @@ and running the Class methods to perform the menu option's functions.
 '''
 
 # IMPORT MODULES
+from Classes.AssignmentStatement import AssignmentStatement
 
 # Main class
-class Main:
+class Main(AssignmentStatement):
     # Initialization
     def __init__(self):
+        # Initialize AssignmentStatement Class
+        super().__init__()
+        # Banner 
         self._banner=['*'*59, "* ST1507 DSAA: Evaluating & Sorting Assignment Statements *", "*" + "-"*57 + "*", "*" + " "*57 + "*", "*  - Done by: Edward Tan (2214407) & Ashwin Raj (2239716) *", "*  - Class DAAA/2B/04" + " " * 37 + "*"]
         self.__banner_order = [0,1,2,3,4,5,3,0]
+        # Menu options
         self.choice = None
         self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'Exit']
-        self.__options = {}
+        self.__options = {
+            1: super().add_modify_statement,
+            2: super().display_statements
+        }
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
 
     # Start banner
@@ -66,7 +74,8 @@ class Main:
                 else:
                     print("Only options between 1 and 6 are available. Please try again.")
             # Handle ValueError (user choice is not integer)
-            except ValueError:
+            except ValueError as ve:
+                print(ve)
                 print("\nInput must be an integer. Please try again.\n")
             # Handle Keyboard Interrupt (CRTL + C)
             except KeyboardInterrupt:
