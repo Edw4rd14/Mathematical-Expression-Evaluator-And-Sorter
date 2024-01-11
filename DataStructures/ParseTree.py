@@ -12,8 +12,13 @@ from DataStructures.BinaryTree import BinaryTree
 # ParseTree Class
 class ParseTree:
     # Initialization
-    def __init__(self, expression):
+    def __init__(self, expression, hashTable):
+        # Hashtable with variables stored
+        self.hashTable = hashTable
+        # Build parse tree of expression
         self.root = self.build_parse_tree(expression)
+        # Regex expression
+        self.regex = r'\s*(?:(\d+)|(\w+)|(.))'
 
     # Tokenize expression
     @staticmethod
@@ -24,24 +29,27 @@ class ParseTree:
     def build_parse_tree(self,expression):
         tokens = self.tokenize(expression)
         stack = Stack()
-        tree = BinaryTree(root_object='?')
+        tree = BinaryTree(root_object=None)
         stack.push(tree)
         current_tree = tree
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left child and descend into that node
             if t == '(':
-                current_tree.insert_left('?')
+                current_tree.insert_left(None)
                 stack.push(current_tree)
                 current_tree = current_tree.get_left_child()
             # RULE 2: If token is operator set key of current node to that operator and add a new node as right child and descend into that node
             elif t in ['+', '-', '*', '/']:
                 current_tree.set_root_value(t)
-                current_tree.insert_right('?')
+                current_tree.insert_right(None)
                 stack.push(current_tree)
                 current_tree = current_tree.get_right_child()
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*', '/', ')']:
-                current_tree.set_root_value(int(t))
+                if t.isnumeric():
+                    current_tree.set_root_value(int(t))
+                else:
+                    current_tree.set_root_value(self._evaluate_tree(self.build_parse_tree(self.hashTable[t])))
                 parent = stack.pop()
                 current_tree = parent
             # RULE 4: If token is ')' go to parent of current node

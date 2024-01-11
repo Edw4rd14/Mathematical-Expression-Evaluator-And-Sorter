@@ -16,6 +16,7 @@ class AssignmentStatement(HashTable):
     def __init__(self):
         # Initialize HashTable Class
         super().__init__()
+        # Regex expression for variable
         self.regex = r"^[a-zA-Z]+$"
     
     # Option 1: Add/modify assignment statement
@@ -48,11 +49,13 @@ class AssignmentStatement(HashTable):
     # Option 2: Display current assignment statements
     def display_statements(self):
         print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
-        for key in self.keys: 
-            try:
-                value = self[key]
-                tree = ParseTree(expression=value)
-                print(f'{key}={value}=> {tree.evaluate()}')
-            except:
-                pass
-
+        if all(key is None for key in self.keys):
+            print("There are no current assignment statements.")
+        else:
+            for key in sorted(self.keys,key=lambda x: (x is None, x)): 
+                try:
+                    value = self[key]
+                    tree = ParseTree(expression=value, hashTable=self)
+                    print(f'{key}={value}=> {tree.evaluate()}')
+                except:
+                    pass
