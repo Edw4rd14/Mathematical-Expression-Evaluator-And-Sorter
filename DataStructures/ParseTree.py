@@ -23,25 +23,25 @@ class ParseTree:
     # Tokenize expression
     @staticmethod
     def tokenize(expression):
-        return [*expression]
+        return expression.split()
     
     # Build a parse tree
     def build_parse_tree(self,expression):
         tokens = self.tokenize(expression)
         stack = Stack()
-        tree = BinaryTree(root_object=None)
+        tree = BinaryTree(root_object="?")
         stack.push(tree)
         current_tree = tree
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left child and descend into that node
             if t == '(':
-                current_tree.insert_left(None)
+                current_tree.insert_left("?")
                 stack.push(current_tree)
                 current_tree = current_tree.get_left_child()
             # RULE 2: If token is operator set key of current node to that operator and add a new node as right child and descend into that node
             elif t in ['+', '-', '*', '/']:
                 current_tree.set_root_value(t)
-                current_tree.insert_right(None)
+                current_tree.insert_right("?")
                 stack.push(current_tree)
                 current_tree = current_tree.get_right_child()
             # RULE 3: If token is number, set key of the current node to that number and return to parent

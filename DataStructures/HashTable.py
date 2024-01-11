@@ -13,7 +13,7 @@ Implemented Dynamic Resizing to prevent running out of space
 # Hashtable Class
 class HashTable:
     # Initialization
-    def __init__(self, size=4):
+    def __init__(self, size=10):
         # Set size of Hastable
         self.size = size
         # Keys and Buckets

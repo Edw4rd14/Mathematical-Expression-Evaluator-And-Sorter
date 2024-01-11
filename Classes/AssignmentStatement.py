@@ -11,11 +11,11 @@ from DataStructures.ParseTree import ParseTree
 import re
 
 # AssignmentStatement Class
-class AssignmentStatement(HashTable):
+class AssignmentStatement:
     # Initialization
     def __init__(self):
         # Initialize HashTable Class
-        super().__init__()
+        self.hash_table = HashTable()
         # Regex expression for variable
         self.regex = r"^[a-zA-Z]+$"
     
@@ -33,7 +33,7 @@ class AssignmentStatement(HashTable):
                     # Check if key or value is empty, if it is not empty, add to HashTable and break out of option 1
                     if key and value:
                         if re.match(self.regex, key):
-                            self[key] = value
+                            self.hash_table[key] = value
                             break
                         else:
                             print("\nInvalid format! Variable names should only contain letters. Please try again or CRTL+C to return back to main menu.\n")
@@ -49,13 +49,15 @@ class AssignmentStatement(HashTable):
     # Option 2: Display current assignment statements
     def display_statements(self):
         print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
-        if all(key is None for key in self.keys):
+        if all(key is None for key in self.hash_table.keys):
             print("There are no current assignment statements.")
         else:
-            for key in sorted(self.keys,key=lambda x: (x is None, x)): 
-                try:
-                    value = self[key]
-                    tree = ParseTree(expression=value, hashTable=self)
-                    print(f'{key}={value}=> {tree.evaluate()}')
-                except:
-                    pass
+            for key in sorted(self.hash_table.keys,key=lambda x: (x is None, x)): 
+                if key is not None:
+                    try:
+                        value = self.hash_table[key]
+                        tree = ParseTree(expression=value, hashTable=self.hash_table) # smtg here broken
+                        print(f'{key}={value}=> {tree.evaluate()}')
+                    except Exception as e:
+                        print(e)
+                        pass
