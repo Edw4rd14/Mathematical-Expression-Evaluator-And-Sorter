@@ -16,22 +16,29 @@ class ParseTree:
         # Hashtable with variables stored
         self.hashTable = hashTable
         # Build parse tree of expression
-        self.root = self.build_parse_tree(expression)
+        self.expression = expression
+        self.root = self.build_parse_tree(self.expression)
         # Regex expression
         self.regex = r'\s*(?:(\d+)|(\w+)|(.))'
 
     # Tokenize expression
     @staticmethod
     def tokenize(expression):
-        return expression.split()
+        return [*expression]
     
     # Build a parse tree
-    def build_parse_tree(self,expression):
-        tokens = self.tokenize(expression)
+    def build_parse_tree(self,expression):        
         stack = Stack()
         tree = BinaryTree(root_object="?")
         stack.push(tree)
         current_tree = tree
+        try:
+            tokens = self.tokenize(expression)
+        except:
+            tree.set_root_value(None)
+            tree.insert_left(None)
+            tree.insert_right(None)
+            return tree
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left child and descend into that node
             if t == '(':

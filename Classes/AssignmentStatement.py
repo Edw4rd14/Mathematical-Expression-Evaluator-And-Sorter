@@ -56,7 +56,7 @@ class AssignmentStatement:
                 if key is not None:
                     try:
                         value = self.hash_table[key]
-                        tree = ParseTree(expression=value, hashTable=self.hash_table) # smtg here broken
+                        tree = ParseTree(expression=self.hash_table[key], hashTable=self.hash_table) # smtg here broken
                         print(f'{key}={value}=> {tree.evaluate()}')
                     except Exception as e:
                         print(e)
