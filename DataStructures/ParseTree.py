@@ -1,67 +1,67 @@
+# =================================================================================================
 # ST1507 DATA STRUCTURES AND ALGORITHM (AI) CA2 ASSIGNMENT: ASSIGNMENT STATEMENT EVALUATOR & SORTER
 # NAME: EDWARD TAN YUAN CHONG; ASHWIN RAJ
 # CLASS: DAAA/FT/2B/04
 # ADM NO: 2214407; 2239716
+# =================================================================================================
+# FILENAME: ParseTree.py
+# =================================================================================================
+'''
+Description:
+This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
+and running the Class methods to perform the menu option's functions.
+'''
 
-# ParseTree.py
-
-# Import modules
+# Import Data Structures
 from DataStructures.Stack import Stack
 from DataStructures.BinaryTree import BinaryTree
+# Import Utils
+from Utils import tokenize
 
 # ParseTree Class
 class ParseTree:
     # Initialization
-    def __init__(self, expression, hashTable):
+    def __init__(self, expression, hash_table):
         # Hashtable with variables stored
-        self.hashTable = hashTable
+        self.hash_table = hash_table
         # Build parse tree of expression
         self.expression = expression
         self.root = self.build_parse_tree(self.expression)
-        # Regex expression
-        self.regex = r'\s*(?:(\d+)|(\w+)|(.))'
 
-    # Tokenize expression
-    @staticmethod
-    def tokenize(expression):
-        return [*expression]
-    
     # Build a parse tree
     def build_parse_tree(self,expression):        
         stack = Stack()
-        tree = BinaryTree(root_object="?")
+        tree = BinaryTree(root_object=None)
         stack.push(tree)
         current_tree = tree
-        try:
-            tokens = self.tokenize(expression)
-        except:
-            tree.set_root_value(None)
-            tree.insert_left(None)
-            tree.insert_right(None)
-            return tree
+        tokens = tokenize(expression)
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left child and descend into that node
             if t == '(':
-                current_tree.insert_left("?")
+                current_tree.insert_left(None)
                 stack.push(current_tree)
                 current_tree = current_tree.get_left_child()
             # RULE 2: If token is operator set key of current node to that operator and add a new node as right child and descend into that node
             elif t in ['+', '-', '*', '/']:
                 current_tree.set_root_value(t)
-                current_tree.insert_right("?")
+                current_tree.insert_right(None)
                 stack.push(current_tree)
                 current_tree = current_tree.get_right_child()
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*', '/', ')']:
                 if t.isnumeric():
                     current_tree.set_root_value(int(t))
+                elif t in self.hash_table.keys:
+                    # If value is a string, build a subtree
+                    current_tree.set_root_value(int(t) if t.isnumeric() else self._evaluate_tree(self.build_parse_tree(self.hash_table[t])))
                 else:
-                    current_tree.set_root_value(self._evaluate_tree(self.build_parse_tree(self.hashTable[t])))
-                parent = stack.pop()
-                current_tree = parent
+                    current_tree.set_root_value(None)
+                if not stack.is_empty():
+                    current_tree = stack.pop()
             # RULE 4: If token is ')' go to parent of current node
             elif t == ')':
-                current_tree = stack.pop()
+                if not stack.is_empty():
+                    current_tree = stack.pop()
             else:
                 raise ValueError
         return tree
@@ -72,17 +72,33 @@ class ParseTree:
 
     # Evaluate tree
     def _evaluate_tree(self,tree):
-        left_tree = tree.get_left_child()
-        right_tree = tree.get_right_child()
-        op = tree.get_root_value()
-        if left_tree != None and right_tree != None:
-            if op == '+':
-                return self._evaluate_tree(left_tree) + self._evaluate_tree(right_tree)
-            elif op == '-':
-                return self._evaluate_tree(left_tree) - self._evaluate_tree(right_tree)
-            elif op == '*':
-                return self._evaluate_tree(left_tree) * self._evaluate_tree(right_tree)
-            elif op == '/':
-                return self._evaluate_tree(left_tree) / self._evaluate_tree(right_tree)
-        else:
-            return tree.get_root_value()
+        try:
+            # Get the left and right subtrees of the current node
+            left_tree = tree.get_left_child()
+            right_tree = tree.get_right_child()
+            # Get the operator stored in the current node
+            op = tree.get_root_value()
+            # Check if both left and right subtrees exist
+            if left_tree is not None and right_tree is not None:
+                # Recursively evaluate the left and right subtrees
+                left, right = self._evaluate_tree(left_tree), self._evaluate_tree(right_tree)
+                # Perform the arithmetic operation based on the operand
+                if op == '+':
+                    return left + right
+                elif op == '-':
+                    return left - right
+                elif op == '*':
+                    return left * right
+                elif op == '/':
+                    # Check for division by zero before performing the division.
+                    if right != 0:
+                        return left / right
+                    else:
+                        # Handle division by zero by returning None.
+                        return None
+            else:
+                # If either left or right subtree is missing, return the value stored in the current node
+                return tree.get_root_value()
+        except:
+            # Return None if there are any errors
+            return None

@@ -1,10 +1,13 @@
+# =================================================================================================
 # ST1507 DATA STRUCTURES AND ALGORITHM (AI) CA2 ASSIGNMENT: ASSIGNMENT STATEMENT EVALUATOR & SORTER
 # NAME: EDWARD TAN YUAN CHONG; ASHWIN RAJ
 # CLASS: DAAA/FT/2B/04
 # ADM NO: 2214407; 2239716
-
-# Hashtable.py
+# =================================================================================================
+# FILENAME: HashTable.py
+# =================================================================================================
 '''
+Description:
 Implemented Dynamic Resizing to prevent running out of space
 '''
 
@@ -81,9 +84,16 @@ class HashTable:
 
     # Get item from Hashtable
     def __getitem__(self,key):
+        # Use the hash function to calculate the index where the key should be stored.
         index = self._hash_function(key)
+        
+        # Check if entry exists at the calculated index
         if self.keys[index]:
-            for k, v in zip(self.keys,self.buckets):
+            # Loop through the keys and values stored at each index.
+            for k, v in zip(self.keys, self.buckets):
+                # If a matching key is found, return the value from the bucket.
                 if k == key:
                     return v
+        
+        # If the key is not found return None
         return None

@@ -1,15 +1,18 @@
+# =================================================================================================
 # ST1507 DATA STRUCTURES AND ALGORITHM (AI) CA2 ASSIGNMENT: ASSIGNMENT STATEMENT EVALUATOR & SORTER
 # NAME: EDWARD TAN YUAN CHONG; ASHWIN RAJ
 # CLASS: DAAA/FT/2B/04
 # ADM NO: 2214407; 2239716
-
-# MAIN.PY
+# =================================================================================================
+# FILENAME: Main.py
+# =================================================================================================
 '''
+Description:
 This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
 and running the Class methods to perform the menu option's functions.
 '''
 
-# IMPORT MODULES
+# Import Classes
 from Classes.AssignmentStatement import AssignmentStatement
 
 # Main class
@@ -28,6 +31,7 @@ class Main(AssignmentStatement):
             1: super().add_modify_statement,
             2: super().display_statements
         }
+        # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
 
     # Start banner
@@ -52,7 +56,7 @@ class Main(AssignmentStatement):
         self._start_banner()
         # While loop for menu
         while True:
-            # try:
+            try:
                 # Prompt users for choice
                 self._menu()
                 # If user options are between 1 and 6
@@ -73,17 +77,16 @@ class Main(AssignmentStatement):
                 # Else print error message (user option is not valid)
                 else:
                     print("Only options between 1 and 6 are available. Please try again.")
-            # # Handle ValueError (user choice is not integer)
-            # except ValueError as ve:
-            #     print(ve) # REMOVEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-            #     print("\nInput must be an integer. Please try again.\n")
-            # # Handle Keyboard Interrupt (CRTL + C)
-            # except KeyboardInterrupt:
-            #     print(f"\n{self._exit}")
-            #     break
-            # # Handle errors
-            # except Exception as e:
-            #     print(e)
+            # Handle ValueError (user choice is not integer)
+            except ValueError:
+                print("\nInput must be an integer. Please try again.\n")
+            # Handle Keyboard Interrupt (CRTL + C)
+            except KeyboardInterrupt:
+                print(f"\n{self._exit}")
+                break
+            # Handle errors
+            except Exception as e:
+                print(e) # REMOVE LATERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 
 # Instantiate Main class
 main = Main()

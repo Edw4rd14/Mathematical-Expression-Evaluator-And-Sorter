@@ -1,11 +1,16 @@
+# =================================================================================================
 # ST1507 DATA STRUCTURES AND ALGORITHM (AI) CA2 ASSIGNMENT: ASSIGNMENT STATEMENT EVALUATOR & SORTER
 # NAME: EDWARD TAN YUAN CHONG; ASHWIN RAJ
 # CLASS: DAAA/FT/2B/04
 # ADM NO: 2214407; 2239716
-
-# Stack.py
-
-
+# =================================================================================================
+# FILENAME: Stack.py
+# =================================================================================================
+'''
+Description:
+This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
+and running the Class methods to perform the menu option's functions.
+'''
 # Stack Class
 class Stack:
     def __init__(self):
