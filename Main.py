@@ -76,7 +76,7 @@ class Main(AssignmentStatement):
                     break
                 # Else print error message (user option is not valid)
                 else:
-                    print("Only options between 1 and 6 are available. Please try again.")
+                    print("\nOnly options between 1 and 6 are available. Please try again.\n")
             # Handle ValueError (user choice is not integer)
             except ValueError:
                 print("\nInput must be an integer. Please try again.\n")
