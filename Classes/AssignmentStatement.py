@@ -41,11 +41,11 @@ class AssignmentStatement:
             # Get assignment statement
             statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
 
-            # Check if '=' is in statement, which is the correct format we expect, else print error message
-            if '=' not in statement:
-                print(format_error("Please include '=' in the statement"))
+            # Check for consecutive operands
+            if check_consecutive_operands(value):
+                print(format_error("There should not be consecutive operands"))
                 continue
-
+            
             # Split the statement by '='
             key, value = statement.split('=')
             key, value = key.strip(), value.strip()
@@ -70,10 +70,7 @@ class AssignmentStatement:
                 print(format_error("Variable names should only contain letters"))
                 continue
 
-            # # Check for consecutive operands
-            # if check_consecutive_operands(value):
-            #     print(format_error("There should not be consecutive operands"))
-            #     continue
+            
 
             # Check for any unmatched parenthesis
             if check_parenthesis(value):

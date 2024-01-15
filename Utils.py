@@ -59,10 +59,11 @@ def check_consecutive_operands(expression):
     return False
 
 # Check for incomplete expressions
-def check_incomplete_expression(expression):
-    # Check if expression starts or ends with a non-unary operand
-    if expression[0] in operands or expression[-1] in operands:
+def check_incomplete_expression(expression):    
+    # Check whether '=' in the expression and whether there are more than 1 '=' in the statement, if expression starts or ends with a non-unary operand, else print error message
+    if expression.count('=') != 1 or expression[0] in operands or expression[-1] in operands:
         return True
+    
     # Return boolean of whether there are any operands, True if there are no operands in expression, and False if there is
     return not any(char in operands for char in expression)
 

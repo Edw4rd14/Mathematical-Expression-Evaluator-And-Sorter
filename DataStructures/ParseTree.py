@@ -36,17 +36,17 @@ class ParseTree:
         current_tree = tree
         tokens = tokenize(expression)
         for t in tokens:
-            # RULE 1: If token is '(' add a new node as left child and descend into that node
+            # RULE 1: If token is '(' add a new node as left tree and descend into that node
             if t == '(':
                 current_tree.insert_left(None)
                 stack.push(current_tree)
-                current_tree = current_tree.get_left_child()
-            # RULE 2: If token is operator set key of current node to that operator and add a new node as right child and descend into that node
+                current_tree = current_tree.get_left_tree()
+            # RULE 2: If token is operator set key of current node to that operator and add a new node as right tree and descend into that node
             elif t in ['+', '-', '*', '/']:
                 current_tree.set_root_value(t)
                 current_tree.insert_right(None)
                 stack.push(current_tree)
-                current_tree = current_tree.get_right_child()
+                current_tree = current_tree.get_right_tree()
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*', '/', ')']:
                 if t.isnumeric():
@@ -74,8 +74,8 @@ class ParseTree:
     def _evaluate_tree(self,tree):
         try:
             # Get the left and right subtrees of the current node
-            left_tree = tree.get_left_child()
-            right_tree = tree.get_right_child()
+            left_tree = tree.get_left_tree()
+            right_tree = tree.get_right_tree()
             # Get the operator stored in the current node
             op = tree.get_root_value()
             # Check if both left and right subtrees exist
