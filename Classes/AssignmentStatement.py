@@ -41,16 +41,15 @@ class AssignmentStatement:
             statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
 
             # Get count of number of equal signs
-            count_of_eq_signs = statement.count("=")
+            count_of_equal_signs = statement.count("=")
 
             # Check if there is an equal sign
-            if count_of_eq_signs != 1:
+            if count_of_equal_signs != 1:
                 print(format_error("Please include at least/only one '=' in the statement"))
                 continue
             
             # Split the statement by '='
-            key, value = statement.split('=')
-            key, value = key.strip(), value.strip()
+            key, value = [x.strip() for x in statement.split('=')]
 
             # Check if key or value is empty, if it is empty, print error message
             if not key or not value:
@@ -108,13 +107,12 @@ class AssignmentStatement:
                     try:
                         # Try grabbing the assignment statement value
                         value = self.hash_table[key]
-                        # Feed it to the ParseTree to evaluate its value
+                        # Evaluate value of expression with ParseTree
                         tree = ParseTree(expression=value, hash_table=self.hash_table)
                         # Print evaluation result
                         print(f'{key}={value}=> {tree.evaluate()}')
-                    # If an error occurs
+                    # If an error occurs, pass
                     except:
-                        # Skip
                         pass
 
     # Option 3: Evaluate and print parse tree for an individual variable
@@ -128,20 +126,16 @@ class AssignmentStatement:
                 if expression is not None:
                     # Build parse tree
                     tree = ParseTree(expression, hash_table=self.hash_table)
-
                     # Print expression tree in in-order format
                     print("\nExpression Tree:")
                     tree.print_in_order()
-
                     # Evaluate and print the value for the variable
                     value = tree.evaluate()
                     print(f"Value for variable \"{variable}\" is {value}")
-
                     # Break out of while loop after variable is evaluated
                     break
                 else:
                     print(f'\nVariable "{variable}" does not exist. Please try again or CTRL+C to return to the main menu.\n')
-
             # Catch Any Errors
             except:
                 pass

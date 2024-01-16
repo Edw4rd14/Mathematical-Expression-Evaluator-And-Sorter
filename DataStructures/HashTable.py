@@ -86,7 +86,6 @@ class HashTable:
     def __getitem__(self,key):
         # Use the hash function to calculate the index where the key should be stored.
         index = self._hash_function(key)
-        
         # Check if entry exists at the calculated index
         if self.keys[index]:
             # Loop through the keys and values stored at each index.
@@ -94,12 +93,5 @@ class HashTable:
                 # If a matching key is found, return the value from the bucket.
                 if k == key:
                     return v
-        
         # If the key is not found return None
-        return None
-
-    def get_key_by_value(self,search_value):
-        for key, value in zip(self.keys, self.buckets):
-            if search_value in value:
-                return key
         return None

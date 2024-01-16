@@ -84,30 +84,25 @@ class ParseTree:
                 # Get the left and right subtrees of the current node
                 left_tree = tree.get_left_tree()
                 right_tree = tree.get_right_tree()
-
                 # If evaluated value is not None, return it directly
                 if evaluated_value is not None:
                     return evaluated_value
-
+                # Evaluation of operators
+                operator_functions = {
+                    '+': lambda l, r: l + r,
+                    '-': lambda l, r: l - r,
+                    '*': lambda l, r: l * r,
+                    '/': lambda l, r: l / r if r != 0 else None
+                }
                 # If the node is an operator, recursively evaluate its operands
-                if original_token in ['+', '-', '*', '/']:
+                if original_token in operator_functions:
                     left = self._evaluate_tree(left_tree)
                     right = self._evaluate_tree(right_tree)
-
-                    if original_token == '+':
-                        return left + right
-                    elif original_token == '-':
-                        return left - right
-                    elif original_token == '*':
-                        return left * right
-                    elif original_token == '/':
-                        if right != 0:
-                            return left / right
-                        else:
-                            return None  # Handle division by zero
+                    return operator_functions[original_token](left,right)
                 else:
-                    # If it's a variable, look up its value in the hash table
-                    return tree.get_root_value()
+                    # If it's a variable, return original value
+                    return original_token
+                
         except Exception as e:
             # Handle exceptions or return None if there are any errors
             return None
@@ -116,16 +111,17 @@ class ParseTree:
     def print_in_order(self):
         self._print_in_order(self.root)
 
-    # Print in order function
+    # Print in order function (This is a in-order traversal)
     def _print_in_order(self, node, depth=0):
+        # If node is not None
         if node is not None:
+            # Recursively call the function on the right tree of the current tree [R]
             self._print_in_order(node.get_right_tree(), depth + 1)
-            
-            # Get original token and evaluated value
+            # Get original token and evaluated value [C]
             original_token, evaluated_value = node.get_root_value()
             # Check if original token is a variable and print it, else print evaluated value
             print_value = evaluated_value if original_token is None else original_token
+            # Print the number of dots equal to the current depth and the evaluated/original value
             print(f"{'.' * depth}{print_value}")
-
+            # Recursively call the function on the left tree of the current tree [L]
             self._print_in_order(node.get_left_tree(), depth + 1)
-        
