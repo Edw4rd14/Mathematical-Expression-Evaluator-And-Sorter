@@ -114,3 +114,30 @@ class AssignmentStatement:
                     except:
                         # Skip
                         pass
+
+    # Option 3: Evaluate and print parse tree for an individual variable
+    def evaluate_single_variable(self):
+    # Get variable from user input
+        variable = input("Please enter the variable you want to evaluate:\n")
+
+        try:
+            # Get the expression associated with the variable
+            expression = self.hash_table[variable]
+
+            if expression is not None:
+                # Build parse tree
+                tree = ParseTree(expression, hash_table=self.hash_table)
+
+                # Print expression tree in in-order format
+                print("\nExpression Tree:")
+                tree.print_in_order()
+
+                # Evaluate and print the value for the variable
+                value = tree.evaluate()
+                print(f"Value for variable \"{variable}\" is {value}")
+
+            else:
+                print(f"\nVariable \"{variable}\" not found.")
+
+        except Exception as e:
+            print(f"\nError: {e}")

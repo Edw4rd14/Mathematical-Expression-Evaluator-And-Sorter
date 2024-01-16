@@ -102,3 +102,21 @@ class ParseTree:
         except:
             # Return None if there are any errors
             return None
+        
+        # Print the expression tree in in-order format with indentation
+    def print_in_order(self):
+        self._print_in_order(self.root, 0)
+        print()
+
+    def _print_in_order(self, node, depth):
+        if node is not None:
+            self._print_in_order(node.get_left_child(), depth + 1)
+
+            # Add indentation based on the depth of the node
+            value = node.get_root_value()
+            if isinstance(value, str) and value in self.hash_table.keys:
+                print(f"{'.' * depth}{value}")
+            else:
+                print(f"{'.' * depth}{value}")
+
+            self._print_in_order(node.get_right_child(), depth + 1)

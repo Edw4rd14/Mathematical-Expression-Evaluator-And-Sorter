@@ -29,7 +29,8 @@ class Main(AssignmentStatement):
         self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'Exit']
         self.__options = {
             1: super().add_modify_statement,
-            2: super().display_statements
+            2: super().display_statements,
+            3: super().evaluate_single_variable
         }
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
