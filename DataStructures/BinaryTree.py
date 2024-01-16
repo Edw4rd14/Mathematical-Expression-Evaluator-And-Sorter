@@ -18,48 +18,47 @@ class BinaryTree:
     def __init__(self, root_object):
         # Initialize key / root object
         self.key = root_object
-        # Initialize left and right child
-        self.left_child = None
-        self.right_child = None
+        # Initialize left and right tree
+        self.left_tree = None
+        self.right_tree = None
 
     # Insert left
     def insert_left(self, new_node):
-        # If left child is empty
-        if self.left_child is None:
-            # Create new BinaryTree of new node in left child
-            self.left_child = BinaryTree(new_node)
-        # Else if left child exists
+        # If left tree is empty
+        if self.left_tree is None:
+            # Create new BinaryTree of new node in left tree
+            self.left_tree = BinaryTree(new_node)
+        # Else if left tree exists
         else:
             # Create a new BinaryTree node for the new node
             t = BinaryTree(new_node)
-            # Set the current left child as the left child of the new node
-            t.left_child = self.left_child
-            # Update the left child of the current node to be the new node
-            self.left_child = t
-
+            # Set the current left tree as the left tree of the new node
+            t.left_tree = self.left_tree
+            # Update the left tree of the current node to be the new node
+            self.left_tree = t
 
     # Insert right
     def insert_right(self, new_node):
-        # If right child is empty
-        if self.right_child is None:
-            # Create a new BinaryTree of new node in right child
-            self.right_child = BinaryTree(new_node)
-        # Else if right child exists
+        # If right tree is empty
+        if self.right_tree is None:
+            # Create a new BinaryTree of new node in right tree
+            self.right_tree = BinaryTree(new_node)
+        # Else if right tree exists
         else:
             # Create a new BinaryTree node for the new node
             t = BinaryTree(new_node)
-            # Set the current right child as the right child of the new node
-            t.right_child = self.right_child
-            # Update the right child of the current node to be the new node
-            self.right_child = t
+            # Set the current right tree as the right tree of the new node
+            t.right_tree = self.right_tree
+            # Update the right tree of the current node to be the new node
+            self.right_tree = t
 
-    # Get the right child of the current node
-    def get_right_child(self):
-        return self.right_child
+    # Get the right tree of the current node
+    def get_right_tree(self):
+        return self.right_tree
 
-    # Get the left child of the current node
-    def get_left_child(self):
-        return self.left_child
+    # Get the left tree of the current node
+    def get_left_tree(self):
+        return self.left_tree
 
     # Set the value of the root node
     def set_root_value(self, obj):

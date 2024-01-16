@@ -17,7 +17,8 @@ import re
 # ================================
 
 # Variables
-operands = ['+','-','/','*']
+operators = ['+','-','/','*']
+operator_regex = re.compile(r'[\+\-\*/]')
     
 # Check for matching parenthesis
 def check_parenthesis(expression):
@@ -39,19 +40,18 @@ def check_parenthesis(expression):
     return not stack.is_empty()
 
 # Formatting error
-def format_error(error):
-    return f'\nInvalid format! {error}. Please try again or CRTL+C to return back to main menu.\n'
+format_error = lambda error: f'\nInvalid format! {error}. Please try again or CRTL+C to return back to main menu.\n'
 
 # Check for consecutive operands etc. "++" or "/*"
-def check_consecutive_operands(expression):
+def check_consecutive_operators(expression):
     # Check for an operand without operands on both sides
     previous_char = ""
     # For each character in expression
     for char in expression:
         # If character is an operand
-        if char in operands:
+        if char in operators:
             # And if previous character is empty, or is an operand, return True
-            if previous_char == "" or previous_char in operands:
+            if previous_char == "" or previous_char in operators:
                 return True
         # Set previous character of next character as current character
         previous_char = char
@@ -59,12 +59,13 @@ def check_consecutive_operands(expression):
     return False
 
 # Check for incomplete expressions
-def check_incomplete_expression(expression):
-    # Check if expression starts or ends with a non-unary operand
-    if expression[0] in operands or expression[-1] in operands:
+def check_incomplete_expression(expression):    
+    # Check if expression starts or ends with an operator
+    # Check if expression has at least one operator
+    # Check that it is an expression (e.g. x=a+2, c=apple+banana) and not an incomplete expession (e.g. a=b)
+    if expression[0] in operators or expression[-1] in operators or not bool(operator_regex.search(expression)) or len(tokenize(expression)) == 1:
         return True
-    # Return boolean of whether there are any operands, True if there are no operands in expression, and False if there is
-    return not any(char in operands for char in expression)
+
 
 # =================================================
 # Utils for AssignmentStatement.py and ParseTree.py

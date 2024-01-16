@@ -18,7 +18,7 @@ from DataStructures.ParseTree import ParseTree
 # Import Utils
 from Utils import check_parenthesis
 from Utils import format_error
-from Utils import check_consecutive_operands
+from Utils import check_consecutive_operators
 from Utils import tokenize
 from Utils import check_incomplete_expression
 # Import Modules
@@ -37,15 +37,17 @@ class AssignmentStatement:
     def add_modify_statement(self):
         # While loop to prompt users until valid input is provided
         while True:
-
             # Get assignment statement
             statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
 
-            # Check if '=' is in statement, which is the correct format we expect, else print error message
-            if '=' not in statement:
-                print(format_error("Please include '=' in the statement"))
-                continue
+            # Get count of number of equal signs
+            count_of_eq_signs = statement.count("=")
 
+            # Check if there is an equal sign
+            if count_of_eq_signs != 1:
+                print(format_error("Please include at least/only one '=' in the statement"))
+                continue
+            
             # Split the statement by '='
             key, value = statement.split('=')
             key, value = key.strip(), value.strip()
@@ -60,6 +62,11 @@ class AssignmentStatement:
                 print(format_error("Expression is incomplete"))
                 continue
 
+            # Check for consecutive operators
+            if check_consecutive_operators(value):
+                print(format_error("There should not be consecutive operators"))
+                continue
+
             # Check if variable is referencing itself
             if key in tokenize(value):
                 print(format_error("Variable should not reference itself"))
@@ -69,11 +76,6 @@ class AssignmentStatement:
             if not self.regex.match(key):
                 print(format_error("Variable names should only contain letters"))
                 continue
-
-            # # Check for consecutive operands
-            # if check_consecutive_operands(value):
-            #     print(format_error("There should not be consecutive operands"))
-            #     continue
 
             # Check for any unmatched parenthesis
             if check_parenthesis(value):
