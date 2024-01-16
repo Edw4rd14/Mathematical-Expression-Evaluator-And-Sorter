@@ -97,3 +97,9 @@ class HashTable:
         
         # If the key is not found return None
         return None
+
+    def get_key_by_value(self,search_value):
+        for key, value in zip(self.keys, self.buckets):
+            if search_value in value:
+                return key
+        return None

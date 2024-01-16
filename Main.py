@@ -86,8 +86,8 @@ class Main(AssignmentStatement):
                 print(f"\n{self._exit}")
                 break
             # Handle errors
-            except Exception as e:
-                print(e) # REMOVE LATERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+            # except Exception as e:
+            #     print(e) # REMOVE LATERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 
 # Instantiate Main class
 main = Main()

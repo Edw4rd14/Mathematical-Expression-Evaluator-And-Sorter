@@ -120,26 +120,29 @@ class AssignmentStatement:
     # Option 3: Evaluate and print parse tree for an individual variable
     def evaluate_single_variable(self):
     # Get variable from user input
-        variable = input("Please enter the variable you want to evaluate:\n")
+        while True:
+            variable = input("Please enter the variable you want to evaluate:\n")
+            try:
+                # Get the expression associated with the variable
+                expression = self.hash_table[variable]
+                if expression is not None:
+                    # Build parse tree
+                    tree = ParseTree(expression, hash_table=self.hash_table)
 
-        try:
-            # Get the expression associated with the variable
-            expression = self.hash_table[variable]
+                    # Print expression tree in in-order format
+                    print("\nExpression Tree:")
+                    tree.print_in_order()
 
-            if expression is not None:
-                # Build parse tree
-                tree = ParseTree(expression, hash_table=self.hash_table)
+                    # Evaluate and print the value for the variable
+                    value = tree.evaluate()
+                    print(f"Value for variable \"{variable}\" is {value}")
 
-                # Print expression tree in in-order format
-                print("\nExpression Tree:")
-                tree.print_in_order()
+                    # Break out of while loop after variable is evaluated
+                    break
+                else:
+                    print(f'\nVariable "{variable}" does not exist. Please try again or CTRL+C to return to the main menu.\n')
 
-                # Evaluate and print the value for the variable
-                value = tree.evaluate()
-                print(f"Value for variable \"{variable}\" is {value}")
-
-            else:
-                print(f"\nVariable \"{variable}\" not found.")
-
-        except Exception as e:
-            print(f"\nError: {e}")
+            # Catch Any Errors
+            except:
+                pass
+    

@@ -26,6 +26,7 @@ class ParseTree:
         self.hash_table = hash_table
         # Build parse tree of expression
         self.expression = expression
+        # Root tree
         self.root = self.build_parse_tree(self.expression)
 
     # Build a parse tree
@@ -34,7 +35,10 @@ class ParseTree:
         tree = BinaryTree(root_object=None)
         stack.push(tree)
         current_tree = tree
-        tokens = tokenize(expression)
+        try:
+            tokens = tokenize(expression)
+        except:
+            raise ValueError
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left tree and descend into that node
             if t == '(':
@@ -43,19 +47,20 @@ class ParseTree:
                 current_tree = current_tree.get_left_tree()
             # RULE 2: If token is operator set key of current node to that operator and add a new node as right tree and descend into that node
             elif t in ['+', '-', '*', '/']:
-                current_tree.set_root_value(t)
+                current_tree.set_root_value((t,None))
                 current_tree.insert_right(None)
                 stack.push(current_tree)
                 current_tree = current_tree.get_right_tree()
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*', '/', ')']:
                 if t.isnumeric():
-                    current_tree.set_root_value(int(t))
+                    current_tree.set_root_value((int(t),int(t)))
                 elif t in self.hash_table.keys:
-                    # If value is a string, build a subtree
-                    current_tree.set_root_value(int(t) if t.isnumeric() else self._evaluate_tree(self.build_parse_tree(self.hash_table[t])))
+                    # If value is a string, build a subtree and store evaluated value
+                    evaluated = self._evaluate_tree(self.build_parse_tree(self.hash_table[t]))
+                    current_tree.set_root_value((t, evaluated))
                 else:
-                    current_tree.set_root_value(None)
+                    current_tree.set_root_value((t,None))
                 if not stack.is_empty():
                     current_tree = stack.pop()
             # RULE 4: If token is ')' go to parent of current node
@@ -70,53 +75,57 @@ class ParseTree:
     def evaluate(self):
         return self._evaluate_tree(tree=self.root)
 
-    # Evaluate tree
+    # Evaluate tree function
     def _evaluate_tree(self,tree):
         try:
-            # Get the left and right subtrees of the current node
-            left_tree = tree.get_left_tree()
-            right_tree = tree.get_right_tree()
-            # Get the operator stored in the current node
-            op = tree.get_root_value()
-            # Check if both left and right subtrees exist
-            if left_tree is not None and right_tree is not None:
-                # Recursively evaluate the left and right subtrees
-                left, right = self._evaluate_tree(left_tree), self._evaluate_tree(right_tree)
-                # Perform the arithmetic operation based on the operand
-                if op == '+':
-                    return left + right
-                elif op == '-':
-                    return left - right
-                elif op == '*':
-                    return left * right
-                elif op == '/':
-                    # Check for division by zero before performing the division.
-                    if right != 0:
-                        return left / right
-                    else:
-                        # Handle division by zero by returning None.
-                        return None
-            else:
-                # If either left or right subtree is missing, return the value stored in the current node
-                return tree.get_root_value()
-        except:
-            # Return None if there are any errors
+            if tree is not None:
+                # Extract original token and evaluated value
+                original_token, evaluated_value = tree.get_root_value()
+                # Get the left and right subtrees of the current node
+                left_tree = tree.get_left_tree()
+                right_tree = tree.get_right_tree()
+
+                # If evaluated value is not None, return it directly
+                if evaluated_value is not None:
+                    return evaluated_value
+
+                # If the node is an operator, recursively evaluate its operands
+                if original_token in ['+', '-', '*', '/']:
+                    left = self._evaluate_tree(left_tree)
+                    right = self._evaluate_tree(right_tree)
+
+                    if original_token == '+':
+                        return left + right
+                    elif original_token == '-':
+                        return left - right
+                    elif original_token == '*':
+                        return left * right
+                    elif original_token == '/':
+                        if right != 0:
+                            return left / right
+                        else:
+                            return None  # Handle division by zero
+                else:
+                    # If it's a variable, look up its value in the hash table
+                    return tree.get_root_value()
+        except Exception as e:
+            # Handle exceptions or return None if there are any errors
             return None
         
-        # Print the expression tree in in-order format with indentation
+    # Print the expression tree in in-order format with indentation
     def print_in_order(self):
-        self._print_in_order(self.root, 0)
-        print()
+        self._print_in_order(self.root)
 
-    def _print_in_order(self, node, depth):
+    # Print in order function
+    def _print_in_order(self, node, depth=0):
         if node is not None:
-            self._print_in_order(node.get_left_child(), depth + 1)
+            self._print_in_order(node.get_right_tree(), depth + 1)
+            
+            # Get original token and evaluated value
+            original_token, evaluated_value = node.get_root_value()
+            # Check if original token is a variable and print it, else print evaluated value
+            print_value = evaluated_value if original_token is None else original_token
+            print(f"{'.' * depth}{print_value}")
 
-            # Add indentation based on the depth of the node
-            value = node.get_root_value()
-            if isinstance(value, str) and value in self.hash_table.keys:
-                print(f"{'.' * depth}{value}")
-            else:
-                print(f"{'.' * depth}{value}")
-
-            self._print_in_order(node.get_right_child(), depth + 1)
+            self._print_in_order(node.get_left_tree(), depth + 1)
+        
