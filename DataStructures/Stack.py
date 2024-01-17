@@ -33,5 +33,4 @@ class Stack:
 
     def is_empty(self):
         # Return boolean on whether list is empty
-        return len(self.items) == 0 
-
+        return len(self.items) == 0
