@@ -16,11 +16,10 @@ and running the Class methods to perform the menu option's functions.
 from DataStructures.HashTable import HashTable
 from DataStructures.ParseTree import ParseTree
 # Import Utils
-from Utils import check_parenthesis
-from Utils import format_error
-from Utils import check_consecutive_operators
-from Utils import tokenize
-from Utils import check_incomplete_expression
+from Utils import validate_and_process_statement
+from Utils import validate_read_file
+from Utils import get_key_and_value
+from Utils import check_eq_sign
 # Import Modules
 import re
 
@@ -30,62 +29,22 @@ class AssignmentStatement:
     def __init__(self):
         # Initialize HashTable Class
         self.hash_table = HashTable()
-        # Regex expression for variable
-        self.regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
     
     # Option 1: Add/modify assignment statement
-    def add_modify_statement(self, key=None, value=None):
+    def add_modify_statement(self, key=None, value=None, loop=True):
         # While loop to prompt users until valid input is provided
         while True:
-            # If key and value are not provided as arguments, get them from user input
-            if key is None or value is None:
-                statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
-
-            # Get count of number of equal signs
-            count_of_equal_signs = statement.count("=")
-
-            # Check if there is an equal sign
-            if count_of_equal_signs != 1:
-                print(format_error("Please include at least/only one '=' in the statement"))
+            # Get assignment statement from user
+            statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
+            # Check for equal sign
+            if not check_eq_sign(statement):
                 continue
-            
             # Split the statement by '='
-            key, value = [x.strip() for x in statement.split('=')]
-
-            # Check if key or value is empty, if it is empty, print error message
-            if not key or not value:
-                print(format_error("Both left-hand side and right-hand side of the statement should not be empty"))
+            key, value = get_key_and_value(statement)
+            # Validate and process key and value
+            loop, value = validate_and_process_statement(key,value)
+            if not loop:
                 continue
-
-            # Check if expression is incomplete
-            if check_incomplete_expression(value):
-                print(format_error("Expression is incomplete"))
-                continue
-
-            # Check for consecutive operators
-            if check_consecutive_operators(value):
-                print(format_error("There should not be consecutive operators"))
-                continue
-
-            # Check if variable is referencing itself
-            if key in tokenize(value):
-                print(format_error("Variable should not reference itself"))
-                continue
-
-            # Check if key matches regex to only contain letters
-            if not self.regex.match(key):
-                print(format_error("Variable names should only contain letters"))
-                continue
-
-            # Check for any unmatched parenthesis
-            if check_parenthesis(value):
-                print(format_error("Please resolve any unmatched parenthesis"))
-                continue
-
-            # Encapsulate value with parentheses if not already
-            if not (value.startswith("(") and value.endswith(")")):
-                value = f"({value})"
-
             # Expression satisfies all conditions, add to HashTable and break out of the loop
             self.hash_table[key] = value
             break
@@ -145,25 +104,25 @@ class AssignmentStatement:
 
     # Option 4: Read statements from a file and sort statements
     def read_statements_from_file(self):
-        # Prompt user to enter the input file
-        file_path = input("Enter the path of the input file: ")
-
-        try:
-            # Read and evaluate statements from the file
-            with open(file_path, 'r') as file:
-                statements = file.readlines()
+        while True:
+            # Prompt user to enter the input file
+            file_path = input("Enter the path of the input file: ")
+            # Try and except to catch errors
+            try:
+                # Validate and read statements from file
+                statements = validate_read_file(file_path)
+                # Loop each statement
                 for statement in statements:
-                    # Split the statement by '='
-                    key, value = statement.strip().split('=')
-                    key, value = key.strip(), value.strip()
-                    
-                    # Call the add_modify_statement method with key and value as arguments
-                    self.add_modify_statement(key=key, value=value)
-
-            # Display the list of current assignments (same as Option 2)
-            self.display_statements()
-
-        except FileNotFoundError:
-            print(format_error(f"File not found at path: {file_path}"))
-        except Exception as e:
-            print(format_error(f"Error while reading statements from file: {e}"))
+                    # Check equal sign
+                    if check_eq_sign(statement):
+                        # Get key and value from statement
+                        key, value = get_key_and_value(statement)
+                        # Validate and process key and value
+                        if validate_and_process_statement(key,value)[0]:
+                            # Expression satisfies all conditions, add to HashTable
+                            self.hash_table[key] = value
+                # Display the list of current assignments (same as Option 2) and break out of loop
+                self.display_statements()
+                break
+            except Exception as e:
+                print(e)

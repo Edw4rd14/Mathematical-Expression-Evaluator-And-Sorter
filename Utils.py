@@ -11,13 +11,16 @@
 from DataStructures.Stack import Stack
 # Import Modules
 import re
+import os
 
 # ================================
 # Utils for AssignmentStatement.py
 # ================================
 
-# Variables
+# Operator regex
 operator_regex = re.compile(r'[\+\-\*/]')
+# Variable regex
+variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
 
 # Check for existence of operators
 def contain_operator(string):
@@ -43,38 +46,75 @@ def check_parenthesis(expression):
     return not stack.is_empty()
 
 # Formatting error
-format_error = lambda error: f'\nInvalid format! {error}. Please try again or CRTL+C to return back to main menu.\n'
+format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. Please try again or CRTL+C to return back to main menu.\n"
 
 # Check for consecutive operands etc. "++" or "/*"
 def check_consecutive_operators(expression):
-    """
-    Check if there are consecutive operators in the expression.
-
-    :param expression: The expression to check.
-    :return: True if consecutive operators are found, False otherwise.
-    """
-    operators = set('+-*/')
-
-    for i in range(len(expression) - 1):
-        char1, char2 = expression[i], expression[i + 1]
-
-        # Check if both characters are operators
-        if char1 in operators and char2 in operators:
-            # Check for valid exponentiation (char1 should be '*' and char2 should be '*')
-            if char1 == '*' and char2 == '*':
-                continue  # Valid exponentiation, skip to the next iteration
-            else:
-                # Provide information about the location of consecutive operators
-                start_index = max(0, i - 10)
-                end_index = min(len(expression), i + 11)
-                snippet = expression[start_index:end_index]
-
-                # Print an error message with the specific location
-                print(format_error(f"There should not be consecutive operators. Found in: ...{snippet}..."))
+    # Check for an operand without operands on both sides
+    previous_char = ""
+    # For each character in expression
+    for char in expression:
+        # If character is an operator
+        if contain_operator(char):
+            # And if previous character is empty, or is an operand, return True
+            if previous_char == "" or previous_char in '+-':
                 return True
-
+        # Set previous character of next character as current character
+        previous_char = char
+    # After looping through all characters, and no return True has occured, this means there are no consecutive operands, hence return False
     return False
 
+# Check for equal sign
+def check_eq_sign(statement):
+    # Get count of number of equal signs
+    count_of_equal_signs = statement.count("=")
+    # Check if there is an equal sign
+    if count_of_equal_signs != 1:
+        print(format_error("Please include at least/only one '=' in the statement"))
+        return False
+    return True
+
+# Get key and value from statement
+def get_key_and_value(statement):
+    return [x.strip() for x in statement.split('=')]
+
+# Validate and process key and value
+def validate_and_process_statement(key, value):
+    # Check if key or value is empty
+    if not key or not value:
+        print(format_error("Both left-hand side and right-hand side of the statement should not be empty",key))
+        return False, value
+
+    # Check if expression is incomplete
+    if check_incomplete_expression(value):
+        print(format_error("Expression is incomplete",key))
+        return False, value
+
+    # Check for consecutive operators
+    if check_consecutive_operators(value):
+        print(format_error("There should not be consecutive operators",key))
+        return False, value
+
+    # Check if variable is referencing itself
+    if key in tokenize(value):
+        print(format_error("Variable should not reference itself",key))
+        return False, value
+
+    # Check if key matches regex to only contain letters
+    if not variable_regex.match(key):
+        print(format_error("Variable names should only contain letters",key))
+        return False, value
+
+    # Check for any unmatched parenthesis
+    if check_parenthesis(value):
+        print(format_error("Please resolve any unmatched parenthesis",key))
+        return False, value
+
+    # Encapsulate value with parentheses if not already
+    if not (value.startswith("(") and value.endswith(")")):
+        value = f"({value})"
+
+    return True, value
 
 
 # Check for incomplete expressions
@@ -84,6 +124,26 @@ def check_incomplete_expression(expression):
     # Check that it is an expression (e.g. x=a+2, c=apple+banana) and not an incomplete expession (e.g. a=b)
     if contain_operator(expression[0]) or contain_operator(expression[-1]) or not contain_operator(expression) or len(tokenize(expression)) == 1:
         return True
+    
+# Validate file path
+def validate_read_file(file_path):
+            # Check if file path exist
+        if os.path.exists(file_path):
+            # Check if file path ends with .txt
+            if file_path.endswith(".txt"):
+                # Try to open, read  and store file content
+                try:
+                    with open(file_path, 'r') as file: # .close() not required as the file is automaatically closed with 'with'
+                        return file.readlines()
+                # Raise error if error occurs
+                except:
+                    raise FileNotFoundError(f'\nError occurred reading file "{file_path}". Please try again or CRTL+C to force exit.\n')
+            # If file is not .txt file, raise error
+            else:
+                raise ValueError(f'\n{file_path} is an invalid file type. Expected a .txt file. Please try again or CRTL+C to force exit.\n')
+        # If file path does not exist, raise error
+        else:
+            raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. Please try again or CRTL+C to force exit.\n')
 
 
 # =================================================
@@ -92,7 +152,11 @@ def check_incomplete_expression(expression):
 
 # Tokenize expression
 def tokenize(expression):
-    tokens = re.findall(r'(\b\w+\b|\S)', expression)
+    # \b\w+\b matches whole words.
+    # \*\* matches the ** operator.
+    # // matches the // operator.
+    # \S matches any non-whitespace character, covering other operators and single characters.
+    tokens = re.findall(r'(\b\w+\b|\*\*|//|\S)', expression)
     return tokens
 
 # ======================

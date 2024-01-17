@@ -46,13 +46,13 @@ class ParseTree:
                 stack.push(current_tree)
                 current_tree = current_tree.get_left_tree()
             # RULE 2: If token is operator set key of current node to that operator and add a new node as right tree and descend into that node
-            elif t in ['+', '-', '*', '/']:
+            elif t in ['+', '-', '*', '**', '/', '//']:
                 current_tree.set_root_value((t,None))
                 current_tree.insert_right(None)
                 stack.push(current_tree)
                 current_tree = current_tree.get_right_tree()
             # RULE 3: If token is number, set key of the current node to that number and return to parent
-            elif t not in ['+', '-', '*', '/', ')']:
+            elif t not in ['+', '-', '*',  '**', '/', '//', ')']:
                 if t.isnumeric():
                     current_tree.set_root_value((int(t),int(t)))
                 elif t in self.hash_table.keys:
@@ -92,7 +92,9 @@ class ParseTree:
                     '+': lambda l, r: l + r,
                     '-': lambda l, r: l - r,
                     '*': lambda l, r: l * r,
-                    '/': lambda l, r: l / r if r != 0 else None
+                    '**': lambda l,r: l ** r,
+                    '/': lambda l, r: l / r if r != 0 else None,
+                    '//': lambda l, r: l // r if r != 0 else None
                 }
                 # If the node is an operator, recursively evaluate its operands
                 if original_token in operator_functions:
