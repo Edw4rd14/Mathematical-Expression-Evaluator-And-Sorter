@@ -128,4 +128,3 @@ class ParseTree:
             print(f"{'.' * depth}{print_value}")
 
             self._print_in_order(node.get_left_tree(), depth + 1)
-        
