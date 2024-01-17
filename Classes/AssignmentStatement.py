@@ -34,11 +34,12 @@ class AssignmentStatement:
         self.regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
     
     # Option 1: Add/modify assignment statement
-    def add_modify_statement(self):
+    def add_modify_statement(self, key=None, value=None):
         # While loop to prompt users until valid input is provided
         while True:
-            # Get assignment statement
-            statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
+            # If key and value are not provided as arguments, get them from user input
+            if key is None or value is None:
+                statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
 
             # Get count of number of equal signs
             count_of_equal_signs = statement.count("=")
@@ -85,7 +86,7 @@ class AssignmentStatement:
             if not (value.startswith("(") and value.endswith(")")):
                 value = f"({value})"
 
-            # Expression satisfies all conditions, add to HashTable and break out of option 1
+            # Expression satisfies all conditions, add to HashTable and break out of the loop
             self.hash_table[key] = value
             break
     
@@ -141,4 +142,28 @@ class AssignmentStatement:
             # Catch Any Errors
             except:
                 pass
-    
+
+    # Option 4: Read statements from a file and sort statements
+    def read_statements_from_file(self):
+        # Prompt user to enter the input file
+        file_path = input("Enter the path of the input file: ")
+
+        try:
+            # Read and evaluate statements from the file
+            with open(file_path, 'r') as file:
+                statements = file.readlines()
+                for statement in statements:
+                    # Split the statement by '='
+                    key, value = statement.strip().split('=')
+                    key, value = key.strip(), value.strip()
+                    
+                    # Call the add_modify_statement method with key and value as arguments
+                    self.add_modify_statement(key=key, value=value)
+
+            # Display the list of current assignments (same as Option 2)
+            self.display_statements()
+
+        except FileNotFoundError:
+            print(format_error(f"File not found at path: {file_path}"))
+        except Exception as e:
+            print(format_error(f"Error while reading statements from file: {e}"))

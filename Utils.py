@@ -47,19 +47,35 @@ format_error = lambda error: f'\nInvalid format! {error}. Please try again or CR
 
 # Check for consecutive operands etc. "++" or "/*"
 def check_consecutive_operators(expression):
-    # Check for an operand without operands on both sides
-    previous_char = ""
-    # For each character in expression
-    for char in expression:
-        # If character is an operator
-        if contain_operator(char):
-            # And if previous character is empty, or is an operand, return True
-            if previous_char == "" or contain_operator(previous_char):
+    """
+    Check if there are consecutive operators in the expression.
+
+    :param expression: The expression to check.
+    :return: True if consecutive operators are found, False otherwise.
+    """
+    operators = set('+-*/')
+
+    for i in range(len(expression) - 1):
+        char1, char2 = expression[i], expression[i + 1]
+
+        # Check if both characters are operators
+        if char1 in operators and char2 in operators:
+            # Check for valid exponentiation (char1 should be '*' and char2 should be '*')
+            if char1 == '*' and char2 == '*':
+                continue  # Valid exponentiation, skip to the next iteration
+            else:
+                # Provide information about the location of consecutive operators
+                start_index = max(0, i - 10)
+                end_index = min(len(expression), i + 11)
+                snippet = expression[start_index:end_index]
+
+                # Print an error message with the specific location
+                print(format_error(f"There should not be consecutive operators. Found in: ...{snippet}..."))
                 return True
-        # Set previous character of next character as current character
-        previous_char = char
-    # After looping through all characters, and no return True has occured, this means there are no consecutive operands, hence return False
+
     return False
+
+
 
 # Check for incomplete expressions
 def check_incomplete_expression(expression):    
