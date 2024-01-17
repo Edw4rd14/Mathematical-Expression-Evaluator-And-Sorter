@@ -31,7 +31,7 @@ class AssignmentStatement:
         # Initialize HashTable Class
         self.hash_table = HashTable()
         # Regex expression for variable
-        self.regex = re.compile("^[A-Za-z]+$")
+        self.regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
     
     # Option 1: Add/modify assignment statement
     def add_modify_statement(self):
@@ -123,6 +123,7 @@ class AssignmentStatement:
             try:
                 # Get the expression associated with the variable
                 expression = self.hash_table[variable]
+                # If expression exists
                 if expression is not None:
                     # Build parse tree
                     tree = ParseTree(expression, hash_table=self.hash_table)
@@ -134,6 +135,7 @@ class AssignmentStatement:
                     print(f"Value for variable \"{variable}\" is {value}")
                     # Break out of while loop after variable is evaluated
                     break
+                # Else, variable does not exist
                 else:
                     print(f'\nVariable "{variable}" does not exist. Please try again or CTRL+C to return to the main menu.\n')
             # Catch Any Errors

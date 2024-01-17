@@ -17,8 +17,11 @@ import re
 # ================================
 
 # Variables
-operators = ['+','-','/','*']
 operator_regex = re.compile(r'[\+\-\*/]')
+
+# Check for existence of operators
+def contain_operator(string):
+    return bool(operator_regex.search(string))
     
 # Check for matching parenthesis
 def check_parenthesis(expression):
@@ -48,10 +51,10 @@ def check_consecutive_operators(expression):
     previous_char = ""
     # For each character in expression
     for char in expression:
-        # If character is an operand
-        if char in operators:
+        # If character is an operator
+        if contain_operator(char):
             # And if previous character is empty, or is an operand, return True
-            if previous_char == "" or previous_char in operators:
+            if previous_char == "" or contain_operator(previous_char):
                 return True
         # Set previous character of next character as current character
         previous_char = char
@@ -63,7 +66,7 @@ def check_incomplete_expression(expression):
     # Check if expression starts or ends with an operator
     # Check if expression has at least one operator
     # Check that it is an expression (e.g. x=a+2, c=apple+banana) and not an incomplete expession (e.g. a=b)
-    if expression[0] in operators or expression[-1] in operators or not bool(operator_regex.search(expression)) or len(tokenize(expression)) == 1:
+    if contain_operator(expression[0]) or contain_operator(expression[-1]) or not contain_operator(expression) or len(tokenize(expression)) == 1:
         return True
 
 

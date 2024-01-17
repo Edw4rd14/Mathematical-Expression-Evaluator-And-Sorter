@@ -86,12 +86,16 @@ class HashTable:
     def __getitem__(self,key):
         # Use the hash function to calculate the index where the key should be stored.
         index = self._hash_function(key)
-        # Check if entry exists at the calculated index
-        if self.keys[index]:
-            # Loop through the keys and values stored at each index.
-            for k, v in zip(self.keys, self.buckets):
-                # If a matching key is found, return the value from the bucket.
-                if k == key:
-                    return v
+        start_index = index
+        # Loop until we find an empty bucket or have scanned the entire table
+        while self.keys[index] is not None:
+            if self.keys[index] == key:
+                # Key found, return the corresponding value
+                return self.buckets[index]
+            # Move to the next index
+            index = self._rehash_function(index)
+            # Check if we have scanned the entire table
+            if index == start_index:
+                break
         # If the key is not found return None
         return None
