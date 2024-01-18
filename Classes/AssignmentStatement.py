@@ -17,9 +17,14 @@ from DataStructures.HashTable import HashTable
 from DataStructures.ParseTree import ParseTree
 from DataStructures.SortedList import SortedList
 # Import Utils
-from Utils import validate_and_process_statement, handle_file, get_key_and_value, check_eq_sign, file_operation
-# Import Modules
-import re
+from Utils import (
+    validate_key_and_value, 
+    handle_file, 
+    get_key_and_value, 
+    check_eq_sign, 
+    file_operation, 
+    merge_sort
+)
 
 # AssignmentStatement Class
 class AssignmentStatement:
@@ -30,6 +35,11 @@ class AssignmentStatement:
     
     # Option 1: Add/modify assignment statement
     def add_modify_statement(self, key=None, value=None, loop=True):
+        '''
+        This function is for option 1 where users add or modify statements. The user input goes through
+        a series of validation before the assignment statements are added to the HashTable, which was
+        the data structure implemented here.
+        '''
         # While loop to prompt users until valid input is provided
         while True:
             # Get assignment statement from user
@@ -39,8 +49,8 @@ class AssignmentStatement:
                 continue
             # Split the statement by '='
             key, value = get_key_and_value(statement)
-            # Validate and process key and value
-            loop, value = validate_and_process_statement(key,value)
+            # Validate key and value
+            loop, value = validate_key_and_value(key,value)
             if not loop:
                 continue
             # Expression satisfies all conditions, add to HashTable and break out of the loop
@@ -49,6 +59,12 @@ class AssignmentStatement:
     
     # Option 2: Display current assignment statements
     def display_statements(self):
+        '''
+        This function is for option 2 where users display the assignment statements created/imported 
+        from text files. The function utilizes the ParseTree data structure to evaluate the assignment
+        statements. It utilizes the SortedList data structure to sort the assignment statements by variable
+        for option 5. Furthermore, it also utilizes the Merge Sort algorithm to sort the keys for displaying.
+        '''
         # Sorted List to store results sorted
         self.sorted_list = SortedList()
         # Print header
@@ -59,8 +75,10 @@ class AssignmentStatement:
             print("There are no current assignment statements.")
         # Else if there are assignment statements
         else:
-            # Loop each key in the sorted list
-            for key in sorted(self.hash_table.keys,key=lambda x: (x is None, x)):
+            # Get all keys that are not None
+            keys = [key for key in self.hash_table.keys if key is not None]
+            # Loop each sorted key from merge sort
+            for key in merge_sort(keys):
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
@@ -71,6 +89,7 @@ class AssignmentStatement:
                         tree = ParseTree(expression=value, hash_table=self.hash_table)
                         # Print evaluation result
                         evaluated_value = tree.evaluate()
+                        tree.display_variable_dependencies()
                         statement = f'{key}={value}'
                         print(f'{statement}=> {evaluated_value}')
                         # Add evaluation result to SortedList
@@ -81,7 +100,12 @@ class AssignmentStatement:
 
     # Option 3: Evaluate and print parse tree for an individual variable
     def evaluate_single_variable(self):
-    # Get variable from user input
+        '''
+        This function is for option 3 where users evaluate one variable and view 
+        the evaluation of it in a in-order traversal format. The function mainly
+        utilizes the HashTable and ParseTree data structures.
+        '''
+        # Get variable from user input
         while True:
             variable = input("Please enter the variable you want to evaluate:\n")
             try:
@@ -106,8 +130,13 @@ class AssignmentStatement:
             except:
                 pass
 
-    # Option 4: Read statements from a file and sort statements
+    # Option 4: Read statements from a file
     def read_statements_from_file(self):
+        '''
+        This function is for option 4 where users read assignment statements from a file. This option
+        includes file operations handled by the Utilities file (Utils.py), and reads the file and validates 
+        and adds each assignment statement into the HashTable, then displays the statements (Option 2)
+        '''
         # While loop until valid input or user force exits
         while True:
             # Try and except to catch errors
@@ -122,8 +151,8 @@ class AssignmentStatement:
                     if check_eq_sign(statement):
                         # Get key and value from statement
                         key, value = get_key_and_value(statement)
-                        # Validate and process key and value
-                        valid, value = validate_and_process_statement(key,value)
+                        # Validate key and value
+                        valid, value = validate_key_and_value(key,value)
                         if valid:
                             # Expression satisfies all conditions, add to HashTable
                             self.hash_table[key] = value
@@ -136,6 +165,10 @@ class AssignmentStatement:
 
     # Option 5: Sort assignment statements
     def sort_statements(self):
+        '''
+        This function is for option 5 where users sort their assignment statements and outputs them
+        into a text file, and utilizes file operations handled by the Utilities file as well.
+        '''
         # While loop until valid user input or user force exits
         while True:
             try:
@@ -144,8 +177,11 @@ class AssignmentStatement:
                 # Process assignment statements and write to file
                 file_operation(file_path=output_file, mode='w',content=self.sorted_list.print_sorted())
                 break
-            except AttributeError as ae:
-                print("\nPlease check option 2 for the assignment statements before sorting.")
+            except AttributeError:
+                print("\nPlease check menu option 2 for the assignment statements before sorting.")
                 break
             except Exception as e:
                 print(e)
+
+    # # Option 6:
+    # def view_dependency(self):

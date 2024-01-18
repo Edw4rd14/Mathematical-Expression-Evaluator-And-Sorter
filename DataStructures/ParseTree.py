@@ -131,3 +131,29 @@ class ParseTree:
             print(f"{'.' * depth}{print_value}")
             # Recursively call the function on the left tree of the current tree [L]
             self._print_in_order(node.get_left_tree(), depth + 1)
+
+    def variable_dependencies(self):
+        dependencies = {}
+        self._collect_variable_dependencies(self.root, dependencies)
+        return dependencies
+
+    # Helper method to collect variable dependencies recursively
+    def _collect_variable_dependencies(self, node, dependencies, path=[]):
+        if node is not None:
+            original_token, _ = node.get_root_value()
+            if isinstance(original_token, str):
+                path_context = path + [original_token]
+                if original_token not in dependencies:
+                    dependencies[original_token] = []
+                dependencies[original_token].append(path_context)
+
+            self._collect_variable_dependencies(node.get_left_tree(), dependencies, path + ['L'])
+            self._collect_variable_dependencies(node.get_right_tree(), dependencies, path + ['R'])
+
+    # Method to display variable dependencies neatly
+    def display_variable_dependencies(self):
+        dependencies = self.variable_dependencies()
+        for variable, paths in dependencies.items():
+            print(f"Variable '{variable}' is used in contexts:")
+            for path in paths:
+                print(f"  - {' -> '.join(path)}")

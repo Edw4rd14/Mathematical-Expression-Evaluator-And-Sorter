@@ -13,13 +13,16 @@ from DataStructures.Node import Node
 # SortedList class
 class SortedList:
     def __init__(self):
-        self.head_node = None # Initialize head node
-        self.current_node = None # Initialize current node
-        self.length = 0 # Initialize length
+        # Initialize head node
+        self.head_node = None
+        # Initialize current node
+        self.current_node = None
+        # Initialize length
+        self._length = 0 
     
     def __len__(self): 
         # Return length
-        return self.length
+        return self._length
 
     def __iter__(self):
         # When object is iterated, set current_node to head_node to start looping from the head
@@ -43,20 +46,21 @@ class SortedList:
     def print_sorted(self): 
         # Initialize a list to store the lines
         output_lines = [] 
-        # Current value while looping
+        # Current value set to None
         current_value = None
         # For each assignment statement
         for node_data in self:
             # Extract statement and value from the node data
             statement, value = node_data
-            # Check if we are still in the same group
+            # Check if still in the same group, if new group,
             if current_value != value:
-                # We have a new group, prepare the header for this group
+                # And it is not the very first loop
                 if current_value is not None:
-                    # If this isn't the first group, add a new line for spacing
+                    # Add a new line to separate each value's groupings
                     output_lines.append("")  
                 # Add the header
                 output_lines.append(f"*** Statements with value=> {value}") 
+                # Set current value to value
                 current_value = value
             # Add the current statement
             output_lines.append(statement)
@@ -73,13 +77,13 @@ class SortedList:
         # Set the next node of the new head node to the old head node
         self.head_node.nextNode = oldHeadNode
         # Increment length by 1
-        self.length += 1
+        self._length += 1
 
     def insert(self, new_data): 
         # Make new data a node
         new_node = Node(new_data)
         # Increment length by 1
-        self.length += 1
+        self._length += 1
         # If there is no head node (empty SortedList), set head node to new node
         if self.head_node is None: 
             self.head_node = new_node

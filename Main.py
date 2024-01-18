@@ -26,13 +26,18 @@ class Main(AssignmentStatement):
         self.__banner_order = [0,1,2,3,4,5,3,0]
         # Menu options
         self.choice = None
-        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'Exit']
+        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Exit']
         self.__options = {
             1: super().add_modify_statement,
             2: super().display_statements,
             3: super().evaluate_single_variable,
             4: super().read_statements_from_file,
-            5: super().sort_statements
+            5: super().sort_statements,
+            # 6: super().,
+            # 7:,
+            # 8:,
+            # 9:,
+            # 10:
         }
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
@@ -54,7 +59,7 @@ class Main(AssignmentStatement):
         self.choice = int(input("Enter choice: "))
 
     # Run main application
-    def run(self):
+    def start(self):
         # Start banner
         self._start_banner()
         # While loop for menu
@@ -93,5 +98,8 @@ class Main(AssignmentStatement):
 
 # Instantiate Main class
 main = Main()
-# Run main application
-main.run()
+
+# Check that script is being run directly and not being imported
+if __name__ == '__main__':
+    # Run main application
+    main.start()

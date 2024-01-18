@@ -21,32 +21,15 @@ import os
 operator_regex = re.compile(r'[\+\-\*/]')
 # Variable regex
 variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
+# End of error message
+err_msg = 'Please try again or CRTL + C to return back to main menu.\n'
 
 # Formatting error
-format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. Please try again or CRTL+C to return back to main menu.\n"
+format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. {err_msg}"
 
 # Check for existence of operators
 def contain_operator(string:str)->bool:
     return bool(operator_regex.search(string))
-    
-# Check for matching parenthesis
-def check_parenthesis(expression:str)->bool:
-    # Instantiate Stack
-    stack = Stack()
-    # For each character in expression
-    for char in expression:
-        # If character is opening parenthesis, push into stack
-        if char == '(':
-            stack.push(char)
-        # If character is closing parenthesis
-        elif char == ')':
-            # And the stack is empty, means that there is an unmatched parenthesis, hence return True
-            if stack.is_empty():
-                return True
-            # Else, pop the corresponding opening parenthesis from the stack
-            stack.pop()
-    # If stack is not empty, there are unmatched opening parentheses
-    return not stack.is_empty()
 
 # Check for consecutive operands etc. "++" or "/*"
 def check_consecutive_operators(expression:str)->bool:
@@ -79,7 +62,7 @@ def get_key_and_value(statement:str)->list:
     return [x.strip() for x in statement.split('=')]
 
 # Validate and process key and value
-def validate_and_process_statement(key:str, value:str)->list([bool,str]):
+def validate_key_and_value(key:str, value:str)->list([bool,str]):
     # Check if key or value is empty
     if not key or not value:
         print(format_error("Both left-hand side and right-hand side of the statement should not be empty",key))
@@ -106,16 +89,43 @@ def validate_and_process_statement(key:str, value:str)->list([bool,str]):
         return False, value
 
     # Check for any unmatched parenthesis
-    if check_parenthesis(value):
-        print(format_error("Please resolve any unmatched parenthesis",key))
+    if not check_parenthesis(value):
+        print(format_error("Please check that the expression is fully parenthesized",key))
         return False, value
-
-    # Encapsulate value with parentheses if not already
-    if not (value.startswith("(") and value.endswith(")")):
-        value = f"({value})"
 
     return True, value
 
+# Check if expression is fully parenthesized
+def check_parenthesis(expression:str)->bool:
+     # Remove whitespace from the expression
+    expression = expression.replace(' ', '') 
+    # Initialize a stack to keep track of parentheses
+    stack = Stack()
+    # Flag to track if an operator is found within parentheses
+    operator_found = False
+
+    for char in expression:
+        if char in '([{':
+            # Push opening bracket to stack
+            stack.push(char) 
+            # Reset operator flag for new level of parentheses
+            operator_found = False 
+        elif char in '+-*/':
+            # Return False if operator is found outside any parentheses
+            if stack.is_empty():
+                return False 
+            # Set flag to True as an operator is found within parentheses
+            operator_found = True 
+        elif char in ')]}':
+            # Return False if parentheses are unbalanced or no operator in this set
+            if stack.is_empty() or not operator_found:
+                return False 
+            # Pop the opening bracket from the stack
+            stack.pop() 
+             # Set flag for parent level that an operator was found in this level
+            operator_found = True
+
+    return stack.is_empty()  # Return True if stack is empty, indicating balanced parentheses
 
 # Check for incomplete expressions
 def check_incomplete_expression(expression:str)->bool:    
@@ -131,10 +141,10 @@ def handle_file(question:str, mode:str=None)->str:
     file_path = input(question)
     # Validate file extension
     if not file_path.endswith(".txt"):
-        raise ValueError(f'\n"{file_path}" is an invalid file type. Expected a .txt file. Please try again or CRTL + C to return to main menu.\n')
+        raise ValueError(f'\n"{file_path}" is an invalid file type. Expected a .txt file. {err_msg}')
     # Validate file existence for reading
     if mode == 'r' and not os.path.exists(file_path):
-        raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. Please try again or CRTL + C to return to main menu.\n')
+        raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. {err_msg}')
     # If no errors, return file path
     return file_path
 
@@ -152,7 +162,47 @@ def file_operation(file_path: str, mode: str, content: str = None):
                 return file.readlines()
     # Catch any errors
     except Exception:
-        raise FileNotFoundError(f'\nError occurred with file "{file_path}". Please try again or CRTL + C to return to main menu.\n')
+        raise FileNotFoundError(f'\nError occurred with file "{file_path}".')
+
+# Bubble sort algorithm
+def merge_sort(arr:list)->list:
+    """
+    Perform merge sort on the array.
+    """
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        left_half = arr[:mid]
+        right_half = arr[mid:]
+
+        # Recursive calls to divide the array
+        merge_sort(left_half)
+        merge_sort(right_half)
+
+        # Merging the sorted halves
+        i = j = k = 0
+
+        # Merge the two halves
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                arr[k] = left_half[i]
+                i += 1
+            else:
+                arr[k] = right_half[j]
+                j += 1
+            k += 1
+
+        # Checking if any element was left
+        while i < len(left_half):
+            arr[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            arr[k] = right_half[j]
+            j += 1
+            k += 1
+
+    return arr
 
 # =================================================
 # Utils for AssignmentStatement.py and ParseTree.py
