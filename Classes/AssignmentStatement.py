@@ -16,10 +16,7 @@ and running the Class methods to perform the menu option's functions.
 from DataStructures.HashTable import HashTable
 from DataStructures.ParseTree import ParseTree
 # Import Utils
-from Utils import validate_and_process_statement
-from Utils import validate_read_file
-from Utils import get_key_and_value
-from Utils import check_eq_sign
+from Utils import validate_and_process_statement, handle_file, get_key_and_value, check_eq_sign, write_file, read_file
 # Import Modules
 import re
 
@@ -104,13 +101,14 @@ class AssignmentStatement:
 
     # Option 4: Read statements from a file and sort statements
     def read_statements_from_file(self):
+        # While loop until valid input or user force exits
         while True:
-            # Prompt user to enter the input file
-            file_path = input("Enter the path of the input file: ")
             # Try and except to catch errors
             try:
-                # Validate and read statements from file
-                statements = validate_read_file(file_path)
+                # Get, validate and read statements from file
+                file_path = handle_file(question='Please enter input file: ', mode='r')
+                # Read file
+                statements = read_file(file_path)
                 # Loop each statement
                 for statement in statements:
                     # Check equal sign
@@ -124,5 +122,17 @@ class AssignmentStatement:
                 # Display the list of current assignments (same as Option 2) and break out of loop
                 self.display_statements()
                 break
+            # Catch any errors
+            except Exception as e:
+                print(e)
+
+    # Option 5: Sort assignment statements
+    def sort_statements(self):
+        # While loop until valid user input or user force exits
+        while True:
+            try:
+                # Get user input on output file path
+                output_file=input("Please enter output file: ")
+                
             except Exception as e:
                 print(e)

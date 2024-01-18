@@ -22,6 +22,9 @@ operator_regex = re.compile(r'[\+\-\*/]')
 # Variable regex
 variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
 
+# Formatting error
+format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. Please try again or CRTL+C to return back to main menu.\n"
+
 # Check for existence of operators
 def contain_operator(string):
     return bool(operator_regex.search(string))
@@ -44,9 +47,6 @@ def check_parenthesis(expression):
             stack.pop()
     # If stack is not empty, there are unmatched opening parentheses
     return not stack.is_empty()
-
-# Formatting error
-format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. Please try again or CRTL+C to return back to main menu.\n"
 
 # Check for consecutive operands etc. "++" or "/*"
 def check_consecutive_operators(expression):
@@ -125,26 +125,54 @@ def check_incomplete_expression(expression):
     if contain_operator(expression[0]) or contain_operator(expression[-1]) or not contain_operator(expression) or len(tokenize(expression)) == 1:
         return True
     
-# Validate file path
-def validate_read_file(file_path):
-            # Check if file path exist
-        if os.path.exists(file_path):
-            # Check if file path ends with .txt
-            if file_path.endswith(".txt"):
-                # Try to open, read  and store file content
-                try:
-                    with open(file_path, 'r') as file: # .close() not required as the file is automaatically closed with 'with'
-                        return file.readlines()
-                # Raise error if error occurs
-                except:
-                    raise FileNotFoundError(f'\nError occurred reading file "{file_path}". Please try again or CRTL+C to force exit.\n')
-            # If file is not .txt file, raise error
-            else:
-                raise ValueError(f'\n{file_path} is an invalid file type. Expected a .txt file. Please try again or CRTL+C to force exit.\n')
-        # If file path does not exist, raise error
-        else:
-            raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. Please try again or CRTL+C to force exit.\n')
+# Handle file operations
+def handle_file(question:str, mode:str)->str:
+    # Get user input on input file path
+    file_path = input(question)
+    # Validate file extension
+    if not file_path.endswith(".txt"):
+        raise ValueError(f'\n{file_path} is an invalid file type. Expected a .txt file.\n')
+    # Validate file existence for reading
+    if mode == 'r' and not os.path.exists(file_path):
+        raise FileNotFoundError(f'\nFile path "{file_path}" does not exist.\n')
+    # If no errors, return file path
+    return file_path
+    
+def write_file(file_path:str, content:str):
+    try:
+        # Open file
+        with open(file_path, 'w') as file:
+            # Write content to file
+            file.write(content)
+    # Catch exceptions and raise error
+    except Exception:
+        raise FileNotFoundError(f'\nError occurred with file "{file_path}."\n')
 
+
+def read_file(file_path:str)->str:
+    try:
+        # Open file
+        with open(file_path, 'r') as file:
+            # Read lines of file
+            return file.readlines()
+    # Catch exceptions and raise error
+    except Exception:
+        raise FileNotFoundError(f'\nError occurred with file "{file_path}."\n')
+
+    
+def file_operation(file_path: str, mode: str, content: str = None) -> str:
+    # Try and except to catch errors
+    try:
+        # Open file
+        with open(file_path, mode, encoding='utf-8') as file:
+            # If mode is write
+            if mode == 'w':
+                file.write(content)
+            # Else mode is read
+            else:
+                return file.readlines()
+    except Exception:
+        raise FileNotFoundError(f'\nError occurred with file "{file_path}."\n')
 
 # =================================================
 # Utils for AssignmentStatement.py and ParseTree.py
