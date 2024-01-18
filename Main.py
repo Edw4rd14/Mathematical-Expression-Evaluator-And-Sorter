@@ -31,7 +31,8 @@ class Main(AssignmentStatement):
             1: super().add_modify_statement,
             2: super().display_statements,
             3: super().evaluate_single_variable,
-            4: super().read_statements_from_file
+            4: super().read_statements_from_file,
+            5: super().sort_statements
         }
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
@@ -86,9 +87,9 @@ class Main(AssignmentStatement):
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")
                 break
-            # Handle errors
-            # except Exception as e:
-            #     print(e) # REMOVE LATERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+            # Handle any other errors (as a precaution, and not leak error messages)
+            except Exception:
+                print("\nAn error has occurred with the application. Try restarting the application.\n")
 
 # Instantiate Main class
 main = Main()

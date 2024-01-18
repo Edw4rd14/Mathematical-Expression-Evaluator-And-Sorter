@@ -53,14 +53,18 @@ class ParseTree:
                 current_tree = current_tree.get_right_tree()
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*',  '**', '/', '//', ')']:
-                if t.isnumeric():
-                    current_tree.set_root_value((int(t),int(t)))
-                elif t in self.hash_table.keys:
-                    # If value is a string, build a subtree and store evaluated value
-                    evaluated = self._evaluate_tree(self.build_parse_tree(self.hash_table[t]))
-                    current_tree.set_root_value((t, evaluated))
-                else:
-                    current_tree.set_root_value((t,None))
+                # Try converting t to float, then to integer (if it is an integer) before checking whether it is a variable or not 
+                try:
+                    num = float(t)
+                    num = int(num) if num.is_integer() else num
+                    current_tree.set_root_value((num, num))
+                except:
+                    if t in self.hash_table.keys:
+                        # If value is a string, build a subtree and store evaluated value
+                        evaluated = self._evaluate_tree(self.build_parse_tree(self.hash_table[t]))
+                        current_tree.set_root_value((t, evaluated))
+                    else:
+                        current_tree.set_root_value((t,None))
                 if not stack.is_empty():
                     current_tree = stack.pop()
             # RULE 4: If token is ')' go to parent of current node
@@ -103,7 +107,7 @@ class ParseTree:
                     return operator_functions[original_token](left,right)
                 else:
                     # If it's a variable, return original value
-                    return original_token
+                    return None
                 
         except Exception as e:
             # Handle exceptions or return None if there are any errors

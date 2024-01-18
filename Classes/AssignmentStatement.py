@@ -15,8 +15,9 @@ and running the Class methods to perform the menu option's functions.
 # Import Data Structures
 from DataStructures.HashTable import HashTable
 from DataStructures.ParseTree import ParseTree
+from DataStructures.SortedList import SortedList
 # Import Utils
-from Utils import validate_and_process_statement, handle_file, get_key_and_value, check_eq_sign, write_file, read_file
+from Utils import validate_and_process_statement, handle_file, get_key_and_value, check_eq_sign, file_operation
 # Import Modules
 import re
 
@@ -48,6 +49,8 @@ class AssignmentStatement:
     
     # Option 2: Display current assignment statements
     def display_statements(self):
+        # Sorted List to store results sorted
+        self.sorted_list = SortedList()
         # Print header
         print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
         # Check if there are any assignment statements (if there isnt all keys are None)
@@ -67,7 +70,11 @@ class AssignmentStatement:
                         # Evaluate value of expression with ParseTree
                         tree = ParseTree(expression=value, hash_table=self.hash_table)
                         # Print evaluation result
-                        print(f'{key}={value}=> {tree.evaluate()}')
+                        evaluated_value = tree.evaluate()
+                        statement = f'{key}={value}'
+                        print(f'{statement}=> {evaluated_value}')
+                        # Add evaluation result to SortedList
+                        self.sorted_list.insert(new_data=(statement, evaluated_value))
                     # If an error occurs, pass
                     except:
                         pass
@@ -83,7 +90,7 @@ class AssignmentStatement:
                 # If expression exists
                 if expression is not None:
                     # Build parse tree
-                    tree = ParseTree(expression, hash_table=self.hash_table)
+                    tree = ParseTree(expression=expression, hash_table=self.hash_table)
                     # Print expression tree in in-order format
                     print("\nExpression Tree:")
                     tree.print_in_order()
@@ -108,7 +115,7 @@ class AssignmentStatement:
                 # Get, validate and read statements from file
                 file_path = handle_file(question='Please enter input file: ', mode='r')
                 # Read file
-                statements = read_file(file_path)
+                statements = file_operation(file_path=file_path, mode='r')
                 # Loop each statement
                 for statement in statements:
                     # Check equal sign
@@ -116,7 +123,8 @@ class AssignmentStatement:
                         # Get key and value from statement
                         key, value = get_key_and_value(statement)
                         # Validate and process key and value
-                        if validate_and_process_statement(key,value)[0]:
+                        valid, value = validate_and_process_statement(key,value)
+                        if valid:
                             # Expression satisfies all conditions, add to HashTable
                             self.hash_table[key] = value
                 # Display the list of current assignments (same as Option 2) and break out of loop
@@ -131,8 +139,13 @@ class AssignmentStatement:
         # While loop until valid user input or user force exits
         while True:
             try:
-                # Get user input on output file path
-                output_file=input("Please enter output file: ")
-                
+                # Get and validate file path
+                output_file = handle_file(question='Please enter output file: ')
+                # Process assignment statements and write to file
+                file_operation(file_path=output_file, mode='w',content=self.sorted_list.print_sorted())
+                break
+            except AttributeError as ae:
+                print("\nPlease check option 2 for the assignment statements before sorting.")
+                break
             except Exception as e:
                 print(e)

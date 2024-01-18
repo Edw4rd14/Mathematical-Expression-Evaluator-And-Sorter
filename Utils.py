@@ -26,11 +26,11 @@ variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
 format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. Please try again or CRTL+C to return back to main menu.\n"
 
 # Check for existence of operators
-def contain_operator(string):
+def contain_operator(string:str)->bool:
     return bool(operator_regex.search(string))
     
 # Check for matching parenthesis
-def check_parenthesis(expression):
+def check_parenthesis(expression:str)->bool:
     # Instantiate Stack
     stack = Stack()
     # For each character in expression
@@ -49,7 +49,7 @@ def check_parenthesis(expression):
     return not stack.is_empty()
 
 # Check for consecutive operands etc. "++" or "/*"
-def check_consecutive_operators(expression):
+def check_consecutive_operators(expression:str)->bool:
     # Check for an operand without operands on both sides
     previous_char = ""
     # For each character in expression
@@ -65,7 +65,7 @@ def check_consecutive_operators(expression):
     return False
 
 # Check for equal sign
-def check_eq_sign(statement):
+def check_eq_sign(statement:str)->bool:
     # Get count of number of equal signs
     count_of_equal_signs = statement.count("=")
     # Check if there is an equal sign
@@ -75,11 +75,11 @@ def check_eq_sign(statement):
     return True
 
 # Get key and value from statement
-def get_key_and_value(statement):
+def get_key_and_value(statement:str)->list:
     return [x.strip() for x in statement.split('=')]
 
 # Validate and process key and value
-def validate_and_process_statement(key, value):
+def validate_and_process_statement(key:str, value:str)->list([bool,str]):
     # Check if key or value is empty
     if not key or not value:
         print(format_error("Both left-hand side and right-hand side of the statement should not be empty",key))
@@ -118,7 +118,7 @@ def validate_and_process_statement(key, value):
 
 
 # Check for incomplete expressions
-def check_incomplete_expression(expression):    
+def check_incomplete_expression(expression:str)->bool:    
     # Check if expression starts or ends with an operator
     # Check if expression has at least one operator
     # Check that it is an expression (e.g. x=a+2, c=apple+banana) and not an incomplete expession (e.g. a=b)
@@ -126,41 +126,20 @@ def check_incomplete_expression(expression):
         return True
     
 # Handle file operations
-def handle_file(question:str, mode:str)->str:
+def handle_file(question:str, mode:str=None)->str:
     # Get user input on input file path
     file_path = input(question)
     # Validate file extension
     if not file_path.endswith(".txt"):
-        raise ValueError(f'\n{file_path} is an invalid file type. Expected a .txt file.\n')
+        raise ValueError(f'\n"{file_path}" is an invalid file type. Expected a .txt file. Please try again or CRTL + C to return to main menu.\n')
     # Validate file existence for reading
     if mode == 'r' and not os.path.exists(file_path):
-        raise FileNotFoundError(f'\nFile path "{file_path}" does not exist.\n')
+        raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. Please try again or CRTL + C to return to main menu.\n')
     # If no errors, return file path
     return file_path
-    
-def write_file(file_path:str, content:str):
-    try:
-        # Open file
-        with open(file_path, 'w') as file:
-            # Write content to file
-            file.write(content)
-    # Catch exceptions and raise error
-    except Exception:
-        raise FileNotFoundError(f'\nError occurred with file "{file_path}."\n')
 
-
-def read_file(file_path:str)->str:
-    try:
-        # Open file
-        with open(file_path, 'r') as file:
-            # Read lines of file
-            return file.readlines()
-    # Catch exceptions and raise error
-    except Exception:
-        raise FileNotFoundError(f'\nError occurred with file "{file_path}."\n')
-
-    
-def file_operation(file_path: str, mode: str, content: str = None) -> str:
+# File operation (read/write)
+def file_operation(file_path: str, mode: str, content: str = None):
     # Try and except to catch errors
     try:
         # Open file
@@ -171,20 +150,22 @@ def file_operation(file_path: str, mode: str, content: str = None) -> str:
             # Else mode is read
             else:
                 return file.readlines()
+    # Catch any errors
     except Exception:
-        raise FileNotFoundError(f'\nError occurred with file "{file_path}."\n')
+        raise FileNotFoundError(f'\nError occurred with file "{file_path}". Please try again or CRTL + C to return to main menu.\n')
 
 # =================================================
 # Utils for AssignmentStatement.py and ParseTree.py
 # =================================================
 
 # Tokenize expression
-def tokenize(expression):
+def tokenize(expression:str)->list:
     # \b\w+\b matches whole words.
     # \*\* matches the ** operator.
     # // matches the // operator.
     # \S matches any non-whitespace character, covering other operators and single characters.
-    tokens = re.findall(r'(\b\w+\b|\*\*|//|\S)', expression)
+    # (\d+\.\d+) matches decimal numbers.
+    tokens = re.findall(r'(\b\d+\.\d+\b|\b\w+\b|\*\*|//|\S)', expression)
     return tokens
 
 # ======================
