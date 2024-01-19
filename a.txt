@@ -14,6 +14,9 @@ Strawberry=(Pear*1)
 *** Statements with value=> 15
 Apple=(3*5)
 
+*** Statements with value=> 1
+Coconut=(1+0)
+
 *** Statements with value=> None
 Cherry=(Lemon/2)
 Lemon=(Pear+Tangerine)

@@ -48,12 +48,14 @@ class SortedList:
         output_lines = [] 
         # Current value set to None
         current_value = None
+        # Flag to indicate if current_value has been set
+        is_current_value_set = False
         # For each assignment statement
         for node_data in self:
             # Extract statement and value from the node data
             statement, value = node_data
             # Check if still in the same group, if new group,
-            if current_value != value:
+            if current_value != value or not is_current_value_set:
                 # And it is not the very first loop
                 if current_value is not None:
                     # Add a new line to separate each value's groupings
@@ -62,6 +64,8 @@ class SortedList:
                 output_lines.append(f"*** Statements with value=> {value}") 
                 # Set current value to value
                 current_value = value
+                # Set flag
+                is_current_value_set = True
             # Add the current statement
             output_lines.append(statement)
         # Join all the lines into a single string with newlines between them
@@ -104,6 +108,12 @@ class SortedList:
         right_node = self.head_node.nextNode
         # Iterate through nodes while it has not reached the end
         while right_node is not None:
+            # Check if right node's data is None
+            if right_node.data[1] is None:
+                # If it is, append the new node at the end of the list
+                left_node.nextNode = new_node
+                new_node.nextNode = right_node
+                return
             # If correct position of node has been found, insert between left and right node
             if new_node.data[1] > right_node.data[1]:
                 left_node.nextNode = new_node 

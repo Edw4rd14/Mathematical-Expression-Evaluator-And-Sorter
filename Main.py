@@ -29,7 +29,7 @@ class Main(AssignmentStatement):
         self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Exit']
         self.__options = {
             1: super().add_modify_statement,
-            2: super().display_statements,
+            2: super().display_and_sort_statements,
             3: super().evaluate_single_variable,
             4: super().read_statements_from_file,
             5: super().sort_statements,

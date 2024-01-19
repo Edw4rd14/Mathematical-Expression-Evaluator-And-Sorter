@@ -18,7 +18,7 @@ import os
 # ================================
 
 # Operator regex
-operator_regex = re.compile(r'[\+\-\*/]')
+operator_regex = re.compile(r'\*\*|//|[\+\-\*/]')
 # Variable regex
 variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
 # End of error message
@@ -96,36 +96,31 @@ def validate_key_and_value(key:str, value:str)->list([bool,str]):
     return True, value
 
 # Check if expression is fully parenthesized
-def check_parenthesis(expression:str)->bool:
-     # Remove whitespace from the expression
-    expression = expression.replace(' ', '') 
-    # Initialize a stack to keep track of parentheses
+def check_parenthesis(expression: str) -> bool:
+    # Remove whitespace from the expression
+    expression = expression.replace(' ', '')
+    # Initialize a stack to keep track of parentheses and operators
     stack = Stack()
-    # Flag to track if an operator is found within parentheses
-    operator_found = False
-
+    # For each character in the expression
     for char in expression:
-        if char in '([{':
-            # Push opening bracket to stack
-            stack.push(char) 
-            # Reset operator flag for new level of parentheses
-            operator_found = False 
+        if char == '(':
+            # Push a tuple to stack: (opening bracket, operator flag reset)
+            stack.push(('(', False))
         elif char in '+-*/':
-            # Return False if operator is found outside any parentheses
             if stack.is_empty():
-                return False 
-            # Set flag to True as an operator is found within parentheses
-            operator_found = True 
-        elif char in ')]}':
-            # Return False if parentheses are unbalanced or no operator in this set
-            if stack.is_empty() or not operator_found:
-                return False 
-            # Pop the opening bracket from the stack
-            stack.pop() 
-             # Set flag for parent level that an operator was found in this level
-            operator_found = True
-
-    return stack.is_empty()  # Return True if stack is empty, indicating balanced parentheses
+                # Operator found outside of any parentheses
+                return False
+            else:
+                # Update the top element of the stack to set operator flag to True
+                top = stack.pop()
+                if top[1]:  # There's already an operator inside these parentheses
+                    return False
+                stack.push((top[0], True))
+        elif char == ')':
+            if stack.is_empty() or not stack.pop()[1]:  # Parentheses are unbalanced or no operator inside
+                return False
+    # Check if there are any unclosed parentheses left in the stack
+    return all(item[0] != '(' for item in stack.items)
 
 # Check for incomplete expressions
 def check_incomplete_expression(expression:str)->bool:    

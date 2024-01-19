@@ -55,20 +55,26 @@ class AssignmentStatement:
                 continue
             # Expression satisfies all conditions, add to HashTable and break out of the loop
             self.hash_table[key] = value
+            # Update sorted statements in SortedList for option 5
+            self.display_and_sort_statements(display=False)
             break
     
     # Option 2: Display current assignment statements
-    def display_statements(self):
+    def display_and_sort_statements(self, display=True):
         '''
         This function is for option 2 where users display the assignment statements created/imported 
-        from text files. The function utilizes the ParseTree data structure to evaluate the assignment
-        statements. It utilizes the SortedList data structure to sort the assignment statements by variable
-        for option 5. Furthermore, it also utilizes the Merge Sort algorithm to sort the keys for displaying.
+        from text files. The function is also utilized in option 5 in order to sort the assignment
+        statements without printing any results. The function utilizes the ParseTree data structure 
+        to evaluate the assignment statements. It utilizes the SortedList data structure to sort the 
+        assignment statements by variablefor option 5. Furthermore, it also utilizes the Merge Sort 
+        algorithm to sort the keys for displaying.
         '''
         # Sorted List to store results sorted
         self.sorted_list = SortedList()
-        # Print header
-        print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
+        # If display boolean is True (default is True)
+        if display:
+            # Print header
+            print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
         # Check if there are any assignment statements (if there isnt all keys are None)
         if all(key is None for key in self.hash_table.keys):
             # Print error statement if there are no assignment statements
@@ -85,17 +91,21 @@ class AssignmentStatement:
                     try:
                         # Try grabbing the assignment statement value
                         value = self.hash_table[key]
+                        # Formulate statement string
+                        statement = f'{key}={value}'
                         # Evaluate value of expression with ParseTree
                         tree = ParseTree(expression=value, hash_table=self.hash_table)
-                        # Print evaluation result
+                        # Get evaluated value of expression
                         evaluated_value = tree.evaluate()
-                        tree.display_variable_dependencies()
-                        statement = f'{key}={value}'
-                        print(f'{statement}=> {evaluated_value}')
+                        # If display boolean is True (default is True)
+                        if display:
+                            # Print evaluation result
+                            print(f'{statement}=> {evaluated_value}')
                         # Add evaluation result to SortedList
                         self.sorted_list.insert(new_data=(statement, evaluated_value))
-                    # If an error occurs, pass
-                    except:
+                    # # If an error occurs, pass
+                    except Exception as e:
+                        print(e)
                         pass
 
     # Option 3: Evaluate and print parse tree for an individual variable
@@ -157,7 +167,7 @@ class AssignmentStatement:
                             # Expression satisfies all conditions, add to HashTable
                             self.hash_table[key] = value
                 # Display the list of current assignments (same as Option 2) and break out of loop
-                self.display_statements()
+                self.display_and_sort_statements()
                 break
             # Catch any errors
             except Exception as e:
@@ -183,5 +193,6 @@ class AssignmentStatement:
             except Exception as e:
                 print(e)
 
-    # # Option 6:
+    # Option 6:
     # def view_dependency(self):
+        
