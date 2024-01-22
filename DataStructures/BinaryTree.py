@@ -19,13 +19,34 @@ class BinaryTree:
         # Initialize key / root object
         self.key = root_object
         # Initialize left and right tree
-        self.left_tree = None
-        self.right_tree = None
+        self._left_tree = None
+        self._right_tree = None
+
+    # Get the right tree of the current node
+    @property
+    def right_tree(self):
+        return self._right_tree
+    
+    # Set the right tree of the current node
+    @right_tree.setter
+    def right_tree(self, value):
+        self._right_tree = value
+
+    # Get the left tree of the current node
+    @property
+    def left_tree(self):
+        return self._left_tree    
+    
+    # Set the left tree of the current node
+    @left_tree.setter
+    def left_tree(self, value):
+        # You can add any validation or assignment logic here
+        self._left_tree = value
 
     # Insert left
     def insert_left(self, new_node):
         # If left tree is empty
-        if self.left_tree is None:
+        if self._left_tree is None:
             # Create new BinaryTree of new node in left tree
             self.left_tree = BinaryTree(new_node)
         # Else if left tree exists
@@ -33,14 +54,14 @@ class BinaryTree:
             # Create a new BinaryTree node for the new node
             t = BinaryTree(new_node)
             # Set the current left tree as the left tree of the new node
-            t.left_tree = self.left_tree
+            t.left_tree = self._left_tree
             # Update the left tree of the current node to be the new node
             self.left_tree = t
 
     # Insert right
     def insert_right(self, new_node):
         # If right tree is empty
-        if self.right_tree is None:
+        if self._right_tree is None:
             # Create a new BinaryTree of new node in right tree
             self.right_tree = BinaryTree(new_node)
         # Else if right tree exists
@@ -48,22 +69,17 @@ class BinaryTree:
             # Create a new BinaryTree node for the new node
             t = BinaryTree(new_node)
             # Set the current right tree as the right tree of the new node
-            t.right_tree = self.right_tree
+            t.right_tree = self._right_tree
             # Update the right tree of the current node to be the new node
             self.right_tree = t
-
-    # Get the right tree of the current node
-    def get_right_tree(self):
-        return self.right_tree
-
-    # Get the left tree of the current node
-    def get_left_tree(self):
-        return self.left_tree
+    
+    # Get the value of the root node
+    @property
+    def root_value(self):
+        return self.key
 
     # Set the value of the root node
-    def set_root_value(self, obj):
+    @root_value.setter
+    def root_value(self, obj):
         self.key = obj
 
-    # Get the value of the root node
-    def get_root_value(self):
-        return self.key

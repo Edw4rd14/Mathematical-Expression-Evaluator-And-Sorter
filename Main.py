@@ -10,6 +10,8 @@
 Description:
 This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
 and running the Class methods to perform the menu option's functions.
+The Main class inherits the AssignmentStatement class as the main functionality of the application derives from the AssignmentStatement and they are related
+as the main application is about handling assignment statements.
 '''
 
 # Import Classes
@@ -26,15 +28,15 @@ class Main(AssignmentStatement):
         self.__banner_order = [0,1,2,3,4,5,3,0]
         # Menu options
         self.choice = None
-        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Exit']
+        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history', 'Exit']
         self.__options = {
             1: super().add_modify_statement,
             2: super().display_and_sort_statements,
             3: super().evaluate_single_variable,
             4: super().read_statements_from_file,
             5: super().sort_statements,
-            # 6: super().,
-            # 7:,
+            6: super().view_dependency,
+            7: super().manage_history,
             # 8:,
             # 9:,
             # 10:
@@ -67,8 +69,8 @@ class Main(AssignmentStatement):
             try:
                 # Prompt users for choice
                 self._menu()
-                # If user options are between 1 and 6
-                if self.choice in range(1,6):
+                # If user options are between 1 and 10
+                if self.choice in range(1,10):
                     try:
                         # Get menu option function
                         option = self.__options.get(self.choice)
@@ -79,12 +81,12 @@ class Main(AssignmentStatement):
                         print("\nReturning back to main menu...")
                     input("\nPlease enter key to continue...\n")
                 # Else if choice is 8 (exit application)
-                elif self.choice == 6:
+                elif self.choice == 8:
                     print(f"{self._exit}")
                     break
                 # Else print error message (user option is not valid)
                 else:
-                    print("\nOnly options between 1 and 6 are available. Please try again.\n")
+                    print("\nOnly options between 1 and 10 are available. Please try again.\n")
             # Handle ValueError (user choice is not integer)
             except ValueError:
                 print("\nInput must be an integer. Please try again.\n")
@@ -93,8 +95,8 @@ class Main(AssignmentStatement):
                 print(f"\n{self._exit}")
                 break
             # Handle any other errors (as a precaution, and not leak error messages)
-            except Exception:
-                print("\nAn error has occurred with the application. Try restarting the application.\n")
+            # except Exception:
+            #     print("\nAn error has occurred with the application. Try restarting the application.\n")
 
 # Instantiate Main class
 main = Main()

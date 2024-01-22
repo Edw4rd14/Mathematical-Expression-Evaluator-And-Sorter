@@ -15,6 +15,7 @@ and running the Class methods to perform the menu option's functions.
 # Import Data Structures
 from DataStructures.Stack import Stack
 from DataStructures.BinaryTree import BinaryTree
+from DataStructures.AbstractExpressionTree import AbstractExpressionTree
 # Import Utils
 from Utils import tokenize
 
@@ -44,32 +45,32 @@ class ParseTree:
             if t == '(':
                 current_tree.insert_left(None)
                 stack.push(current_tree)
-                current_tree = current_tree.get_left_tree()
+                current_tree = current_tree.left_tree
             # RULE 2: If token is operator set key of current node to that operator and add a new node as right tree and descend into that node
-            elif t in ['+', '-', '*', '**', '/', '//']:
-                current_tree.set_root_value((t,None))
+            elif t in ['+', '-', '*', '**', '/']:
+                current_tree.root_value = (t,None)
                 current_tree.insert_right(None)
                 stack.push(current_tree)
-                current_tree = current_tree.get_right_tree()
+                current_tree = current_tree.right_tree
             # RULE 3: If token is number, set key of the current node to that number and return to parent
-            elif t not in ['+', '-', '*',  '**', '/', '//', ')']:
+            elif t not in ['+', '-', '*',  '**', '/', ')']:
                 # Try converting t to float, then to integer (if it is an integer) before checking whether it is a variable or not 
                 try:
                     num = float(t)
                     num = int(num) if num.is_integer() else num
-                    current_tree.set_root_value((num, num))
+                    current_tree.root_value = (num, num)
                 except:
                     if t in self.hash_table.keys:
                         # If value is a string, build a subtree and store evaluated value
                         evaluated = self._evaluate_tree(self.build_parse_tree(self.hash_table[t]))
-                        current_tree.set_root_value((t, evaluated))
+                        current_tree.root_value = (t, evaluated)
                     else:
-                        current_tree.set_root_value((t,None))
-                if not stack.is_empty():
+                        current_tree.root_value = (t,None)
+                if not stack.is_empty:
                     current_tree = stack.pop()
             # RULE 4: If token is ')' go to parent of current node
             elif t == ')':
-                if not stack.is_empty():
+                if not stack.is_empty:
                     current_tree = stack.pop()
             else:
                 raise ValueError
@@ -84,10 +85,10 @@ class ParseTree:
         try:
             if tree is not None:
                 # Extract original token and evaluated value
-                original_token, evaluated_value = tree.get_root_value()
+                original_token, evaluated_value = tree.root_value
                 # Get the left and right subtrees of the current node
-                left_tree = tree.get_left_tree()
-                right_tree = tree.get_right_tree()
+                left_tree = tree.left_tree
+                right_tree = tree.right_tree
                 # If evaluated value is not None, return it directly
                 if evaluated_value is not None:
                     return evaluated_value
@@ -97,8 +98,7 @@ class ParseTree:
                     '-': lambda l, r: l - r,
                     '*': lambda l, r: l * r,
                     '**': lambda l,r: l ** r,
-                    '/': lambda l, r: l / r if r != 0 else None,
-                    '//': lambda l, r: l // r if r != 0 else None
+                    '/': lambda l, r: l / r if r != 0 else None
                 }
                 # If the node is an operator, recursively evaluate its operands
                 if original_token in operator_functions:
@@ -122,15 +122,15 @@ class ParseTree:
         # If node is not None
         if node is not None:
             # Recursively call the function on the right tree of the current tree [R]
-            self._print_in_order(node.get_right_tree(), depth + 1)
+            self._print_in_order(node.right_tree, depth + 1)
             # Get original token and evaluated value [C]
-            original_token, evaluated_value = node.get_root_value()
+            original_token, evaluated_value = node.root_value
             # Check if original token is a variable and print it, else print evaluated value
             print_value = evaluated_value if original_token is None else original_token
             # Print the number of dots equal to the current depth and the evaluated/original value
             print(f"{'.' * depth}{print_value}")
             # Recursively call the function on the left tree of the current tree [L]
-            self._print_in_order(node.get_left_tree(), depth + 1)
+            self._print_in_order(node.left_tree, depth + 1)
 
     def variable_dependencies(self):
         dependencies = {}
@@ -140,20 +140,31 @@ class ParseTree:
     # Helper method to collect variable dependencies recursively
     def _collect_variable_dependencies(self, node, dependencies, path=[]):
         if node is not None:
-            original_token, _ = node.get_root_value()
+            original_token, _ = node.root_value
             if isinstance(original_token, str):
                 path_context = path + [original_token]
                 if original_token not in dependencies:
                     dependencies[original_token] = []
                 dependencies[original_token].append(path_context)
 
-            self._collect_variable_dependencies(node.get_left_tree(), dependencies, path + ['L'])
-            self._collect_variable_dependencies(node.get_right_tree(), dependencies, path + ['R'])
+            self._collect_variable_dependencies(node.left_tree, dependencies, path + ['L'])
+            self._collect_variable_dependencies(node.right_tree, dependencies, path + ['R'])
 
-    # Method to display variable dependencies neatly
+    # Method to display variable dependencies in a tree-like structure
     def display_variable_dependencies(self):
         dependencies = self.variable_dependencies()
+
         for variable, paths in dependencies.items():
-            print(f"Variable '{variable}' is used in contexts:")
+            print(variable)  # Print the variable name
+            unique_paths = set()  # To store unique paths (avoid duplicates)
+            
             for path in paths:
-                print(f"  - {' -> '.join(path)}")
+                formatted_path = ' -> '.join(path)
+                unique_paths.add(formatted_path)
+
+            for path in unique_paths:
+                # Split the path into parts and print with indentation
+                parts = path.split(' -> ')
+                for i, part in enumerate(parts):
+                    indent = '  ' * i + '+-' if i > 0 else ''
+                    print(f"{indent}{part}")

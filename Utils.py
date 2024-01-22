@@ -17,8 +17,8 @@ import os
 # Utils for AssignmentStatement.py
 # ================================
 
-# Operator regex
-operator_regex = re.compile(r'\*\*|//|[\+\-\*/]')
+# Operator regex 
+operator_regex = re.compile(r'\*\*|[\+\-\*/]')
 # Variable regex
 variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
 # End of error message
@@ -101,13 +101,15 @@ def check_parenthesis(expression: str) -> bool:
     expression = expression.replace(' ', '')
     # Initialize a stack to keep track of parentheses and operators
     stack = Stack()
-    # For each character in the expression
-    for char in expression:
-        if char == '(':
+    # Get tokens
+    tokens = tokenize(expression)
+    # For each token in expression tokens
+    for t in tokens:
+        if t == '(':
             # Push a tuple to stack: (opening bracket, operator flag reset)
             stack.push(('(', False))
-        elif char in '+-*/':
-            if stack.is_empty():
+        elif operator_regex.search(t):
+            if stack.is_empty:
                 # Operator found outside of any parentheses
                 return False
             else:
@@ -116,8 +118,8 @@ def check_parenthesis(expression: str) -> bool:
                 if top[1]:  # There's already an operator inside these parentheses
                     return False
                 stack.push((top[0], True))
-        elif char == ')':
-            if stack.is_empty() or not stack.pop()[1]:  # Parentheses are unbalanced or no operator inside
+        elif t == ')':
+            if stack.is_empty or not stack.pop()[1]:  # Parentheses are unbalanced or no operator inside
                 return False
     # Check if there are any unclosed parentheses left in the stack
     return all(item[0] != '(' for item in stack.items)
@@ -159,44 +161,54 @@ def file_operation(file_path: str, mode: str, content: str = None):
     except Exception:
         raise FileNotFoundError(f'\nError occurred with file "{file_path}".')
 
-# Bubble sort algorithm
+# Merge sort algorithm
 def merge_sort(arr:list)->list:
     """
-    Perform merge sort on the array.
+    This function perform merge sort on the array and returns a sorted array in a descending order.
     """
+    # If array length is more than 1 (and requires sorting)
     if len(arr) > 1:
+        # Find middle of array and split into left and right half
         mid = len(arr) // 2
         left_half = arr[:mid]
         right_half = arr[mid:]
-
-        # Recursive calls to divide the array
+        # Recursive sort each half
         merge_sort(left_half)
         merge_sort(right_half)
-
         # Merging the sorted halves
-        i = j = k = 0
-
+        left_index = right_index = merged_index = 0
         # Merge the two halves
-        while i < len(left_half) and j < len(right_half):
-            if left_half[i] < right_half[j]:
-                arr[k] = left_half[i]
-                i += 1
+        while left_index < len(left_half) and right_index < len(right_half):
+            # If the left value is less than the right half value
+            if left_half[left_index] < right_half[right_index]:
+                # Take element from left half
+                arr[merged_index] = left_half[left_index]
+                # Move to the next element in left half
+                left_index += 1
             else:
-                arr[k] = right_half[j]
-                j += 1
-            k += 1
-
-        # Checking if any element was left
-        while i < len(left_half):
-            arr[k] = left_half[i]
-            i += 1
-            k += 1
-
-        while j < len(right_half):
-            arr[k] = right_half[j]
-            j += 1
-            k += 1
-
+                # Take element from right half
+                arr[merged_index] = right_half[right_index]
+                # Move to the next element in right half
+                right_index += 1
+            # Move to the next position in the main array
+            merged_index += 1
+        # Check if any elements are left in the left half
+        while left_index < len(left_half):
+            # Copy remaining elements from left half
+            arr[merged_index] = left_half[left_index]
+            # Move to the next element in left half
+            left_index += 1
+            # Move to the next position in the main array
+            merged_index += 1
+        # Check if any elements are left in the right half
+        while right_index < len(right_half):
+            # Copy remaining elements from right half
+            arr[merged_index] = right_half[right_index]
+            # Move to the next element in right half
+            right_index += 1
+            # Move to the next position in the main array
+            merged_index += 1
+    # Return sorted array
     return arr
 
 # =================================================
@@ -212,47 +224,3 @@ def tokenize(expression:str)->list:
     # (\d+\.\d+) matches decimal numbers.
     tokens = re.findall(r'(\b\d+\.\d+\b|\b\w+\b|\*\*|//|\S)', expression)
     return tokens
-
-# ======================
-# Utils for 
-# ======================
-def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-
-    # Divide the array into two halves
-    mid = len(arr) // 2
-    left_half = arr[:mid]
-    right_half = arr[mid:]
-
-    # Recursively sort both halves
-    left_sorted = merge_sort(left_half)
-    right_sorted = merge_sort(right_half)
-
-    # Merge the sorted halves
-    return merge(left_sorted, right_sorted)
-
-def merge(left, right):
-    sorted_list = []
-    left_index, right_index = 0, 0
-
-    # Iterate over both lists to merge them in sorted order
-    while left_index < len(left) and right_index < len(right):
-        if left[left_index] <= right[right_index]:
-            sorted_list.append(left[left_index])
-            left_index += 1
-        else:
-            sorted_list.append(right[right_index])
-            right_index += 1
-
-    # Add any remaining elements from the left list
-    while left_index < len(left):
-        sorted_list.append(left[left_index])
-        left_index += 1
-
-    # Add any remaining elements from the right list
-    while right_index < len(right):
-        sorted_list.append(right[right_index])
-        right_index += 1
-
-    return sorted_list

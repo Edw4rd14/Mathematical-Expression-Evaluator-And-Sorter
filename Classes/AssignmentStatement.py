@@ -25,6 +25,10 @@ from Utils import (
     file_operation, 
     merge_sort
 )
+# Import Classes
+from Classes.History import History
+# Import modules
+from datetime import datetime
 
 # AssignmentStatement Class
 class AssignmentStatement:
@@ -32,6 +36,8 @@ class AssignmentStatement:
     def __init__(self):
         # Initialize HashTable Class
         self.hash_table = HashTable()
+        # Initialize History Class
+        self.history = History(hash_table=self.hash_table)
     
     # Option 1: Add/modify assignment statement
     def add_modify_statement(self, key=None, value=None, loop=True):
@@ -88,7 +94,7 @@ class AssignmentStatement:
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
-                    try:
+                    # try:
                         # Try grabbing the assignment statement value
                         value = self.hash_table[key]
                         # Formulate statement string
@@ -103,10 +109,12 @@ class AssignmentStatement:
                             print(f'{statement}=> {evaluated_value}')
                         # Add evaluation result to SortedList
                         self.sorted_list.insert(new_data=(statement, evaluated_value))
-                    # # If an error occurs, pass
-                    except Exception as e:
-                        print(e)
-                        pass
+                        # Add evaluation result to History
+                        self.history.add_history(item=(statement, evaluated_value, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                    # If an error occurs, pass
+                    # except Exception as e:
+                    #     print(e)
+                    #     pass
 
     # Option 3: Evaluate and print parse tree for an individual variable
     def evaluate_single_variable(self):
@@ -125,6 +133,7 @@ class AssignmentStatement:
                 if expression is not None:
                     # Build parse tree
                     tree = ParseTree(expression=expression, hash_table=self.hash_table)
+                    print(tree)
                     # Print expression tree in in-order format
                     print("\nExpression Tree:")
                     tree.print_in_order()
@@ -194,5 +203,63 @@ class AssignmentStatement:
                 print(e)
 
     # Option 6:
-    # def view_dependency(self):
+    def view_dependency(self):
+        # Sorted List to store results sorted
+        self.sorted_list = SortedList()
+        # If display boolean is True (default is True)
+        # Check if there are any assignment statements (if there isnt all keys are None)
+        if all(key is None for key in self.hash_table.keys):
+            # Print error statement if there are no assignment statements
+            print("There are no current assignment statements.")
+        # Else if there are assignment statements
+        else:
+            # Get all keys that are not None
+            keys = [key for key in self.hash_table.keys if key is not None]
+            # Loop each sorted key from merge sort
+            for key in merge_sort(keys):
+                # If key is not None and is an assignment statement
+                if key is not None:
+                    # Catch errors with try
+                    try:
+                        # Try grabbing the assignment statement value
+                        value = self.hash_table[key]
+                        # Evaluate value of expression with ParseTree
+                        tree = ParseTree(expression=value, hash_table=self.hash_table)
+                        # Get evaluated value of expression
+                        tree.display_variable_dependencies()
+                    # # If an error occurs, pass
+                    except Exception as e:
+                        print(e)
+                        pass
         
+    def manage_history(self):
+        if not self.history.is_empty:
+            index = 1
+            total = self.history.length
+            while True:
+                self.history.print_history(position=index)
+                try:
+                    # Get input for menu action
+                    action = int(input(f"\n1. Next\n2. Previous\n3. Clear History \n4. Exit\nSelect your choice: "))
+                    # If menu action is 1, go forward in history list (down the list)
+                    if action == 1:
+                        # Change current data to next node
+                        self.history.go_forward()
+                        # If index is not at total yet, means not at end of history list
+                        if index != total:
+                            # Increment index by 1
+                            index += 1
+                    # Else if action is 2, go back in history list (up the list)
+                    elif action == 2:
+                        # Change current data to previous node
+                        self.history.go_back()
+                        # If index is not 1, meaning the start of the list
+                        if index != 1:
+                            # Decrement index by 1
+                            index -= 1
+                    elif action == 4:
+                        return
+                except:
+                    print("womp womp")
+        else:
+            print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 5.")

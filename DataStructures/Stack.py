@@ -15,22 +15,27 @@ and running the Class methods to perform the menu option's functions.
 class Stack:
     def __init__(self):
         # Use a list to store stack items
-        self.items = []  
+        self._items = []  
 
     def __len__(self):
         # Length of the stack is the length of the list
-        return len(self.items)  
+        return len(self._items)  
 
     def push(self, data):
         # Add an item to the end of the list
-        self.items.append(data)  
+        self._items.append(data)  
 
     def pop(self):
         # Remove and return the last item of the list
-        if self.is_empty():
+        if self.is_empty:
             raise Exception("Stack is empty")
-        return self.items.pop() 
+        return self._items.pop() 
+    
+    @property
+    def items(self):
+        return self._items
 
+    @property
     def is_empty(self):
         # Return boolean on whether list is empty
-        return len(self.items) == 0
+        return len(self._items) == 0
