@@ -100,7 +100,7 @@ class SortedList:
             current.nextNode = new_node
             return
         # Check if it is going to be new head
-        if new_node.data[1] > self.head_node.data[1]:
+        if self.head_node.data[1] is None or new_node.data[1] > self.head_node.data[1]:
             self.__append_to_head(new_node)
             return
         # Set left and right node for traversal

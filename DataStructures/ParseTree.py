@@ -15,7 +15,6 @@ and running the Class methods to perform the menu option's functions.
 # Import Data Structures
 from DataStructures.Stack import Stack
 from DataStructures.BinaryTree import BinaryTree
-from DataStructures.AbstractExpressionTree import AbstractExpressionTree
 # Import Utils
 from Utils import tokenize
 

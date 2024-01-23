@@ -19,17 +19,24 @@ import os
 
 # Operator regex 
 operator_regex = re.compile(r'\*\*|[\+\-\*/]')
+# Parenthesis regex
+parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
+# Operators
+operators = ['+', '-', '*', '**', '/']
 # Variable regex
 variable_regex = re.compile("^[A-Za-z]+$") # Check for only letters in variable
 # End of error message
 err_msg = 'Please try again or CRTL + C to return back to main menu.\n'
-
 # Formatting error
 format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. {err_msg}"
 
 # Check for existence of operators
-def contain_operator(string:str)->bool:
-    return bool(operator_regex.search(string))
+def contain_operator(expression:str)->bool:
+    return bool(operator_regex.search(expression))
+
+# Check for juxtaposition of variables or number next to ( or after ), or )(
+def check_juxtaposition_parenthesis(expression:str)->bool:
+    return bool(parenthesis_regex.search(expression))
 
 # Check for consecutive operands etc. "++" or "/*"
 def check_consecutive_operators(expression:str)->bool:
@@ -62,36 +69,41 @@ def get_key_and_value(statement:str)->list:
     return [x.strip() for x in statement.split('=')]
 
 # Validate and process key and value
-def validate_key_and_value(key:str, value:str)->list([bool,str]):
+def validate_key_and_value(key:str, value:str)->tuple((bool,str)):
+    incorrect_return = (False,value)
     # Check if key or value is empty
     if not key or not value:
         print(format_error("Both left-hand side and right-hand side of the statement should not be empty",key))
-        return False, value
+        return incorrect_return
 
     # Check if expression is incomplete
     if check_incomplete_expression(value):
         print(format_error("Expression is incomplete",key))
-        return False, value
+        return incorrect_return
 
     # Check for consecutive operators
     if check_consecutive_operators(value):
         print(format_error("There should not be consecutive operators",key))
-        return False, value
+        return incorrect_return
 
     # Check if variable is referencing itself
     if key in tokenize(value):
         print(format_error("Variable should not reference itself",key))
-        return False, value
+        return incorrect_return
 
     # Check if key matches regex to only contain letters
     if not variable_regex.match(key):
         print(format_error("Variable names should only contain letters",key))
-        return False, value
+        return incorrect_return
+    
+    if check_juxtaposition_parenthesis(value):
+        print(format_error("Please check juxtaposition of variables and numbers to parenthesis",key))
+        return incorrect_return
 
     # Check for any unmatched parenthesis
     if not check_parenthesis(value):
         print(format_error("Please check that the expression is fully parenthesized",key))
-        return False, value
+        return incorrect_return
 
     return True, value
 

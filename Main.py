@@ -88,8 +88,8 @@ class Main(AssignmentStatement):
                 else:
                     print("\nOnly options between 1 and 10 are available. Please try again.\n")
             # Handle ValueError (user choice is not integer)
-            except ValueError:
-                print("\nInput must be an integer. Please try again.\n")
+            # except ValueError:
+            #     print("\nInput must be an integer. Please try again.\n")
             # Handle Keyboard Interrupt (CRTL + C)
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")
