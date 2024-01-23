@@ -88,15 +88,15 @@ class Main(AssignmentStatement):
                 else:
                     print("\nOnly options between 1 and 10 are available. Please try again.\n")
             # Handle ValueError (user choice is not integer)
-            # except ValueError:
-            #     print("\nInput must be an integer. Please try again.\n")
+            except ValueError:
+                print("\nInput must be an integer. Please try again.\n")
             # Handle Keyboard Interrupt (CRTL + C)
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")
                 break
             # Handle any other errors (as a precaution, and not leak error messages)
-            # except Exception:
-            #     print("\nAn error has occurred with the application. Try restarting the application.\n")
+            except Exception:
+                print("\nAn error has occurred with the application. Try restarting the application.\n")
 
 # Instantiate Main class
 main = Main()
