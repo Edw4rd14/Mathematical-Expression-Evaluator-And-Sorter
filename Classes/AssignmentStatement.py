@@ -133,7 +133,6 @@ class AssignmentStatement:
                 if expression is not None:
                     # Build parse tree
                     tree = ParseTree(expression=expression, hash_table=self.hash_table)
-                    print(tree)
                     # Print expression tree in in-order format
                     print("\nExpression Tree:")
                     tree.print_in_order()
