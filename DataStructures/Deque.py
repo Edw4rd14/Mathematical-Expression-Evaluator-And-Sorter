@@ -14,6 +14,15 @@ from DataStructures.Node import Node
 class Deque:
     # Initialization
     def __init__(self):
+        """
+        The __init__ function initializes the head, tail, current and length variables.
+        The head variable is a pointer to the first node in the Deque. The tail variable is a pointer to 
+        the last node in the Deque. The current variable points to the current node. 
+        Length keeps track of how many nodes are in the Deque.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
         # Initialize head variable
         self.head = None 
         # Initialize tail variable
@@ -24,15 +33,36 @@ class Deque:
         self.length = 0 
 
     def __len__(self):
+        """
+        The __len__ function is a special function that returns the length of an object.
+        It is called by Python's built-in len() function and is used to determine how many items are in the Deque.
+        
+        :param self: Refer to the instance of the class
+        :return: The length of the Deque
+        """
         # Return length
         return self.length
 
     @property
     def is_empty(self):
+        """
+        The is_empty function returns a boolean value of True if the length of the Deque is 0, and False otherwise.
+        
+        :param self: Refer to the instance of the class
+        :return: A boolean value of length == 0
+        """
         # Return boolean of length == 0
         return self.length == 0
 
     def add_head(self, data):
+        """
+        The add_head function adds a new node to the head of the Deque.
+        If there is already a node with that data, it replaces it.
+            
+        :param self: Refer to the instance of the class
+        :param data: Data to be stored
+        :return: Nothing
+        """
         # Create new node of data
         new_node = Node(data)
 
@@ -63,6 +93,14 @@ class Deque:
         self.length += 1
 
     def add_tail(self, data):
+        """
+        The add_tail function adds a new node to the end of the Deque.
+        If there is already a node with that key, replace it with the new data.
+        
+        :param self: Refer to the instance of the class
+        :param data: Data to be stored
+        :return: Nothing
+        """
         # Create new node of data
         new_node = Node(data)
 
@@ -92,6 +130,16 @@ class Deque:
         self.length += 1
 
     def remove_head(self):
+        """
+        The remove_head function removes the head of the Deque and returns it.
+        If there is only one item in the Deque, then both head and tail are set to None.
+        Else if there is more than one item in the Deque, then a new head is set to be 
+        following node of current head, and its previous node pointer is set to None as it 
+        will now be at front of list.
+        
+        :param self: Refer to the instance of the class
+        :return: The data of the head node
+        """
         # If Deque is not empty
         if not self.is_empty:
             # Store item to be removed, which is data at head
@@ -115,6 +163,14 @@ class Deque:
             raise IndexError("Deque is empty")
 
     def remove_tail(self):
+        """
+        The remove_tail function removes the tail node from the Deque.
+        It returns the data of that removed node.
+        If there is only one item in the Deque, it will remove that item and set head and tail to None.
+        
+        :param self: Refer to the instance of the class
+        :return: The removed item
+        """
         # If Deque is not empty
         if not self.is_empty:
             # Store item to be removed, which is data at tail
@@ -138,6 +194,15 @@ class Deque:
             raise IndexError("Deque is empty")
     
     def remove_current(self):
+        """
+        The remove_current function removes the current node from the Deque.
+        If there is no current node, it raises an IndexError.
+        Otherwise, it returns the data of the removed node and sets self.current to None if there are no nodes left in 
+        self after removal.
+        
+        :param self: Refer to the instance of the class
+        :return: The data of the node that was removed
+        """
         if self.current is None:
             raise IndexError("No current item to remove")
 
@@ -166,6 +231,14 @@ class Deque:
         return removed_data
         
     def go_back(self):
+        """
+        The go_back function allows the user to go back one node in the Deque.
+        If there is no previous node, it returns an error message.
+        This allows for traversal backwards in the Deque.
+        
+        :param self: Refer to the instance of the class
+        :return: The previous node
+        """
         # If current node and previous node exists
         if self.current and self.current.prevNode:
             # Set current node to previous node
@@ -177,6 +250,14 @@ class Deque:
             return "No previous item."
 
     def go_forward(self):
+        """
+        The go_forward function moves the current node to the next node in the Deque.
+        If there is no next node, it returns an error message.
+        This allows for forward traversal in the Deque.
+        
+        :param self: Refer to the instance of the class
+        :return: The data of the next node
+        """
         # If current node and next node exists
         if self.current and self.current.nextNode:
             # Set current node to next node
@@ -188,12 +269,26 @@ class Deque:
             return "No next item."
 
     def clear(self):
+        """
+        The clear function sets the head and tail to None, and resets the length of the Deque to 0.
+        
+        :param self: Refer to the instance of the class
+        :return: None
+        """
         # Set head and tail to None
         self.head = self.tail = None
         # Set length to 0 (reset Deque)
         self.length = 0
 
     def contains(self, item):
+        """
+        The contains function takes in a tuple of the form (key, value) and returns True if the key is present in the Deque.
+        If it is not present, then it returns False.
+        
+        :param self: Refer to the instance of the class
+        :param item: Item to be checked on whether it is present in the Deque
+        :return: True if the item is in the Deque, and false otherwise
+        """
         current_node = self.head
         while current_node:
             if current_node.data[0] == item[0]:

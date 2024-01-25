@@ -13,6 +13,12 @@ from DataStructures.Node import Node
 # SortedList class
 class SortedList:
     def __init__(self):
+        """
+        The __init__ function initializes the head node, current node, and length of the sorted list.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
         # Initialize head node
         self.head_node = None
         # Initialize current node
@@ -21,16 +27,37 @@ class SortedList:
         self._length = 0 
     
     def __len__(self): 
+        """
+        The __len__ function is a special function that returns the length of an object.
+        It is called by Python's built-in len() function.
+        This function returns the length of the sorted list
+        
+        :param self: Refer to the instance of the class
+        :return: The length of the queue
+        """
         # Return length
         return self._length
 
     def __iter__(self):
+        """
+        The __iter__ function is called when an iterator object is required for a container. 
+        This function returns a new iterator object that can iterate over all the objects in the sorted list. 
+
+        :param self: Refer to the instance of the class
+        :return: The iterator object itself
+        """
         # When object is iterated, set current_node to head_node to start looping from the head
         self.current_node = self.head_node
         # Return self as iterator object to be looped
         return self
 
     def __next__(self):
+        """
+        The __next__ function is called by the Python interpreter to get each item from an iterator. 
+        
+        :param self: Refer to the instance of the class
+        :return: The current node's tuple data
+        """
         # If current_node exists (which means it is not the end of the iteration),
         if self.current_node:
             # Set data to be returned to current node's tuple data
@@ -44,6 +71,15 @@ class SortedList:
             raise StopIteration
         
     def print_sorted(self): 
+        """
+        The print_sorted function will print the statements in sorted order.
+        The output is a string with each value's groupings separated by new  lines.
+        Each grouping starts with a header line containing the value, followed by 
+        the statements that have that value.
+        
+        :param self: Refer to the instance of the class
+        :return: A string that contains all the statements,
+        """
         # Initialize a list to store the lines
         output_lines = [] 
         # Current value set to None
@@ -74,6 +110,15 @@ class SortedList:
         return output_string
 
     def __append_to_head(self, new_node): 
+        """
+        The __append_to_head function is a private function that appends a new node to the head of the sorted list.
+        It does this by storing the old head node, setting the new head node to be the new_node parameter, 
+        setting nextNode of our newly set head_node (new_node) to the oldHeadNode and finally incrementing length by 1.
+        
+        :param self: Refer to the instance of the class
+        :param new_node: Set the new head node
+        :return: Nothing
+        """
         # Store old head node
         oldHeadNode = self.head_node
         # Set new head node to new node
@@ -84,6 +129,16 @@ class SortedList:
         self._length += 1
 
     def insert(self, new_data): 
+        """
+        The insert function takes in a new_data parameter, which is a tuple of the form (key, value).
+        The function then creates a new node with this data. It then checks if the list is empty and inserts it as head node if so.
+        If not, it checks whether or not the key of the new data is None; if so, it appends to end of list. If not, 
+        it compares its key to that of head node's and inserts before or after accordingly.
+        
+        :param self: Refer to the instance of the class
+        :param new_data: Insert a new node into the sortedlist
+        :return: None
+        """
         # Make new data a node
         new_node = Node(new_data)
         # Increment length by 1

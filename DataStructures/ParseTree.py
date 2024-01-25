@@ -22,6 +22,18 @@ from Utils import tokenize
 class ParseTree:
     # Initialization
     def __init__(self, expression, hash_table):
+        """
+        The __init__ function is the constructor for the class. It takes two arguments:
+        expression and hash_table. The expression argument is a string that represents an 
+        arithmetic expression, such as (3*4) The hash_table argument is the hash table with
+        the variable and expressions stored in it. This function builds a parse tree from the
+          given arithmetic expression and store it in self.root for evaluation when needed.
+        
+        :param self: Refer to the instance of the class
+        :param expression: Store the expression that is passed in as a string
+        :param hash_table: Store the variables in a hash table
+        :return: Nothing
+        """
         # Hashtable with variables stored
         self.hash_table = hash_table
         # Build parse tree of expression
@@ -30,7 +42,16 @@ class ParseTree:
         self.root = self.build_parse_tree(self.expression)
 
     # Build a parse tree
-    def build_parse_tree(self,expression):        
+    def build_parse_tree(self,expression):     
+        """
+        The build_parse_tree function takes an expression as a string and returns a binary tree representation of that expression.
+        The function uses the tokenize function to break the input into tokens, then it iterates through each token in order and
+        evaluates the expression, returning None if the expression has unknown variables.
+
+        :param self: Refer to the instance of the class
+        :param expression: Build the parse tree
+        :return: A tree with the root node set to none
+        """
         stack = Stack()
         tree = BinaryTree(root_object=None)
         stack.push(tree)
@@ -77,10 +98,29 @@ class ParseTree:
     
     # Return evaluate tree result
     def evaluate(self):
+        """
+        The evaluate function calls the protected function _evaluate_tree to evaluate the root binary tree expression. 
+        The evaluate function is the public interface of the _evaluate_tree function.
+        
+        :param self: Refer to the instance of the class
+        :return: The value of the root node
+        """
         return self._evaluate_tree(tree=self.root)
 
     # Evaluate tree function
     def _evaluate_tree(self,tree):
+        """
+        The _evaluate_tree function takes the root of a tree and returns the result of evaluating that tree.
+        The _evaluate_tree function is recursive, so it calls itself on each node in the tree until it reaches a leaf node.
+        When it reaches a leaf node, if that leaf is an operand (a number), then we return its value as an integer.
+        If that leaf is an operator (+,-,*,/), then we call evaluate on its left and right children to get their values 
+        (which are integers) and perform some operation with those two integers based on what kind of operator this 
+        particular node.
+        
+        :param self: Refer to the instance of the class
+        :param tree: Store the tree structure of the expression
+        :return: The value of the expression
+        """
         try:
             if tree is not None:
                 # Extract original token and evaluated value
@@ -107,17 +147,32 @@ class ParseTree:
                 else:
                     # If it's a variable, return original value
                     return None
-                
-        except Exception as e:
+        except Exception:
             # Handle exceptions or return None if there are any errors
             return None
         
     # Print the expression tree in in-order format with indentation
     def print_in_order(self):
+        """
+        The print_in_order function prints the tree in order.
+                
+        
+        :param self: Refer to the instance of the class
+        :return: The in-order traversal of the tree
+        """
         self._print_in_order(self.root)
 
     # Print in order function (This is a in-order traversal)
     def _print_in_order(self, node, depth=0):
+        """
+        The _print_in_order function is a recursive function that prints the tree in order.
+        The printout will be in an in order traversal format, in a RIGHT-CENTER-LEFT format.
+        
+        :param self: Refer to the instance of the class
+        :param node: Represent the current node in the tree
+        :param depth: Keep track of the depth of the current node in the tree
+        :return: None
+        """
         # If node is not None
         if node is not None:
             # Recursively call the function on the right tree of the current tree [R]

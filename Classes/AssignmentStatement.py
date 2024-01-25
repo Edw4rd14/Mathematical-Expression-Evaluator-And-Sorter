@@ -32,6 +32,7 @@ from datetime import datetime
 
 # AssignmentStatement Class
 class AssignmentStatement:
+    
     # Initialization
     def __init__(self):
         # Initialize HashTable Class
@@ -40,12 +41,15 @@ class AssignmentStatement:
         self.history = History(hash_table=self.hash_table)
     
     # Option 1: Add/modify assignment statement
-    def add_modify_statement(self, key=None, value=None, loop=True):
-        '''
-        This function is for option 1 where users add or modify statements. The user input goes through
-        a series of validation before the assignment statements are added to the HashTable, which was
-        the data structure implemented here.
-        '''
+    def add_modify_statement(self):
+        """
+        The add_modify_statement function is for option 1 where users add or modify statements. 
+        The user input goes through a series of validation before the assignment statements are 
+        added to the HashTable, which was the data structure implemented here.
+        
+        :param self: Access the hashtable data structure
+        :return: None
+        """
         # While loop to prompt users until valid input is provided
         while True:
             # Get assignment statement from user
@@ -67,14 +71,18 @@ class AssignmentStatement:
     
     # Option 2: Display current assignment statements
     def display_and_sort_statements(self, display=True):
-        '''
-        This function is for option 2 where users display the assignment statements created/imported 
+        """
+        The display_and_sort_statements function is for option 2 where users display the assignment statements created/imported 
         from text files. The function is also utilized in option 5 in order to sort the assignment
         statements without printing any results. The function utilizes the ParseTree data structure 
         to evaluate the assignment statements. It utilizes the SortedList data structure to sort the 
         assignment statements by variablefor option 5. Furthermore, it also utilizes the Merge Sort 
-        algorithm to sort the keys for displaying.
-        '''
+        algorithm to sort keys for displaying.
+        
+        :param self: Access the hash_table and history attributes of the assignmentstatement class
+        :param display: Determine whether or not the assignment statements should be printed
+        :return: A sortedlist object
+        """
         # Sorted List to store results sorted
         self.sorted_list = SortedList()
         # If display boolean is True (default is True)
@@ -94,7 +102,7 @@ class AssignmentStatement:
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
-                    # try:
+                    try:
                         # Try grabbing the assignment statement value
                         value = self.hash_table[key]
                         # Formulate statement string
@@ -112,17 +120,19 @@ class AssignmentStatement:
                         # Add evaluation result to History
                         self.history.add_history(item=(statement, evaluated_value, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
                     # If an error occurs, pass
-                    # except Exception as e:
-                    #     print(e)
-                    #     pass
+                    except Exception:
+                        print("An occurred while trying to display and sort assignment statements. Please try again or restart the application.")
+                        pass
 
     # Option 3: Evaluate and print parse tree for an individual variable
     def evaluate_single_variable(self):
-        '''
-        This function is for option 3 where users evaluate one variable and view 
-        the evaluation of it in a in-order traversal format. The function mainly
-        utilizes the HashTable and ParseTree data structures.
-        '''
+        """
+        The evaluate_single_variable function is for option 3 where users evaluate one variable and view 
+        the evaluation of it in a in-order traversal format. The function mainly utilizes the HashTable and ParseTree data structures.
+        
+        :param self: Refer to the current instance of a class
+        :return: The value of the variable that is being evaluated
+        """
         # Get variable from user input
         while True:
             variable = input("Please enter the variable you want to evaluate:\n")
@@ -150,11 +160,14 @@ class AssignmentStatement:
 
     # Option 4: Read statements from a file
     def read_statements_from_file(self):
-        '''
-        This function is for option 4 where users read assignment statements from a file. This option
-        includes file operations handled by the Utilities file (Utils.py), and reads the file and validates 
-        and adds each assignment statement into the HashTable, then displays the statements (Option 2)
-        '''
+        """
+        The read_statements_from_file function is for option 4 where users read assignment statements from a file. This option
+                includes file operations handled by the Utilities file (Utils.py), and reads the file and validates 
+                and adds each assignment statement into the HashTable, then displays the statements (Option 2)
+        
+        :param self: Refer to the instance of the class
+        :return: None
+        """
         # While loop until valid input or user force exits
         while True:
             # Try and except to catch errors
@@ -183,10 +196,14 @@ class AssignmentStatement:
 
     # Option 5: Sort assignment statements
     def sort_statements(self):
-        '''
-        This function is for option 5 where users sort their assignment statements and outputs them
+        """
+        The sort_statements function is for option 5 where users sort their assignment statements and outputs them
         into a text file, and utilizes file operations handled by the Utilities file as well.
-        '''
+        
+        
+        :param self: Access the class attributes and methods
+        :return: None
+        """
         # While loop until valid user input or user force exits
         while True:
             try:
@@ -203,6 +220,14 @@ class AssignmentStatement:
 
     # Option 6:
     def view_dependency(self):
+        """
+        The view_dependency function is used to display the dependency of each variable.
+            It will print out all variables and their dependencies in a sorted order.
+            If there are no assignment statements, it will print an error statement.
+        
+        :param self: Access the hash_table of the object
+        :return: A sorted list of the assignment statements in ascending order of variable names
+        """
         # Sorted List to store results sorted
         self.sorted_list = SortedList()
         # If display boolean is True (default is True)

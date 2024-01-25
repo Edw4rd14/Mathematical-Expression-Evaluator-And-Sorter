@@ -21,6 +21,12 @@ from Classes.AssignmentStatement import AssignmentStatement
 class Main(AssignmentStatement):
     # Initialization
     def __init__(self):
+        """
+        The __init__ function initializes the Main class.
+        
+        :param self: Refer to the current instance of a class
+        :return: Nothing
+        """
         # Initialize AssignmentStatement Class
         super().__init__()
         # Banner 
@@ -46,6 +52,12 @@ class Main(AssignmentStatement):
 
     # Start banner
     def _start_banner(self):
+        """
+        The _start_banner function prints the banner of the application in the specified order.
+            
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
         # Print banner
         for order in self.__banner_order:
             print(self._banner[order])
@@ -53,6 +65,13 @@ class Main(AssignmentStatement):
 
     # Menu prompt
     def _menu(self):
+        """
+        The _menu function prints the menu options and prompts the user for a choice.
+        The choice is then stored in self.choice to handle user's menu option.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
         # Print menu
         print("Please select a choice ('1','2','3','4','5','6'):")
         for i in range(len(self._menu_options)):
@@ -62,6 +81,16 @@ class Main(AssignmentStatement):
 
     # Run main application
     def start(self):
+        """
+        The start function is the main function that runs the application.
+        It starts by printing a banner, then prompts users for their choice of menu option.
+        If user options are between 1 and 10, it will run the menu option selected by user.
+        Else if choice is 10 (exit application), it will exit out of program with an exit message.
+        Else print error message (user option is not valid).  
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
         # Start banner
         self._start_banner()
         # While loop for menu
