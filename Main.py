@@ -34,7 +34,7 @@ class Main(AssignmentStatement):
         self.__banner_order = [0,1,2,3,4,5,3,0]
         # Menu options
         self.choice = None
-        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history','ASH 1', 'ASH 2', 'Exit']
+        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history', 'Remove all statements', 'FAQ','Exit']
         self.__options = {
             1: super().add_modify_statement,
             2: super().display_and_sort_statements,
@@ -43,9 +43,8 @@ class Main(AssignmentStatement):
             5: super().sort_statements,
             6: super().view_dependency,
             7: super().manage_history,
-            # 8:,
-            # 9:,
-            # 10:
+            8: self.remove_all_statements,
+            9: self.display_information
         }
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
@@ -73,7 +72,7 @@ class Main(AssignmentStatement):
         :return: Nothing
         """
         # Print menu
-        print("Please select a choice ('1','2','3','4','5','6'):")
+        print("Please select a choice ('1','2','3','4','5','6','7','8','9','10'):")
         for i in range(len(self._menu_options)):
             print(f"    {i+1}. {self._menu_options[i]}")
         # User input for menu option
@@ -109,7 +108,7 @@ class Main(AssignmentStatement):
                     except KeyboardInterrupt:
                         print("\nReturning back to main menu...")
                     input("\nPlease enter key to continue...\n")
-                # Else if choice is 8 (exit application)
+                # Else if choice is 10 (exit application)
                 elif self.choice == 10:
                     print(f"{self._exit}")
                     break

@@ -316,3 +316,36 @@ class AssignmentStatement:
 
     def update_history(self):
         self.history.update_file()
+
+    # Option 8:
+    def remove_all_statements(self):
+        # Confirmation from the user
+        confirmation = input("Are you sure you want to remove all assignment statements? (y/n): ").lower()
+        
+        # Check user's confirmation
+        if confirmation == 'y':
+            # Clear the hash_table
+            self.hash_table.clear()
+            
+            # Display a message indicating that all statements have been removed
+            print("All assignment statements have been removed.")
+            
+            # Clear the sorted list and history
+            self.sorted_list.clear()
+            self.history.clear()
+        else:
+            # Display a message indicating that no changes have been made
+            print("No changes have been made.")
+
+    # Option 9:
+    # Inside the AssignmentStatement class
+    def display_information(self):
+        """
+        The display_information function is for option 9 where users can display some general information or a message.
+        
+        :param self: Access the AssignmentStatement class
+        :return: None
+        """
+        print("\nQ: Some question")
+        print("A: Some answer")
+
