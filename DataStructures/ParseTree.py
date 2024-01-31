@@ -16,7 +16,8 @@ and running the Class methods to perform the menu option's functions.
 from DataStructures.Stack import Stack
 from DataStructures.BinaryTree import BinaryTree
 # Import Utils
-from Utils import tokenize
+# from Utils import tokenize
+import re
 
 # ParseTree Class
 class ParseTree:
@@ -41,6 +42,28 @@ class ParseTree:
         # Root tree
         self.root = self.build_parse_tree(self.expression)
 
+    # Tokenize expression
+    @staticmethod
+    def tokenize(expression:str)->list:
+        """
+        The tokenize function takes a string and returns a list of tokens.
+        The tokenize function uses the regular expression r'(\b\d+\.\d+\b|\b\w+\b|[^ \t]+)' to match:
+            - decimal numbers, e.g., 3.15;
+            - whole words, e.g., 'apple';
+            - operators and single characters, e.g., '*', '/', '('.  
+        
+        :param expression:str: Expression to be tokenized
+        :return: A list of tokens
+        """
+        # \b\w+\b matches whole words.
+        # \*\* matches the ** operator.
+        # // matches the // operator.
+        # \S matches any non-whitespace character, covering other operators and single characters.
+        # (\d+\.\d+) matches decimal numbers.
+        tokens = re.findall(r'(\b\d+\.\d+\b|\b\w+\b|\*\*|//|\S)', expression)
+        return tokens
+
+
     # Build a parse tree
     def build_parse_tree(self,expression):     
         """
@@ -57,7 +80,7 @@ class ParseTree:
         stack.push(tree)
         current_tree = tree
         try:
-            tokens = tokenize(expression)
+            tokens = self.tokenize(expression)
         except:
             raise ValueError
         for t in tokens:

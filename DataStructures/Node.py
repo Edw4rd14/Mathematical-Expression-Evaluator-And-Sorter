@@ -21,9 +21,9 @@ class Node:
         # Store data
         self.data = data
         # Pointer for next node
-        self.nextNode = None
+        self.next_node = None
         # Pointer for previous node
-        self.prevNode = None
+        self.prev_node = None
     
     def __lt__(self, other):
         """

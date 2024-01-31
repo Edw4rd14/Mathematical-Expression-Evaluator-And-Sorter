@@ -63,7 +63,7 @@ class SortedList:
             # Set data to be returned to current node's tuple data
             data = self.current_node.data
             # Set current node variable to next node for next iteration
-            self.current_node = self.current_node.nextNode
+            self.current_node = self.current_node.next_node
             # Return current node's tuple data to be accessed
             return data
         # Else if current_node is None (indicating the end of iteration), raise StopIteration exception
@@ -110,21 +110,24 @@ class SortedList:
         return output_string
 
     def __append_to_head(self, new_node): 
+<<<<<<< Updated upstream
+=======
         """
         The __append_to_head function is a private function that appends a new node to the head of the sorted list.
         It does this by storing the old head node, setting the new head node to be the new_node parameter, 
-        setting nextNode of our newly set head_node (new_node) to the oldHeadNode and finally incrementing length by 1.
+        setting next_node of our newly set head_node (new_node) to the oldHeadNode and finally incrementing length by 1.
         
         :param self: Refer to the instance of the class
         :param new_node: Set the new head node
         :return: Nothing
         """
+>>>>>>> Stashed changes
         # Store old head node
         oldHeadNode = self.head_node
         # Set new head node to new node
         self.head_node = new_node
         # Set the next node of the new head node to the old head node
-        self.head_node.nextNode = oldHeadNode
+        self.head_node.next_node = oldHeadNode
         # Increment length by 1
         self._length += 1
 
@@ -150,9 +153,9 @@ class SortedList:
         # If new data's value is None, append to the end of the list
         if new_node.data[1] is None:
             current = self.head_node
-            while current.nextNode:
-                current = current.nextNode
-            current.nextNode = new_node
+            while current.next_node:
+                current = current.next_node
+            current.next_node = new_node
             return
         # Check if it is going to be new head
         if self.head_node.data[1] is None or new_node.data[1] > self.head_node.data[1]:
@@ -160,22 +163,22 @@ class SortedList:
             return
         # Set left and right node for traversal
         left_node = self.head_node
-        right_node = self.head_node.nextNode
+        right_node = self.head_node.next_node
         # Iterate through nodes while it has not reached the end
         while right_node is not None:
             # Check if right node's data is None
             if right_node.data[1] is None:
                 # If it is, append the new node at the end of the list
-                left_node.nextNode = new_node
-                new_node.nextNode = right_node
+                left_node.next_node = new_node
+                new_node.next_node = right_node
                 return
             # If correct position of node has been found, insert between left and right node
             if new_node.data[1] > right_node.data[1]:
-                left_node.nextNode = new_node 
-                new_node.nextNode = right_node
+                left_node.next_node = new_node 
+                new_node.next_node = right_node
                 return
             # Traverse to the next pair of nodes
             left_node = right_node
-            right_node = right_node.nextNode
+            right_node = right_node.next_node
         # If end of the list is reached, new node is appended to the end
-        left_node.nextNode = new_node
+        left_node.next_node = new_node
