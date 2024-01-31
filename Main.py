@@ -28,7 +28,7 @@ class Main(AssignmentStatement):
         self.__banner_order = [0,1,2,3,4,5,3,0]
         # Menu options
         self.choice = None
-        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history', 'Exit']
+        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history','ASH 1', 'ASH 2', 'Exit']
         self.__options = {
             1: super().add_modify_statement,
             2: super().display_and_sort_statements,
@@ -81,7 +81,7 @@ class Main(AssignmentStatement):
                         print("\nReturning back to main menu...")
                     input("\nPlease enter key to continue...\n")
                 # Else if choice is 8 (exit application)
-                elif self.choice == 8:
+                elif self.choice == 10:
                     print(f"{self._exit}")
                     break
                 # Else print error message (user option is not valid)
@@ -97,6 +97,10 @@ class Main(AssignmentStatement):
             # Handle any other errors (as a precaution, and not leak error messages)
             # except Exception:
             #     print("\nAn error has occurred with the application. Try restarting the application.\n")
+<<<<<<< Updated upstream
+=======
+        super().update_history()
+>>>>>>> Stashed changes
 
 # Instantiate Main class
 main = Main()

@@ -18,15 +18,13 @@ from DataStructures.ParseTree import ParseTree
 from DataStructures.SortedList import SortedList
 # Import Utils
 from Utils import (
-    validate_key_and_value, 
-    handle_file, 
     get_key_and_value, 
-    check_eq_sign, 
-    file_operation, 
-    merge_sort
+    file_operation
 )
 # Import Classes
 from Classes.History import History
+from Classes.InputValidation import InputValidation
+from Classes.Sorter import Sorter
 # Import modules
 from datetime import datetime
 
@@ -34,30 +32,52 @@ from datetime import datetime
 class AssignmentStatement:
     # Initialization
     def __init__(self):
+        """
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
         # Initialize HashTable Class
         self.hash_table = HashTable()
         # Initialize History Class
         self.history = History(hash_table=self.hash_table)
+        # Load history file statements into history
+        self.history.load_file()
+        # Initialize InputValidation class 
+        self.input_validation = InputValidation()
     
     # Option 1: Add/modify assignment statement
+<<<<<<< Updated upstream
     def add_modify_statement(self, key=None, value=None, loop=True):
         '''
         This function is for option 1 where users add or modify statements. The user input goes through
         a series of validation before the assignment statements are added to the HashTable, which was
         the data structure implemented here.
         '''
+=======
+    def add_modify_statement(self):
+        """
+        The add_modify_statement function is for option 1 where users add or modify statements. 
+        The user input goes through a series of validation before the assignment statements are 
+        added to the HashTable, which was the data structure implemented here.
+        
+        :param self: Access the hashtable data structure
+        :return: Nothing
+        """
+>>>>>>> Stashed changes
         # While loop to prompt users until valid input is provided
         while True:
             # Get assignment statement from user
             statement = input("Enter the assignment statement you want to add/modify:\nFor example, a=(1+2)\n")
             # Check for equal sign
-            if not check_eq_sign(statement):
+            if not self.input_validation.check_eq_sign(statement):
                 continue
             # Split the statement by '='
             key, value = get_key_and_value(statement)
             # Validate key and value
-            loop, value = validate_key_and_value(key,value)
-            if not loop:
+            if not self.input_validation.validate_key_and_value(key,value):
                 continue
             # Expression satisfies all conditions, add to HashTable and break out of the loop
             self.hash_table[key] = value
@@ -70,11 +90,24 @@ class AssignmentStatement:
         '''
         This function is for option 2 where users display the assignment statements created/imported 
         from text files. The function is also utilized in option 5 in order to sort the assignment
+<<<<<<< Updated upstream
         statements without printing any results. The function utilizes the ParseTree data structure 
         to evaluate the assignment statements. It utilizes the SortedList data structure to sort the 
         assignment statements by variablefor option 5. Furthermore, it also utilizes the Merge Sort 
         algorithm to sort the keys for displaying.
         '''
+=======
+        statements without printing any results. This function is also utilized for option 7 for the
+        assignment statement historyas this function loops through each assignment statement and stores it. 
+        The function utilizes the ParseTree data structure to evaluate the assignment statements. It 
+        utilizes the SortedList data structure to sort the assignment statements by variablefor option 5. 
+        Furthermore, it also utilizes the Merge Sort algorithm to sort keys for displaying.
+        
+        :param self: Access the hash_table and history attributes of the assignmentstatement class
+        :param display: Determine whether or not the assignment statements should be printed
+        :return: Nothing
+        """
+>>>>>>> Stashed changes
         # Sorted List to store results sorted
         self.sorted_list = SortedList()
         # If display boolean is True (default is True)
@@ -90,7 +123,7 @@ class AssignmentStatement:
             # Get all keys that are not None
             keys = [key for key in self.hash_table.keys if key is not None]
             # Loop each sorted key from merge sort
-            for key in merge_sort(keys):
+            for key in Sorter.sort(keys):
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
@@ -110,7 +143,7 @@ class AssignmentStatement:
                         # Add evaluation result to SortedList
                         self.sorted_list.insert(new_data=(statement, evaluated_value))
                         # Add evaluation result to History
-                        self.history.add_history(item=(statement, evaluated_value, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                        self.history.add_history(item=(key, value, evaluated_value, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
                     # If an error occurs, pass
                     # except Exception as e:
                     #     print(e)
@@ -118,11 +151,21 @@ class AssignmentStatement:
 
     # Option 3: Evaluate and print parse tree for an individual variable
     def evaluate_single_variable(self):
+<<<<<<< Updated upstream
         '''
         This function is for option 3 where users evaluate one variable and view 
         the evaluation of it in a in-order traversal format. The function mainly
         utilizes the HashTable and ParseTree data structures.
         '''
+=======
+        """
+        The evaluate_single_variable function is for option 3 where users evaluate one variable and view 
+        the evaluation of it in a in-order traversal format. The function mainly utilizes the HashTable and ParseTree data structures.
+        
+        :param self: Refer to the current instance of a class
+        :return: Nothing
+        """
+>>>>>>> Stashed changes
         # Get variable from user input
         while True:
             variable = input("Please enter the variable you want to evaluate:\n")
@@ -144,35 +187,45 @@ class AssignmentStatement:
                     break
                 # Else, variable does not exist
                 else:
-                    print(f'\nVariable "{variable}" does not exist. Please try again or CTRL+C to return to the main menu.\n')
+                    print(f'\nVariable "{variable}" does not exist. {self.input_validation.err_msg}')
             # Catch Any Errors
             except:
                 pass
 
     # Option 4: Read statements from a file
     def read_statements_from_file(self):
+<<<<<<< Updated upstream
         '''
         This function is for option 4 where users read assignment statements from a file. This option
         includes file operations handled by the Utilities file (Utils.py), and reads the file and validates 
         and adds each assignment statement into the HashTable, then displays the statements (Option 2)
         '''
+=======
+        """
+        The read_statements_from_file function is for option 4 where users read assignment statements from a file. This option
+                includes file operations handled by the Utilities file (Utils.py), and reads the file and validates 
+                and adds each assignment statement into the HashTable, then displays the statements (Option 2)
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
+>>>>>>> Stashed changes
         # While loop until valid input or user force exits
         while True:
             # Try and except to catch errors
             try:
                 # Get, validate and read statements from file
-                file_path = handle_file(question='Please enter input file: ', mode='r')
+                file_path = self.input_validation.validate_file(question='Please enter input file: ', mode='r')
                 # Read file
                 statements = file_operation(file_path=file_path, mode='r')
                 # Loop each statement
                 for statement in statements:
                     # Check equal sign
-                    if check_eq_sign(statement):
+                    if self.input_validation.check_eq_sign(statement):
                         # Get key and value from statement
                         key, value = get_key_and_value(statement)
                         # Validate key and value
-                        valid, value = validate_key_and_value(key,value)
-                        if valid:
+                        if self.input_validation.validate_key_and_value(key,value):
                             # Expression satisfies all conditions, add to HashTable
                             self.hash_table[key] = value
                 # Display the list of current assignments (same as Option 2) and break out of loop
@@ -187,12 +240,19 @@ class AssignmentStatement:
         '''
         This function is for option 5 where users sort their assignment statements and outputs them
         into a text file, and utilizes file operations handled by the Utilities file as well.
+<<<<<<< Updated upstream
         '''
+=======
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
+>>>>>>> Stashed changes
         # While loop until valid user input or user force exits
         while True:
             try:
                 # Get and validate file path
-                output_file = handle_file(question='Please enter output file: ')
+                output_file = self.input_validation.validate_file(question='Please enter output file: ')
                 # Process assignment statements and write to file
                 file_operation(file_path=output_file, mode='w',content=self.sorted_list.print_sorted())
                 break
@@ -204,6 +264,17 @@ class AssignmentStatement:
 
     # Option 6:
     def view_dependency(self):
+<<<<<<< Updated upstream
+=======
+        """
+        The view_dependency function is used to display the dependency of each variable.
+        It will print out all variables and their dependencies in a sorted order.
+        If there are no assignment statements, it will print an error statement.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
+>>>>>>> Stashed changes
         # Sorted List to store results sorted
         self.sorted_list = SortedList()
         # If display boolean is True (default is True)
@@ -216,7 +287,7 @@ class AssignmentStatement:
             # Get all keys that are not None
             keys = [key for key in self.hash_table.keys if key is not None]
             # Loop each sorted key from merge sort
-            for key in merge_sort(keys):
+            for key in Sorter.merge_sort(keys):
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
@@ -233,18 +304,19 @@ class AssignmentStatement:
                         pass
         
     def manage_history(self):
-        if not self.history.is_empty:
+        print(len(self.history))
+        if not self.history.deque.is_empty:
             index = 1
-            total = self.history.length
+            total = len(self.history)
             while True:
-                self.history.print_history(position=index)
                 try:
+                    self.history.print_history(position=index)
                     # Get input for menu action
-                    action = int(input(f"\n1. Next\n2. Previous\n3. Clear History \n4. Exit\nSelect your choice: "))
+                    action = int(input(f"\n1. Next\n2. Previous\n3. Import this variable\n4. Clear History \n5. Exit\nSelect your choice: "))
                     # If menu action is 1, go forward in history list (down the list)
                     if action == 1:
                         # Change current data to next node
-                        self.history.go_forward()
+                        self.history.forward()
                         # If index is not at total yet, means not at end of history list
                         if index != total:
                             # Increment index by 1
@@ -252,14 +324,35 @@ class AssignmentStatement:
                     # Else if action is 2, go back in history list (up the list)
                     elif action == 2:
                         # Change current data to previous node
-                        self.history.go_back()
+                        self.history.backward()
                         # If index is not 1, meaning the start of the list
                         if index != 1:
                             # Decrement index by 1
                             index -= 1
-                    elif action == 4:
+                    # Else if action is 3, import variable
+                    elif action == 3:
+                        print(self.history.deque.current.data)
+                        self.history.import_statement()
                         return
-                except:
-                    print("womp womp")
+                    # Else if action is 4, clear history
+                    elif action == 4:
+                        # Clear history
+                        self.history.clear_history()
+                        # Print statement and return back to main menu
+                        print("Assignment statement history cleared. Returning back to main menu...")
+                        return
+                    # Else if action is 5, return back to main menu
+                    elif action == 5:
+                        # Reset history back to head
+                        self.history.reset_to_head()
+                        return
+                except ValueError:
+                    print(f"\nInput must be an integer. {self.input_validation.err_msg}")
+                except KeyboardInterrupt:
+                    print("\nReturning back to main menu...")
+                    break
         else:
-            print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 5.")
+            print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 4.")
+
+    def update_history(self):
+        self.history.update_file()

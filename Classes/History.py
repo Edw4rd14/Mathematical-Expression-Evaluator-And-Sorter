@@ -13,23 +13,30 @@ This is the History file of the application which handles option 7
 
 # Import Data Structure
 from DataStructures.Deque import Deque
+# Import modules
 import json
+# Import Classes
+from Classes.InputValidation import InputValidation
 
 # History class
-class History(Deque):
+class History:
     # Initialization
     def __init__(self, hash_table, max_length=25):
-        super().__init__()
+        self.deque = Deque()
         self.hash_table = hash_table
         self.max_length = max_length
         self.__file_path = "./history.json"
+        self.input_validation = InputValidation()
+
+    def __len__(self):
+        return len(self.deque)
 
     def update_file(self):
         # History array to store history to update file
         history = []
         # While deque is not empty
-        while not self.is_empty:
-            history.append(self.remove_tail())
+        while not self.deque.is_empty:
+            history.append(self.deque.remove_tail())
         # Open file and store history
         with open(self.__file_path, 'w') as file:
             json.dump(history, file)
@@ -42,29 +49,29 @@ class History(Deque):
                 total_history = json.load(file)
                 # Loop loaded data
                 for history in total_history:
-                    if not self.contains(self,history):
-                        # Insert loaded data into tail of deque
-                        self.add_tail(data=tuple(history))
+                    if not self.deque.contains(history):
+                        # Insert loaded data into head of deque
+                        self.deque.add_head(data=tuple(history))
             # Set current node to head node
-            self.current = self.head
+            self.deque.current = self.deque.head
         # If error print message
         except:
             print(f"\nError loading history. Please try again.")
 
     # Add History (No need for validation as all validation handled before adding)
     def add_history(self, item):
-        if not len(self) >= self.max_length:
-            self.add_tail(data=item)
+        if not len(self.deque) >= self.max_length:
+            self.deque.add_head(data=item)
 
     def remove_history(self):
-        self.remove_current()
+        self.deque.remove_current()
 
     def print_history(self, position):
-        print(f"\nCurrent History Position: {position}/{self.length}")
+        print(f"\nCurrent History Position: {position}/{len(self.deque)}")
         # Labels for each row
-        labels = ['Assignment Statement:', 'Evaluated Value:', 'Timestamp:']
+        labels = ['Variable:', 'Expression:', 'Evaluated Value:', 'Timestamp:']
         # Data corresponding to each label
-        data = self.current.data  # Assuming this is a tuple or list of length 3
+        data = self.deque.current.data 
 
         # Find the maximum length for the labels and data
         max_label_len = max(len(label) for label in labels)
@@ -82,5 +89,27 @@ class History(Deque):
             print(f'| {row} |')
             print(horizontal_border)  # Add this line to create a row of '=' characters between each row
 
+    def import_statement(self): 
+        load_relevant = self.input_validation.prompt_polar_question(question='\nDo you want to load all the variables in this expression as well? (Y/N): ')
+        if load_relevant:
+            self.find_variable('abcd')
+            pass
+            
+    def find_variable(self,expression):
+        all_objects = self.deque.get_all_objects()
+        print(all_objects)
+
+    def forward(self):
+        self.deque.go_forward()
+        print(self.deque.current.data)
+
+    def backward(self):
+        self.deque.go_back()
+
+    def clear_history(self):
+        self.deque.clear()
+
+    def reset_to_head(self):
+        self.deque.reset_to_head()
 
 
