@@ -110,8 +110,6 @@ class SortedList:
         return output_string
 
     def __append_to_head(self, new_node): 
-<<<<<<< Updated upstream
-=======
         """
         The __append_to_head function is a private function that appends a new node to the head of the sorted list.
         It does this by storing the old head node, setting the new head node to be the new_node parameter, 
@@ -121,7 +119,6 @@ class SortedList:
         :param new_node: Set the new head node
         :return: Nothing
         """
->>>>>>> Stashed changes
         # Store old head node
         oldHeadNode = self.head_node
         # Set new head node to new node

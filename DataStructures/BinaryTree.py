@@ -11,9 +11,11 @@ Description:
 This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
 and running the Class methods to perform the menu option's functions.
 '''
+# Import Data Structures
+from DataStructures.AbstractTree import AbstractTree
 
 # BinaryTree class
-class BinaryTree:
+class BinaryTree(AbstractTree):
     # Initialization
     def __init__(self, root_object):
         """
@@ -105,7 +107,7 @@ class BinaryTree:
         """
         The insert_right function inserts a new sub-tree as the right child of the current root.
         If there is already a right child, it will be pushed down one level in the tree to become
-        the right child of that node. This is similar to the insert_left function
+        the right child of that node. This is similar to the insert_left function.
         
         :param self: Refer to the instance of the class
         :param new_node: New node to be inserted

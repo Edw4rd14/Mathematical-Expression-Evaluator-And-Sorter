@@ -65,7 +65,7 @@ class ParseTree:
 
 
     # Build a parse tree
-    def build_parse_tree(self,expression):     
+    def build_parse_tree(self,expression, evaluating=set()):     
         """
         The build_parse_tree function takes an expression as a string and returns a binary tree representation of that expression.
         The function uses the tokenize function to break the input into tokens, then it iterates through each token in order and
@@ -97,6 +97,9 @@ class ParseTree:
                 current_tree = current_tree.right_tree
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*',  '**', '/', ')']:
+                if t in evaluating:  # Check for circular dependency
+                    raise ValueError(f"Circular dependency detected with variable '{t}'. Please modify the assignment statements for this variable with option 1.")
+                evaluating.add(t)
                 # Try converting t to float, then to integer (if it is an integer) before checking whether it is a variable or not 
                 try:
                     num = float(t)
@@ -111,6 +114,7 @@ class ParseTree:
                         current_tree.root_value = (t,None)
                 if not stack.is_empty:
                     current_tree = stack.pop()
+                evaluating.remove(t)
             # RULE 4: If token is ')' go to parent of current node
             elif t == ')':
                 if not stack.is_empty:

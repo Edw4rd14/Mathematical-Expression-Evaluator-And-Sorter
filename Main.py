@@ -10,15 +10,13 @@
 Description:
 This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
 and running the Class methods to perform the menu option's functions.
-The Main class inherits the AssignmentStatement class as the main functionality of the application derives from the AssignmentStatement and they are related
-as the main application is about handling assignment statements.
 '''
 
 # Import Classes
 from Classes.AssignmentStatement import AssignmentStatement
 
 # Main class
-class Main(AssignmentStatement):
+class Main:
     # Initialization
     def __init__(self):
         """
@@ -28,7 +26,7 @@ class Main(AssignmentStatement):
         :return: Nothing
         """
         # Initialize AssignmentStatement Class
-        super().__init__()
+        self.assignment_statement = AssignmentStatement()
         # Banner 
         self._banner=['*'*59, "* ST1507 DSAA: Evaluating & Sorting Assignment Statements *", "*" + "-"*57 + "*", "*" + " "*57 + "*", "*  - Done by: Edward Tan (2214407) & Ashwin Raj (2239716) *", "*  - Class DAAA/2B/04" + " " * 37 + "*"]
         self.__banner_order = [0,1,2,3,4,5,3,0]
@@ -36,15 +34,15 @@ class Main(AssignmentStatement):
         self.choice = None
         self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history', 'Remove all statements', 'FAQ','Exit']
         self.__options = {
-            1: super().add_modify_statement,
-            2: super().display_and_sort_statements,
-            3: super().evaluate_single_variable,
-            4: super().read_statements_from_file,
-            5: super().sort_statements,
-            6: super().view_dependency,
-            7: super().manage_history,
-            8: self.remove_all_statements,
-            9: self.display_information
+            1: self.assignment_statement.add_modify_statement,
+            2: self.assignment_statement.display_and_sort_statements,
+            3: self.assignment_statement.evaluate_single_variable,
+            4: self.assignment_statement.read_statements_from_file,
+            5: self.assignment_statement.sort_statements,
+            6: self.assignment_statement.view_dependency,
+            7: self.assignment_statement.manage_history,
+            8: self.assignment_statement.remove_all_statements,
+            9: self.assignment_statement.display_information
         }
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
@@ -115,18 +113,18 @@ class Main(AssignmentStatement):
                 # Else print error message (user option is not valid)
                 else:
                     print("\nOnly options between 1 and 10 are available. Please try again.\n")
-            # Handle ValueError (user choice is not integer)
-            except ValueError:
-                print("\nInput must be an integer. Please try again.\n")
+            # # Handle ValueError (user choice is not integer)
+            # except ValueError:
+            #     print("\nInput must be an integer. Please try again.\n")
             # Handle Keyboard Interrupt (CRTL + C)
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")
                 break
-            # Handle any other errors (as a precaution, and not leak error messages)
-            except Exception:
-                print("\nAn error has occurred with the application. Try restarting the application.\n")
+            # # Handle any other errors (as a precaution, and not leak error messages)
+            # except Exception:
+            #     print("\nAn error has occurred with the application. Try restarting the application.\n")
         # Update history
-        super().update_history()
+        self.assignment_statement.update_history()
 
 # Instantiate Main class
 main = Main()

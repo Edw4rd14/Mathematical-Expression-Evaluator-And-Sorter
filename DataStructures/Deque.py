@@ -203,17 +203,6 @@ class Deque:
         :param self: Refer to the instance of the class
         :return: The data of the node that was removed
         """
-<<<<<<< Updated upstream
-=======
-        """
-        The remove_current function removes the current node from the Deque.
-        If there is no current node, it raises an IndexError.
-        After removal, sets self.current to None if there are no nodes left, 
-        or to the next node if available, or to the previous node otherwise.
-
-        :param self: Refer to the instance of the class
-        """
->>>>>>> Stashed changes
         if self.current is None:
             raise IndexError("No current item to remove")
         removed_data = self.current.data
@@ -332,3 +321,10 @@ class Deque:
             all_objects.append(current_node.data)
             current_node = current_node.next_node
         return all_objects
+    
+    def get_specific_object(self, variable):
+        all_items = self.get_all_objects()
+        for item in all_items:
+            if item[0] == variable:
+                return item
+        

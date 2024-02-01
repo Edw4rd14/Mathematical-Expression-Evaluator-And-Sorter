@@ -13,6 +13,7 @@ This is the History file of the application which handles option 7
 
 # Import Data Structure
 from DataStructures.Deque import Deque
+from DataStructures.ParseTree import ParseTree
 # Import modules
 import json
 # Import Classes
@@ -89,19 +90,61 @@ class History:
             print(f'| {row} |')
             print(horizontal_border)  # Add this line to create a row of '=' characters between each row
 
-    def import_statement(self): 
-        load_relevant = self.input_validation.prompt_polar_question(question='\nDo you want to load all the variables in this expression as well? (Y/N): ')
-        if load_relevant:
-            self.find_variable('abcd')
-            pass
-            
-    def find_variable(self,expression):
-        all_objects = self.deque.get_all_objects()
-        print(all_objects)
+    def import_variables(self): 
+        """
+        The import_variables function is used to import a statement from the deque into the hash table.
+        The user can choose whether or not they want to load all of the variables in that expression as well.
+        If so, then it will use the function get_related_variables to get all related variables recursively and
+        add them to the hash table.
+        
+        :param self: Refer to the object that is calling the function
+        :return: Nothing
+        """
+        # Prompt user on whether to import relevant variables
+        load_relevant = self.input_validation.prompt_polar_question(question='Do you want to load all the variables in this expression as well? (Y/N): ')
+        # Try and except to handle any errors
+        try:
+            # Current variable they want to import
+            current_variable = self.deque.current.data[0]
+            # If they decide to import relevant variables
+            if load_relevant:
+                # Get relevant variables
+                relevant_variables = self.get_related_variables(current_variable)
+                # For each relevant variable
+                for variable in relevant_variables:
+                    # Add relevant variable and its expression into the hash table
+                    self.hash_table[variable] = self.deque.get_specific_object(variable)[1]
+            # Add current varaible they wanted to import
+            self.hash_table[current_variable] = self.deque.get_specific_object(current_variable)[1]
+            # Print success message if not errors thus far
+            print("\nVariable(s) have been successfully imported. Please use option 2 to verify them.")
+        except:
+            # Print random error message if error occurs
+            print("\nAn error occurred while importing statements. Please restart the application or try again. Returning back to main menu...")
+
+    @staticmethod        
+    def extract_variables(item):
+        variables = []
+        for t in ParseTree.tokenize(item):
+            if t.isalpha():
+                variables.append(t)
+        return variables
+
+    def get_related_variables(self, variable):
+        all_items = self.deque.get_all_objects()
+        for item in all_items:
+            if item[0] == variable:
+                # Extract variables from the expression
+                variables = self.extract_variables(item[1])
+                # Recursively get related variables for each found variable
+                related_variables = set(variables)
+                for v in variables:
+                    related_variables.update(self.get_related_variables(v))
+                return related_variables
+        return set()
 
     def forward(self):
         self.deque.go_forward()
-        print(self.deque.current.data)
 
     def backward(self):
         self.deque.go_back()

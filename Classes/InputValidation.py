@@ -240,7 +240,17 @@ class InputValidation:
         # If no errors, return file path
         return file_path
     
-    def prompt_polar_question(self, question:str)->bool:
+    def prompt_polar_question(self,question:str)->bool:
+        """
+        The prompt_polar_question function prompts the user with a question that requires a Yes or No answer.
+        The function will loop until it receives either Y (Yes) or N (No). If the user inputs anything other than Y or N,
+        the function will print an error message and prompt again. The function returns True if the input is Y, and False if 
+        the input is N.
+        
+        :param self: Access the instance of the class
+        :param question:str: Pass the question to be asked to the user
+        :return: A boolean value
+        """
         while True:
             # Get user input on overwriting
             user_input = input(question)
@@ -249,7 +259,7 @@ class InputValidation:
                 return False
             # Else if invalid input, not N or Y, print error and loop again
             elif user_input.lower() != 'y':
-                print("\nInvalid input! Please enter only Y (Yes) or N (No).",self.err_msg)
+                print("\nInvalid input! Please enter only Y (Yes) or N (No).", self.err_msg)
             # Else input is Y, return True
             else:
                 return True

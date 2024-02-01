@@ -24,7 +24,7 @@ from Utils import (
 # Import Classes
 from Classes.History import History
 from Classes.InputValidation import InputValidation
-from Classes.Sorter import Sorter
+from DSAA_CA2.Classes.MergeSort import MergeSort
 # Import modules
 from datetime import datetime
 
@@ -107,7 +107,7 @@ class AssignmentStatement:
             # Get all keys that are not None
             keys = [key for key in self.hash_table.keys if key is not None]
             # Loop each sorted key from merge sort
-            for key in Sorter.sort(keys):
+            for key in MergeSort.sort(keys):
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
@@ -128,6 +128,9 @@ class AssignmentStatement:
                         self.sorted_list.insert(new_data=(statement, evaluated_value))
                         # Add evaluation result to History
                         self.history.add_history(item=(key, value, evaluated_value, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                    # Catch value error
+                    except ValueError as e:
+                        print(e)
                     # If an error occurs, pass
                     except Exception:
                         print("An occurred while trying to display and sort assignment statements. Please try again or restart the application.")
@@ -247,7 +250,7 @@ class AssignmentStatement:
             # Get all keys that are not None
             keys = [key for key in self.hash_table.keys if key is not None]
             # Loop each sorted key from merge sort
-            for key in Sorter.merge_sort(keys):
+            for key in MergeSort.merge_sort(keys):
                 # If key is not None and is an assignment statement
                 if key is not None:
                     # Catch errors with try
@@ -262,9 +265,9 @@ class AssignmentStatement:
                     except Exception as e:
                         print(e)
                         pass
-        
+    
+    # Option 7: Manage assignment statement history
     def manage_history(self):
-        print(len(self.history))
         if not self.history.deque.is_empty:
             index = 1
             total = len(self.history)
@@ -291,15 +294,17 @@ class AssignmentStatement:
                             index -= 1
                     # Else if action is 3, import variable
                     elif action == 3:
-                        print(self.history.deque.current.data)
-                        self.history.import_statement()
+                        # Import statements
+                        self.history.import_variables()
+                        # Reset history back to head
+                        self.history.reset_to_head()
                         return
                     # Else if action is 4, clear history
                     elif action == 4:
                         # Clear history
                         self.history.clear_history()
                         # Print statement and return back to main menu
-                        print("Assignment statement history cleared. Returning back to main menu...")
+                        print("\nAssignment statement history cleared. Returning back to main menu...")
                         return
                     # Else if action is 5, return back to main menu
                     elif action == 5:
@@ -310,6 +315,8 @@ class AssignmentStatement:
                     print(f"\nInput must be an integer. {self.input_validation.err_msg}")
                 except KeyboardInterrupt:
                     print("\nReturning back to main menu...")
+                    # Reset history back to head
+                    self.history.reset_to_head()
                     break
         else:
             print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 4.")
@@ -332,7 +339,7 @@ class AssignmentStatement:
             
             # Clear the sorted list and history
             self.sorted_list.clear()
-            self.history.clear()
+            self.history.clear_history()
         else:
             # Display a message indicating that no changes have been made
             print("No changes have been made.")
