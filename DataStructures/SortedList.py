@@ -179,3 +179,17 @@ class SortedList:
             right_node = right_node.next_node
         # If end of the list is reached, new node is appended to the end
         left_node.next_node = new_node
+
+    def clear(self):
+        """
+        The clear function resets the sorted list to an empty state.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
+        # Reset head node
+        self.head_node = None
+        # Reset current node
+        self.current_node = None
+        # Reset length to 0
+        self._length = 0

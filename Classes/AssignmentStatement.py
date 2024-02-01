@@ -24,7 +24,7 @@ from Utils import (
 # Import Classes
 from Classes.History import History
 from Classes.InputValidation import InputValidation
-from DSAA_CA2.Classes.MergeSort import MergeSort
+from Classes.MergeSort import MergeSort
 # Import modules
 from datetime import datetime
 
@@ -223,7 +223,7 @@ class AssignmentStatement:
                 file_operation(file_path=output_file, mode='w',content=self.sorted_list.print_sorted())
                 break
             except AttributeError:
-                print("\nPlease check menu option 2 for the assignment statements before sorting.")
+                print("\nPlease ensure that there are assignment statements added before sorting.")
                 break
             except Exception as e:
                 print(e)
@@ -327,22 +327,23 @@ class AssignmentStatement:
     # Option 8:
     def remove_all_statements(self):
         # Confirmation from the user
-        confirmation = input("Are you sure you want to remove all assignment statements? (y/n): ").lower()
-        
+        confirmation = self.input_validation.prompt_polar_question(question="Are you sure you want to remove all assignment statements? (Y/N): ")
         # Check user's confirmation
-        if confirmation == 'y':
-            # Clear the hash_table
-            self.hash_table.clear()
-            
-            # Display a message indicating that all statements have been removed
-            print("All assignment statements have been removed.")
-            
-            # Clear the sorted list and history
-            self.sorted_list.clear()
-            self.history.clear_history()
+        if confirmation:
+            try:
+                # Clear the hash_table
+                self.hash_table.clear()
+                # Clear the sorted list
+                self.sorted_list.clear()
+                # Clear the history
+                self.history.clear_history()
+                # Display a message indicating that all statements have been removed
+                print("\nAll assignment statements have been removed.")
+            except:
+                print("\nThere are no assignment statements to be removed.")
         else:
             # Display a message indicating that no changes have been made
-            print("No changes have been made.")
+            print("\nNo changes have been made.")
 
     # Option 9:
     # Inside the AssignmentStatement class

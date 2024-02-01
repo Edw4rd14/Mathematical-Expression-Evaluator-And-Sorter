@@ -104,6 +104,18 @@ class HashTable:
             if key is not None:
                 self[key] = value
     
+    # Clear Hashtable
+    def clear(self):
+        """
+        The clear function resets the hash table, removing all key-value pairs and setting the count of items back to 0.
+        
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
+        self._keys = [None] * self.size
+        self._buckets = [None] * self.size
+        self.count = 0
+        
     # Add Item into Hashtable
     def __setitem__(self, key, value):
         """

@@ -17,7 +17,7 @@ class AbstractTree(ABC):
         """
         The __init__ function is called when the class is instantiated.
         
-        :param self: Represent the instance of the class
+        :param self: Refer to the instance of the class
         :param root_object: Set the root object of the tree
         :return: Nothing
         """
@@ -30,7 +30,7 @@ class AbstractTree(ABC):
         The right_tree function returns the right subtree of a node.
         This is an abstract method that needs to be implemented by subclasses.
         
-        :param self: Represent the instance of the class
+        :param self: Refer to the instance of the class
         :return: The right subtree of the tree
         """
         pass
@@ -42,7 +42,7 @@ class AbstractTree(ABC):
         This right_tree function sets the value of the right tree to the given value.
         This is an abstract method that needs to be implemented by subclasses.
         
-        :param self: Represent the instance of the class
+        :param self: Refer to the instance of the class
         :param value: Value to be inserted into the right tree
         """
         pass
@@ -54,7 +54,7 @@ class AbstractTree(ABC):
         The left_tree function returns the left subtree of a node.
         This is an abstract method that needs to be implemented by subclasses.
         
-        :param self: Represent the instance of the class
+        :param self: Refer to the instance of the class
         :return: The left subtree of the tree
         """
         pass
@@ -66,7 +66,7 @@ class AbstractTree(ABC):
         This left_tree function sets the value of the left tree to the given value.
         This is an abstract method that needs to be implemented by subclasses.
         
-        :param self: Represent the instance of the class
+        :param self: Refer to the instance of the class
         :param value: Value to be inserted into the left tree
         """
         pass
