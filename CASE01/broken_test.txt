@@ -1,0 +1,6 @@
+a=Banana
+Starfruit
+hello
+a=(15+2+3)
+15=(a+c)
+b=(15)

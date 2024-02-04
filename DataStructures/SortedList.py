@@ -14,7 +14,8 @@ from DataStructures.Node import Node
 class SortedList:
     def __init__(self):
         """
-        The __init__ function initializes the head node, current node, and length of the sorted list.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :return: Nothing

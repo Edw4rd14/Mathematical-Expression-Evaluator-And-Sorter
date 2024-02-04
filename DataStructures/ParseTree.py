@@ -15,20 +15,16 @@ and running the Class methods to perform the menu option's functions.
 # Import Data Structures
 from DataStructures.Stack import Stack
 from DataStructures.BinaryTree import BinaryTree
-# Import Utils
-# from Utils import tokenize
-import re
+# Import Classes
+from Classes.ExpressionHandler import ExpressionHandler
 
 # ParseTree Class
 class ParseTree:
     # Initialization
-    def __init__(self, expression, hash_table):
+    def __init__(self, variable, expression, hash_table):
         """
-        The __init__ function is the constructor for the class. It takes two arguments:
-        expression and hash_table. The expression argument is a string that represents an 
-        arithmetic expression, such as (3*4) The hash_table argument is the hash table with
-        the variable and expressions stored in it. This function builds a parse tree from the
-          given arithmetic expression and store it in self.root for evaluation when needed.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :param expression: Store the expression that is passed in as a string
@@ -37,35 +33,17 @@ class ParseTree:
         """
         # Hashtable with variables stored
         self.hash_table = hash_table
+        # Variable of expression
+        self.variable = variable
+        # Expression Handler
+        self.expression_handler = ExpressionHandler()
         # Build parse tree of expression
         self.expression = expression
         # Root tree
         self.root = self.build_parse_tree(self.expression)
 
-    # Tokenize expression
-    @staticmethod
-    def tokenize(expression:str)->list:
-        """
-        The tokenize function takes a string and returns a list of tokens.
-        The tokenize function uses the regular expression r'(\b\d+\.\d+\b|\b\w+\b|[^ \t]+)' to match:
-            - decimal numbers, e.g., 3.15;
-            - whole words, e.g., 'apple';
-            - operators and single characters, e.g., '*', '/', '('.  
-        
-        :param expression:str: Expression to be tokenized
-        :return: A list of tokens
-        """
-        # \b\w+\b matches whole words.
-        # \*\* matches the ** operator.
-        # // matches the // operator.
-        # \S matches any non-whitespace character, covering other operators and single characters.
-        # (\d+\.\d+) matches decimal numbers.
-        tokens = re.findall(r'(\b\d+\.\d+\b|\b\w+\b|\*\*|//|\S)', expression)
-        return tokens
-
-
     # Build a parse tree
-    def build_parse_tree(self,expression, evaluating=set()):     
+    def build_parse_tree(self, expression):     
         """
         The build_parse_tree function takes an expression as a string and returns a binary tree representation of that expression.
         The function uses the tokenize function to break the input into tokens, then it iterates through each token in order and
@@ -75,14 +53,17 @@ class ParseTree:
         :param expression: Build the parse tree
         :return: A tree with the root node set to none
         """
+        if self.variable and self.expression_handler.has_circular_dependency(self.variable,self.hash_table):
+            del self.hash_table[self.variable]
+            raise ValueError(f"\nCircular dependency detected for variable '{self.variable}'. Evaluation aborted. Please re-evaluate these assignment statements.")
         stack = Stack()
         tree = BinaryTree(root_object=None)
         stack.push(tree)
         current_tree = tree
         try:
-            tokens = self.tokenize(expression)
+            tokens = ExpressionHandler.tokenize(expression)
         except:
-            raise ValueError
+            return None
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left tree and descend into that node
             if t == '(':
@@ -97,9 +78,6 @@ class ParseTree:
                 current_tree = current_tree.right_tree
             # RULE 3: If token is number, set key of the current node to that number and return to parent
             elif t not in ['+', '-', '*',  '**', '/', ')']:
-                if t in evaluating:  # Check for circular dependency
-                    raise ValueError(f"Circular dependency detected with variable '{t}'. Please modify the assignment statements for this variable with option 1.")
-                evaluating.add(t)
                 # Try converting t to float, then to integer (if it is an integer) before checking whether it is a variable or not 
                 try:
                     num = float(t)
@@ -114,13 +92,12 @@ class ParseTree:
                         current_tree.root_value = (t,None)
                 if not stack.is_empty:
                     current_tree = stack.pop()
-                evaluating.remove(t)
             # RULE 4: If token is ')' go to parent of current node
             elif t == ')':
                 if not stack.is_empty:
                     current_tree = stack.pop()
             else:
-                raise ValueError
+                return None
         return tree
     
     # Return evaluate tree result
@@ -212,40 +189,3 @@ class ParseTree:
             print(f"{'.' * depth}{print_value}")
             # Recursively call the function on the left tree of the current tree [L]
             self._print_in_order(node.left_tree, depth + 1)
-
-    def variable_dependencies(self):
-        dependencies = {}
-        self._collect_variable_dependencies(self.root, dependencies)
-        return dependencies
-
-    # Helper method to collect variable dependencies recursively
-    def _collect_variable_dependencies(self, node, dependencies, path=[]):
-        if node is not None:
-            original_token, _ = node.root_value
-            if isinstance(original_token, str):
-                path_context = path + [original_token]
-                if original_token not in dependencies:
-                    dependencies[original_token] = []
-                dependencies[original_token].append(path_context)
-
-            self._collect_variable_dependencies(node.left_tree, dependencies, path + ['L'])
-            self._collect_variable_dependencies(node.right_tree, dependencies, path + ['R'])
-
-    # Method to display variable dependencies in a tree-like structure
-    def display_variable_dependencies(self):
-        dependencies = self.variable_dependencies()
-
-        for variable, paths in dependencies.items():
-            print(variable)  # Print the variable name
-            unique_paths = set()  # To store unique paths (avoid duplicates)
-            
-            for path in paths:
-                formatted_path = ' -> '.join(path)
-                unique_paths.add(formatted_path)
-
-            for path in unique_paths:
-                # Split the path into parts and print with indentation
-                parts = path.split(' -> ')
-                for i, part in enumerate(parts):
-                    indent = '  ' * i + '+-' if i > 0 else ''
-                    print(f"{indent}{part}")

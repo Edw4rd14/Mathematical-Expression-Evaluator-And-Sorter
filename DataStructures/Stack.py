@@ -8,15 +8,14 @@
 # =================================================================================================
 '''
 Description:
-This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
-and running the Class methods to perform the menu option's functions.
+
 '''
 # Stack Class
 class Stack:
     def __init__(self):
         """
-        The __init__ function is called when the class is instantiated. 
-        It sets up the initial state of the object, which in this case means creating an empty list to store stack items.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :return: Nothing
@@ -72,12 +71,10 @@ class Stack:
     @property
     def is_empty(self):
         """
-        The is_empty function returns a boolean value on whether the stack is empty.
-        It does this by checking if the length of items in the stack is equal to 0.
+        The is_empty function returns a boolean value on whether the stack is empty by checking if the length of items in the stack is equal to 0.
         
         :param self: Refer to the instance of the class
         :return: A boolean on whether the stack is empty
-
         """
         # Return boolean on whether list is empty
         return len(self._items) == 0

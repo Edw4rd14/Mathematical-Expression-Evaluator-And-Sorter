@@ -6,12 +6,6 @@
 # =================================================================================================
 # FILENAME: MergeSort.py
 # =================================================================================================
-'''
-Description:
-This is the MergeSort file which includes a MergeSort class, currently having implemented a merge sort as the 
-sorting algorithm. This class is intended to be potentially developed by other users to implement more 
-sorting algorithms as functions in the class to be utilized in the application.
-'''
 
 # Import classes
 from Classes.Sorter import Sorter
@@ -81,11 +75,15 @@ class MergeSort(Sorter):
         The sort function sorts the input list using merge sort and returns the sorted list.
             
         :param arr: Store the list that is to be sorted
-        :param reverse: Reverse the list if needed
+        :param reverse: Boolean on whether to return reversed sorted list
         :return: The sorted list
         """
+        # Sort the array
         MergeSort.merge_sort(arr)
+        # If reverse
         if reverse:
+            # Return reversed sorted array
             return arr[::-1]
+        # Else return sorted array
         else:
             return arr

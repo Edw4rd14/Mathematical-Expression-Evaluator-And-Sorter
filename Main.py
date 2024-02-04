@@ -32,14 +32,14 @@ class Main:
         self.__banner_order = [0,1,2,3,4,5,3,0]
         # Menu options
         self.choice = None
-        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'View variable dependency', 'Manage assignment statement history', 'Remove all statements', 'FAQ','Exit']
+        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'Batch process assignment statement from files', 'Manage assignment statement history', 'Remove all statements', 'FAQ','Exit']
         self.__options = {
             1: self.assignment_statement.add_modify_statement,
-            2: self.assignment_statement.display_and_sort_statements,
+            2: self.assignment_statement.display_statements,
             3: self.assignment_statement.evaluate_single_variable,
             4: self.assignment_statement.read_statements_from_file,
             5: self.assignment_statement.sort_statements,
-            6: self.assignment_statement.view_dependency,
+            6: self.assignment_statement.batch_process,
             7: self.assignment_statement.manage_history,
             8: self.assignment_statement.remove_all_statements,
             9: self.assignment_statement.display_information

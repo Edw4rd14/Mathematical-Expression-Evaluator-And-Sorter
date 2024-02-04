@@ -6,11 +6,6 @@
 # =================================================================================================
 # FILENAME: BinaryTree.py
 # =================================================================================================
-'''
-Description:
-This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
-and running the Class methods to perform the menu option's functions.
-'''
 # Import Data Structures
 from DataStructures.AbstractTree import AbstractTree
 
@@ -19,7 +14,8 @@ class BinaryTree(AbstractTree):
     # Initialization
     def __init__(self, root_object):
         """
-        The __init__ function initializes the root object, and sets the left and right trees to None.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :param root_object: Root of the current binary tree

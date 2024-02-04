@@ -7,7 +7,7 @@
 # FILENAME: AbstractTree.py
 # =================================================================================================
 
-# Import modules
+# Import Modules
 from abc import ABC, abstractmethod
 
 # AbstractTree class
@@ -16,6 +16,7 @@ class AbstractTree(ABC):
     def __init__(self, root_object):
         """
         The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :param root_object: Set the root object of the tree

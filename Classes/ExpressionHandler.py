@@ -4,35 +4,68 @@
 # CLASS: DAAA/FT/2B/04
 # ADM NO: 2214407; 2239716
 # =================================================================================================
-# FILENAME: InputValidation.py
+# FILENAME: ExpressionHandler.py
 # =================================================================================================
 
 # Import Data Structures
 from DataStructures.Stack import Stack
-from DataStructures.ParseTree import ParseTree
-# Import modules
+# Import Classes
+from Classes.InputHandler import InputHandler
+# Import Modules
 import re
-import os
 
-# InputValidation class
-class InputValidation:
+# ExpressionHandler class
+class ExpressionHandler(InputHandler):
+    # Initialization
     def __init__(self):
         """
-        The __init__ function initializes the class with regular expressions for operators, parenthesis and variables.
-        It also creates a lambda function that returns an error message if there is an invalid format.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :return: Nothing
         """
+        super().__init__()
         # Initialize regular expressions
         self.operator_regex = re.compile(r'\*\*|[\+\-\*/]')
         self.parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
         self.variable_regex = re.compile("^[A-Za-z]+$")
-        # End of error message
-        self.err_msg = 'Please try again or CRTL + C to return back to main menu.\n'
-        # Formatting error
-        self.format_error = lambda error, var="": f"\nInvalid format{' for variable ' + var if var else ''}! {error}. {self.err_msg}"
 
+    # Tokenize expression
+    @staticmethod
+    def tokenize(expression:str)->list:
+        """
+        The tokenize function takes a string and returns a list of tokens.
+        The tokenize function uses the regular expression r'(\b\d+\.\d+\b|\b\w+\b|[^ \t]+)' to match:
+            - decimal numbers, e.g., 3.15;
+            - whole words, e.g., 'apple';
+            - operators and single characters, e.g., '*', '/', '('.  
+        
+        :param expression:str: Expression to be tokenized
+        :return: A list of tokens
+        """
+        # \b\w+\b matches whole words.
+        # \*\* matches the ** operator.
+        # // matches the // operator.
+        # \S matches any non-whitespace character, covering other operators and single characters.
+        # (\d+\.\d+) matches decimal numbers.
+        tokens = re.findall(r'(\b\d+\.\d+\b|\b\w+\b|\*\*|//|\S)', expression)
+        return tokens
+    
+    # Get key and value from statement
+    @staticmethod
+    def get_key_and_value(statement:str)->list:
+        """
+        The get_key_and_value function takes in an assignment statement by the = for the variable 
+        and expression of the assignment statement.
+        
+        :param statement:str: Assignment statement to be split
+        :return: A list of strings
+        """
+        return [x.strip() for x in statement.split('=')]
+
+
+    # Check if expression contains operator
     def contain_operator(self, expression: str) -> bool:
         """
         The contain_operator function checks for the existence of operators in an expression.
@@ -44,6 +77,7 @@ class InputValidation:
         # Check for the existence of operators
         return bool(self.operator_regex.search(expression))
 
+    # Check juxtaposition of parenthesis in expression
     def check_juxtaposition_parenthesis(self, expression: str) -> bool:
         """
         The check_juxtaposition_parenthesis function checks for juxtaposition of variables or number next to ( or after ), 
@@ -56,6 +90,7 @@ class InputValidation:
         # Check for juxtaposition of variables or number next to ( or after ), or )(
         return bool(self.parenthesis_regex.search(expression))
 
+    # Check if there are consecutive operators in the expression
     def check_consecutive_operators(self, expression: str) -> bool:
         """
         The check_consecutive_operators function checks for consecutive operators in the expression.
@@ -79,7 +114,8 @@ class InputValidation:
         # After looping through all characters, and no return True has occured, this means there are no consecutive operands, hence return False
         return False
 
-    def check_eq_sign(self, statement: str) -> bool:
+    # Check for equal sign
+    def check_eq_sign(self, statement: str, menu: bool=True) -> bool:
         """
         The check_eq_sign function checks if there is an equal sign in the statement.
         If there is not or more than 1, it returns False and prints a message to the user.
@@ -93,10 +129,11 @@ class InputValidation:
         count_of_equal_signs = statement.count("=")
         # Check if there is an equal sign
         if count_of_equal_signs != 1:
-            print(self.format_error("Please include at least/only one '=' in the statement"))
+            print(self.format_error("Please include at least/only one '=' in the statement", menu))
             return False
         return True
 
+    # Check for incomplete expression
     def check_incomplete_expression(self, expression: str) -> bool:
         """
         The check_incomplete_expression function checks for incomplete expressions.
@@ -109,40 +146,16 @@ class InputValidation:
         :param expression: str: Check if the expression is incomplete
         :return: True if the expression is incomplete and false otherwise
         """
-        # Check for incomplete expressions
-        # Check if expression starts or ends with an operator
-        # Check if expression has at least one operator
-        # Check that it is an expression (e.g. x=a+2, c=apple+banana) and not an incomplete expession (e.g. a=b)
-        if (self.contain_operator(expression[0]) or
-                self.contain_operator(expression[-1]) or
-                not self.contain_operator(expression) or
-                len(ParseTree.tokenize(expression)) == 1):
+        if (
+            self.contain_operator(expression[0]) or
+            self.contain_operator(expression[-1]) or
+            not self.contain_operator(expression) or
+            len(self.tokenize(expression)) == 1
+        ):
             return True
         return False
 
-    def handle_file(self, question: str, mode: str = None) -> str:
-        """
-        The handle_file function is used to validate user input for file paths.
-        It takes two arguments: a question string and an optional mode string.
-        The question argument is the prompt that will be displayed to the user, asking them for their input.
-        The mode argument can either be 'r' or 'w', which stands for read or write respectively, and defaults to None if not specified by the caller.
-        
-        :param self: Refer to the instance of the class
-        :param question: str: Prompt the user for a file path
-        :param mode: str: Determine if the file is being read or written to
-        :return: The file path
-        """
-        # Get user input on input file path
-        file_path = input(question)
-        # Validate file extension
-        if not file_path.endswith(".txt"):
-            raise ValueError(f'\n"{file_path}" is an invalid file type. Expected a .txt file. {self.err_msg}')
-        # Validate file existence for reading
-        if mode == 'r' and not os.path.exists(file_path):
-            raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. {self.err_msg}')
-        # If no errors, return file path
-        return file_path
-
+    # Check parenthesis in expression
     def check_parenthesis(self, expression: str) -> bool:
         """
         The check_parenthesis function checks if the expression is valid.
@@ -158,7 +171,7 @@ class InputValidation:
         # Initialize a stack to keep track of parentheses and operators
         stack = Stack()
         # Get tokens
-        tokens = ParseTree.tokenize(expression)
+        tokens = self.tokenize(expression)
         # For each token in expression tokens
         for t in tokens:
             if t == '(':
@@ -179,9 +192,9 @@ class InputValidation:
                     return False
         # Check if there are any unclosed parentheses left in the stack
         return all(item[0] != '(' for item in stack.items)
-
     
-    def validate_key_and_value(self, key: str, value: str) -> tuple:
+    # Run key and value through all validation
+    def validate_key_and_value(self, key: str, value: str, menu:bool=True) -> tuple:
         """
         The validate_key_and_value function takes in a key and value, and runs a series of
         validation to ensure that the key (variable) and value (expression) are valid, returning the
@@ -194,72 +207,111 @@ class InputValidation:
         """
         # Check if key or value is empty
         if not key or not value:
-            print(self.format_error("Both left-hand side and right-hand side of the statement should not be empty",key))
+            print(self.format_error("Both left-hand side and right-hand side of the statement should not be empty",menu,key))
             return False
 
         # Check if expression is incomplete
         if self.check_incomplete_expression(value):
-            print(self.format_error("Expression is incomplete",key))
+            print(self.format_error("Expression is incomplete",menu,key))
             return False
 
         # Check for consecutive operators
         if self.check_consecutive_operators(value):
-            print(self.format_error("There should not be consecutive operators",key))
+            print(self.format_error("There should not be consecutive operators",menu,key))
             return False
 
         # Check if variable is referencing itself
-        if key in ParseTree.tokenize(value):
-            print(self.format_error("Variable should not reference itself",key))
+        if key in self.tokenize(value):
+            print(self.format_error("Variable should not reference itself",menu,key))
             return False
 
         # Check if key matches regex to only contain letters
         if not self.variable_regex.match(key):
-            print(self.format_error("Variable names should only contain letters",key))
+            print(self.format_error("Variable names should only contain letters",menu,key))
             return False
         
         if self.check_juxtaposition_parenthesis(value):
-            print(self.format_error("Please check juxtaposition of variables and numbers to parenthesis",key))
+            print(self.format_error("Please check juxtaposition of variables and numbers to parenthesis",menu,key))
             return False
 
         # Check for any unmatched parenthesis
         if not self.check_parenthesis(value):
-            print(self.format_error("Please check that the expression is fully parenthesized",key))
+            print(self.format_error("Please check that the expression is fully parenthesized",menu,key))
             return False
 
         return True
-
-    def validate_file(self,question:str, mode:str=None)->str:
-        # Get user input on input file path
-        file_path = input(question)
-        # Validate file extension
-        if not file_path.endswith(".txt"):
-            raise ValueError(f'\n"{file_path}" is an invalid file type. Expected a .txt file. {self.err_msg}')
-        # Validate file existence for reading
-        if mode == 'r' and not os.path.exists(file_path):
-            raise FileNotFoundError(f'\nFile path "{file_path}" does not exist. {self.err_msg}')
-        # If no errors, return file path
-        return file_path
     
-    def prompt_polar_question(self,question:str)->bool:
+    # Extract variable   
+    def extract_variables(self, item):
         """
-        The prompt_polar_question function prompts the user with a question that requires a Yes or No answer.
-        The function will loop until it receives either Y (Yes) or N (No). If the user inputs anything other than Y or N,
-        the function will print an error message and prompt again. The function returns True if the input is Y, and False if 
-        the input is N.
+        The extract_variables returns the variables in an expression.
         
-        :param self: Access the instance of the class
-        :param question:str: Pass the question to be asked to the user
-        :return: A boolean value
+        :param item: Expression to be extracted
+        :return: A list of all the variables from the expression
         """
-        while True:
-            # Get user input on overwriting
-            user_input = input(question)
-            # If user inputs No, return False
-            if user_input.lower() == 'n':
-                return False
-            # Else if invalid input, not N or Y, print error and loop again
-            elif user_input.lower() != 'y':
-                print("\nInvalid input! Please enter only Y (Yes) or N (No).", self.err_msg)
-            # Else input is Y, return True
-            else:
+        variables = []
+        for t in self.tokenize(item):
+            if t.isalpha():
+                variables.append(t)
+        return variables
+    
+    @staticmethod
+    def format_dependency(variable, dependencies):
+        dependency_list = list(dependencies)
+        if len(dependency_list) > 1:
+            result_string = ', '.join(dependency_list[:-1]) + f' and {dependency_list[-1]}.'
+        elif len(dependency_list) == 1:
+            result_string = dependency_list[0]
+        return f"{variable} {'is dependent on ' + result_string if dependency_list else 'is independent.'}\n\n"
+    
+    # Get relevant variables recursively
+    def get_related_variables(self, variable, statements, explored=None):
+        """
+        The get_related_variables function takes a variable as input and returns all variables that are related to it.
+        
+        :param self: Refer to the instance of the class
+        :param variable: Variable to refer to for finding relevant variables
+        :param statements: List of statements containing variables and their expressions
+        :param explored: Set of variables that have already been explored to avoid infinite recursion
+        :return: A set of variables that are related to the variable
+        """
+        if explored is None:
+            # Initialize explored as an empty set if it is None
+            explored = set()
+        # Initialize related_variables as an empty set
+        related_variables = set()
+        # Avoid re-exploring variables
+        if variable in explored:
+            # If the variable has been explored before, return the current set of related variables
+            return related_variables
+        # Add the current variable to the set of explored variables
+        explored.add(variable)
+        for item in statements:
+            if item[0] == variable:
+                # Extract variables from the expression
+                variables = self.extract_variables(item[1])
+                # Add directly related variables
+                related_variables.update(variables)
+                # Recursively get related variables for each found variable
+                for v in variables:
+                    # Check to prevent re-exploration
+                    if v not in explored:  
+                        related_variables.update(self.get_related_variables(v, statements, explored))
+        # Return the set of related variables
+        return related_variables
+
+    def has_circular_dependency(self, variable, hash_table, seen=None):
+        if seen is None:
+            seen = set()
+        if variable in seen:
+            return True  # Circular dependency detected
+        if variable not in hash_table:
+            return False  # Variable not defined, no circular dependency
+        seen.add(variable)
+        # Tokenize the expression associated with the variable to extract referenced variables
+        tokens = self.tokenize(hash_table[variable])
+        for token in tokens:
+            if token in hash_table and self.has_circular_dependency(token, hash_table, seen.copy()):
                 return True
+        seen.remove(variable)
+        return False

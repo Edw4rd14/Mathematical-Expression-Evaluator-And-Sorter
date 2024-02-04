@@ -6,23 +6,17 @@
 # =================================================================================================
 # FILENAME: HashTable.py
 # =================================================================================================
-'''
-Description:
-Implemented Dynamic Resizing to prevent running out of space
-'''
 
 # Hashtable Class
 class HashTable:
     # Initialization
     def __init__(self, size=10):
         """
-        The __init__ function initializes the Hashtable class.
-        Args:
-        size (int): The size of the hashtable. Defaults to 10 if not provided.
-        
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
-        :param size: Set the size of the hash table
+        :param size: Set size of hash table
         :return: Nothing
         """
         # Set size of Hastable
@@ -42,6 +36,16 @@ class HashTable:
         :return: A list of all keys in the hash table
         """
         return self._keys
+    
+    @property
+    def filtered_keys(self):
+        """
+        The filtered_keys function returns a list of the keys in the hash table without the None values.
+                
+        :param self: Refer to the instance of the class
+        :return: A list of all keys in the hash table without None values.
+        """
+        return [key for key in self.keys if key is not None]
     
     @property
     def buckets(self):
@@ -115,6 +119,16 @@ class HashTable:
         self._keys = [None] * self.size
         self._buckets = [None] * self.size
         self.count = 0
+
+    # Length of hash table
+    def __len__(self):
+        """
+        The __len__ function is a special function that returns the length of the hash table
+        
+        :param self: Refer to the instance of the class
+        :return: The number of items in the hash table
+        """
+        return self.count
         
     # Add Item into Hashtable
     def __setitem__(self, key, value):
@@ -201,3 +215,30 @@ class HashTable:
             if index == start_index:
                 break
         return False
+    
+    # Remove Item from Hashtable
+    def __delitem__(self, key):
+        """
+        The __delitem__ function is a special function that allows us to use the del operator on the hash table.
+        This function takes in a key and removes the key-value pair associated with that key if it exists.
+        
+        :param self: Refer to the instance of the class
+        :param key: Key to be removed from the hash table
+        :return: Nothing
+        """
+        # Use the hash function to calculate the index where the key should be stored.
+        index = self._hash_function(key)
+        start_index = index
+        # Loop until we find an empty bucket or have scanned the entire table
+        while self._keys[index] is not None:
+            if self._keys[index] == key:
+                # Key found, remove the corresponding key-value pair
+                self._keys[index] = None
+                self._buckets[index] = None
+                self.count -= 1
+                break
+            # Move to the next index
+            index = self._rehash_function(index)
+            # Check if we have scanned the entire table
+            if index == start_index:
+                break

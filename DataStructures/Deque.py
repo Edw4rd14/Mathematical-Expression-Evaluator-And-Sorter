@@ -15,10 +15,8 @@ class Deque:
     # Initialization
     def __init__(self):
         """
-        The __init__ function initializes the head, tail, current and length variables.
-        The head variable is a pointer to the first node in the Deque. The tail variable is a pointer to 
-        the last node in the Deque. The current variable points to the current node. 
-        Length keeps track of how many nodes are in the Deque.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :return: Nothing
@@ -308,9 +306,10 @@ class Deque:
         # Set current to head
         self.current = self.head
 
-    def get_all_objects(self):
+    @property
+    def items(self):
         """
-        The get_all_objects function returns all objects in the Deque as an array.
+        The items function returns all objects in the Deque as an array.
         
         :param self: Refer to the instance of the class
         :return: An array containing all objects in the Deque
@@ -322,8 +321,8 @@ class Deque:
             current_node = current_node.next_node
         return all_objects
     
-    def get_specific_object(self, variable):
-        all_items = self.get_all_objects()
+    def __getitem__(self, variable):
+        all_items = self.items
         for item in all_items:
             if item[0] == variable:
                 return item

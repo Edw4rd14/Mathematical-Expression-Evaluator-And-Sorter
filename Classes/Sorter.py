@@ -7,7 +7,7 @@
 # FILENAME: Sorter.py
 # =================================================================================================
 
-# Import modules
+# Import Modules
 from abc import ABC, abstractmethod
 
 # Sorter class
