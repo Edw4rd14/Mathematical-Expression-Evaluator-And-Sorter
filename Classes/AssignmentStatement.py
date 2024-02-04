@@ -309,14 +309,17 @@ class AssignmentStatement:
             print("No changes have been made.")
 
     # Option 9:
-    # Inside the AssignmentStatement class
-    def display_information(self):
-        """
-        The display_information function is for option 9 where users can display some general information or a message.
-        
-        :param self: Access the AssignmentStatement class
-        :return: None
-        """
-        print("\nQ: Some question")
-        print("A: Some answer")
+    def calculate_total(self):
+        total_value = 0
 
+        # Iterate through each statement and accumulate the total value
+        for statement in super().get_statements():
+            try:
+                key, value = get_key_and_value(statement)
+                evaluated_value = super().evaluate_expression(value)
+                total_value += evaluated_value
+            except Exception as e:
+                print(f"Error processing statement: {statement}. {str(e)}")
+
+        # Output the total value
+        print(f"\nTotal value of all statements: {total_value}\n")
