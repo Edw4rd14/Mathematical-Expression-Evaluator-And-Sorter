@@ -32,7 +32,7 @@ class Main:
         self.__banner_order = [0,1,2,3,4,5,3,0]
         # Menu options
         self.choice = None
-        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'Batch process assignment statement from files', 'Manage assignment statement history', 'Remove all statements', 'FAQ','Exit']
+        self._menu_options = ['Add/Modify assignment statement', 'Display current assignment statements', 'Evaluate a single variable', 'Read assignment statements from file', 'Sort assignment statements', 'Batch process assignment statement from files', 'Manage assignment statement history', 'Calculate Statements Total', 'FAQ','Exit']
         self.__options = {
             1: self.assignment_statement.add_modify_statement,
             2: self.assignment_statement.display_statements,
@@ -42,7 +42,7 @@ class Main:
             6: self.assignment_statement.batch_process,
             7: self.assignment_statement.manage_history,
             8: self.assignment_statement.remove_all_statements,
-            9: self.assignment_statement.display_information
+            9: self.assignment_statement.calculate_total
         }
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
