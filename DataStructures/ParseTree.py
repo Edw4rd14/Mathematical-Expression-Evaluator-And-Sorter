@@ -42,7 +42,7 @@ class ParseTree:
         # Root tree
         self.root = self.build_parse_tree(self.expression)
 
-    # Build a parse tree
+    # Build a parse tree - Done by Edward
     def build_parse_tree(self, expression):     
         """
         The build_parse_tree function takes an expression as a string and returns a binary tree representation of that expression.
@@ -100,7 +100,7 @@ class ParseTree:
                 return None
         return tree
     
-    # Return evaluate tree result
+    # Return evaluate tree result - Done by Edward
     def evaluate(self):
         """
         The evaluate function calls the protected function _evaluate_tree to evaluate the root binary tree expression. 
@@ -111,7 +111,7 @@ class ParseTree:
         """
         return self._evaluate_tree(tree=self.root)
 
-    # Evaluate tree function
+    # Evaluate tree function - Done by Edward
     def _evaluate_tree(self,tree):
         """
         The _evaluate_tree function takes the root of a tree and returns the result of evaluating that tree.
@@ -155,7 +155,7 @@ class ParseTree:
             # Handle exceptions or return None if there are any errors
             return None
         
-    # Print the expression tree in in-order format with indentation
+    # Print the expression tree in in-order format with indentation - Done by Ashwin
     def print_in_order(self):
         """
         The print_in_order function prints the tree in order.
@@ -166,7 +166,7 @@ class ParseTree:
         """
         self._print_in_order(self.root)
 
-    # Print in order function (This is a in-order traversal)
+    # Print in order function (This is a in-order traversal) - Done by Edward & Ashwin
     def _print_in_order(self, node, depth=0):
         """
         The _print_in_order function is a recursive function that prints the tree in order.

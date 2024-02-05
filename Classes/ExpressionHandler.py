@@ -31,7 +31,7 @@ class ExpressionHandler(InputHandler):
         self.parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
         self.variable_regex = re.compile("^[A-Za-z]+$")
 
-    # Tokenize expression
+    # Tokenize expression - Done by Edward
     @staticmethod
     def tokenize(expression:str)->list:
         """
@@ -52,7 +52,7 @@ class ExpressionHandler(InputHandler):
         tokens = re.findall(r'(\b\d+\.\d+\b|\b\w+\b|\*\*|//|\S)', expression)
         return tokens
     
-    # Get key and value from statement
+    # Get key and value from statement - Done by Edward
     @staticmethod
     def get_key_and_value(statement:str)->list:
         """
@@ -65,7 +65,7 @@ class ExpressionHandler(InputHandler):
         return [x.strip() for x in statement.split('=')]
 
 
-    # Check if expression contains operator
+    # Check if expression contains operator - Done by Edward
     def contain_operator(self, expression: str) -> bool:
         """
         The contain_operator function checks for the existence of operators in an expression.
@@ -77,7 +77,7 @@ class ExpressionHandler(InputHandler):
         # Check for the existence of operators
         return bool(self.operator_regex.search(expression))
 
-    # Check juxtaposition of parenthesis in expression
+    # Check juxtaposition of parenthesis in expression - Done by Edward
     def check_juxtaposition_parenthesis(self, expression: str) -> bool:
         """
         The check_juxtaposition_parenthesis function checks for juxtaposition of variables or number next to ( or after ), 
@@ -90,7 +90,7 @@ class ExpressionHandler(InputHandler):
         # Check for juxtaposition of variables or number next to ( or after ), or )(
         return bool(self.parenthesis_regex.search(expression))
 
-    # Check if there are consecutive operators in the expression
+    # Check if there are consecutive operators in the expression - Done by Edward
     def check_consecutive_operators(self, expression: str) -> bool:
         """
         The check_consecutive_operators function checks for consecutive operators in the expression.
@@ -114,7 +114,7 @@ class ExpressionHandler(InputHandler):
         # After looping through all characters, and no return True has occured, this means there are no consecutive operands, hence return False
         return False
 
-    # Check for equal sign
+    # Check for equal sign - Done by Edward
     def check_eq_sign(self, statement: str, menu: bool=True) -> bool:
         """
         The check_eq_sign function checks if there is an equal sign in the statement.
@@ -133,7 +133,7 @@ class ExpressionHandler(InputHandler):
             return False
         return True
 
-    # Check for incomplete expression
+    # Check for incomplete expression - Done by Edward
     def check_incomplete_expression(self, expression: str) -> bool:
         """
         The check_incomplete_expression function checks for incomplete expressions.
@@ -155,7 +155,7 @@ class ExpressionHandler(InputHandler):
             return True
         return False
 
-    # Check parenthesis in expression
+    # Check parenthesis in expression - Done by Edward
     def check_parenthesis(self, expression: str) -> bool:
         """
         The check_parenthesis function checks if the expression is valid.
@@ -193,7 +193,7 @@ class ExpressionHandler(InputHandler):
         # Check if there are any unclosed parentheses left in the stack
         return all(item[0] != '(' for item in stack.items)
     
-    # Run key and value through all validation
+    # Run key and value through all validation - Done by Edward
     def validate_key_and_value(self, key: str, value: str, menu:bool=True) -> tuple:
         """
         The validate_key_and_value function takes in a key and value, and runs a series of
@@ -241,7 +241,7 @@ class ExpressionHandler(InputHandler):
 
         return True
     
-    # Extract variable   
+    # Extract variable - Done by Edward
     def extract_variables(self, item):
         """
         The extract_variables returns the variables in an expression.
@@ -255,6 +255,7 @@ class ExpressionHandler(InputHandler):
                 variables.append(t)
         return variables
     
+    # Format variable dependency - Done by Edward
     @staticmethod
     def format_dependency(variable, dependencies):
         dependency_list = list(dependencies)
@@ -264,7 +265,7 @@ class ExpressionHandler(InputHandler):
             result_string = dependency_list[0]
         return f"{variable} {'is dependent on ' + result_string if dependency_list else 'is independent.'}\n\n"
     
-    # Get relevant variables recursively
+    # Get relevant variables recursively - Done by Edward
     def get_related_variables(self, variable, statements, explored=None):
         """
         The get_related_variables function takes a variable as input and returns all variables that are related to it.
@@ -300,6 +301,7 @@ class ExpressionHandler(InputHandler):
         # Return the set of related variables
         return related_variables
 
+    # Check circular dependency - Done by Edward
     def has_circular_dependency(self, variable, hash_table, seen=None):
         if seen is None:
             seen = set()

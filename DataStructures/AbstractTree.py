@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 
 # AbstractTree class
 class AbstractTree(ABC):
+    # Initialization
     @abstractmethod
     def __init__(self, root_object):
         """
@@ -24,6 +25,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Right tree getter abstract method - Done by Edward
     @property
     @abstractmethod
     def right_tree(self):
@@ -36,6 +38,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Right tree setter abstract method - Done by Edward
     @right_tree.setter
     @abstractmethod
     def right_tree(self, value):
@@ -48,6 +51,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Left tree getter abstract method - Done by Edward
     @property
     @abstractmethod
     def left_tree(self):
@@ -60,6 +64,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Left tree setter abstract method - Done by Edward
     @left_tree.setter
     @abstractmethod
     def left_tree(self, value):
@@ -72,6 +77,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Insert left child abstract method - Done by Edward
     @abstractmethod
     def insert_left(self, new_node):
         """
@@ -86,6 +92,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Insert right child abstract method - Done by Edward
     @abstractmethod
     def insert_right(self, new_node):
         """
@@ -100,6 +107,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Root value getter abstract method - Done by Edward
     @property
     @abstractmethod
     def root_value(self):
@@ -112,6 +120,7 @@ class AbstractTree(ABC):
         """
         pass
 
+    # Root value setter abstract method - Done by Edward
     @root_value.setter
     @abstractmethod
     def root_value(self, value):

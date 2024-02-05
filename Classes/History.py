@@ -35,7 +35,7 @@ class History:
         self.input_handler = InputHandler()
         self.expression_handler = ExpressionHandler()
 
-    # Override len()
+    # Override len() - Done by Edward
     def __len__(self):
         """
         The __len__ function is a special function that returns the length of the history.        
@@ -45,7 +45,7 @@ class History:
         """
         return len(self.deque)
 
-    # Update file
+    # Update file - Done by Edward
     def update_file(self):
         """
         The update_file function is used to update the JSON file with the current history.
@@ -64,7 +64,7 @@ class History:
         with open(self.__file_path, 'w') as file:
             json.dump(history, file)
     
-    # Load JSON file
+    # Load JSON file - Done by Edward
     def load_file(self):
         """
         The load_file function is used to load the history from the JSON file.
@@ -81,7 +81,7 @@ class History:
                 total_history = json.load(file)
                 # Loop loaded data
                 for history in total_history:
-                    if not self.deque.contains(history):
+                    if history not in self.deque:
                         # Insert loaded data into head of deque
                         self.deque.add_head(data=tuple(history))
             # Set current node to head node
@@ -90,7 +90,7 @@ class History:
         except:
             print(f"\nError loading history. Please try again.")
 
-    # Add History (No need for validation as all validation handled before adding)
+    # Add History (No need for validation as all validation handled before adding) - Done by Edward
     def add_history(self, item):
         """
         The add_history function adds a new item to the history.
@@ -108,7 +108,7 @@ class History:
         # Add the new item to the head of the deque
         self.deque.add_head(data=item)
 
-    # Remove history
+    # Remove history - Done by Edward
     def remove_history(self):
         """
         The remove_history function is a public interface for removing the current item from the deque.   
@@ -118,7 +118,7 @@ class History:
         """
         self.deque.remove_current()
 
-    # Print history
+    # Print history - Done by Edward
     def print_history(self, position):
         """
         The print_history function prints the current history item in a table format, including
@@ -150,7 +150,7 @@ class History:
             print(f'| {row} |')
             print(horizontal_border)  # Add this line to create a row of '=' characters between each row
 
-    # Import variable & relevant variables if necessary
+    # Import variable & relevant variables if necessary - Done by Edward
     def import_variables(self): 
         """
         The import_variables function is used to import a statement from the deque into the hash table.
@@ -193,7 +193,7 @@ class History:
             # Print random error message if error occurs
             print("\nAn error occurred while importing statements. Please restart the application or try again. Returning back to main menu...")
 
-    # Public interface for forward in deque
+    # Public interface for forward in deque - Done by Edward
     def forward(self):
         """
         The forward function moves the deque forward one position.
@@ -203,7 +203,7 @@ class History:
         """
         self.deque.go_forward()
 
-    # Public interface for backwards in deque
+    # Public interface for backwards in deque - Done by Edward
     def backward(self):
         """
         The backward function moves the current node to the previous node in the deque.
@@ -214,7 +214,7 @@ class History:
         """
         self.deque.go_back()
 
-    # Public interface clearing deque
+    # Public interface clearing deque - Done by Edward
     def clear_history(self):
         """
         The clear_history function clears the deque storing the history
@@ -224,7 +224,7 @@ class History:
         """
         self.deque.clear()
 
-    # Public interface for resetting deque to head
+    # Public interface for resetting deque to head - Done by Edward
     def reset_to_head(self):
         """
         The reset_to_head function resets the current node to the head of the deque.

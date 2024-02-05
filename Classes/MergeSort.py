@@ -12,6 +12,7 @@ from Classes.Sorter import Sorter
 
 # MergeSort class
 class MergeSort(Sorter):
+    # Merge sort algorithm - Done by Edward
     @staticmethod
     def merge_sort(arr):
         """
@@ -69,6 +70,7 @@ class MergeSort(Sorter):
         # Return sorted array
         return arr
 
+    # Sort interface - Done by Edward
     @staticmethod
     def sort(arr, reverse=False):
         """

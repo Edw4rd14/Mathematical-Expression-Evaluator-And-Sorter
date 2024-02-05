@@ -27,6 +27,7 @@ class FileHandler(InputHandler):
         """
         super().__init__()
 
+    # Prompt and validate file path - Done by Edward
     def validate_file(self,question:str, mode:str=None)->str:
         """
         The validate_file function is used to validate user input for file paths.
@@ -50,13 +51,29 @@ class FileHandler(InputHandler):
         # If no errors, return file path
         return file_path
     
-    def validate_folder(self, question:str)->str:
+    # Prompt and validate folder path - Done by Edward
+    def validate_folder(self, question: str) -> str:
         while True:
-            folder_path = input(question)
-            if os.path.isdir(folder_path):
+            folder_path = input(question).strip()  # Trim whitespace
+            # Check if the path is a directory and not one of the disallowed paths
+            if os.path.isdir(folder_path) and self.check_folder_path(folder_path):
                 return folder_path
-            print(f"\nFolder path '{folder_path}' does not exist. {self.err_msg}")
-    
+            print(f"\nFolder path '{folder_path}' is not allowed or does not exist. {self.err_msg}")
+
+    # Check folder path - Done by Edward
+    @staticmethod
+    def check_folder_path(path: str) -> bool:
+        # Disallowed characters in folder path such as . or /
+        disallowed = {"../", "./", "/", '.', "\\"}
+        # Check if the path ends with or contains any disallowed characters such as . or /
+        for disallowed_path in disallowed:
+            # Return false if invalid folder path
+            if path == disallowed_path or path.startswith(disallowed_path) or path.endswith(disallowed_path):
+                return False
+        # Return True if valid
+        return True
+
+    # Read folder path - Done by Edward
     def read_folder(self, folder_path:str):
         # File deque
         file_deque = Deque()
@@ -67,10 +84,9 @@ class FileHandler(InputHandler):
                 # Directory variable etc. "CASE01/file01.txt"
                 file_directory = dir_name+"/"+files
                 # Check if directory leads to an existing file, is a text file (ends with .txt)
-                print(files)
                 if os.path.isfile(file_directory) and files.endswith('.txt') and not "file-" in files and files != 'logs.txt':
                     # Open file
-                    with open(file_directory, 'r') as file:
+                    with open(file_directory, 'r', encoding='utf-8') as file:
                         # Read file content
                         file_contents = file.readlines()
                         # Append to Queue
@@ -78,7 +94,7 @@ class FileHandler(InputHandler):
         # Return Queue object and directory name
         return file_deque, dir_name
     
-    # File operation (read/write)
+    # File operation (read/write) - Done by Edward
     def file_operation(self, file_path: str, mode: str, content: str = None, menu=True):
         # Try and except to catch errors
         try:

@@ -47,7 +47,7 @@ class Main:
         # Exit message
         self._exit = "\nBye, thanks for using ST1507 DSAA: Assignment Statement Evaluator & Sorter"
 
-    # Start banner
+    # Start banner - Done by Edward
     def _start_banner(self):
         """
         The _start_banner function prints the banner of the application in the specified order.
@@ -60,7 +60,7 @@ class Main:
             print(self._banner[order])
         print("\n")
 
-    # Menu prompt
+    # Menu prompt - Done by Edward
     def _menu(self):
         """
         The _menu function prints the menu options and prompts the user for a choice.
@@ -76,7 +76,7 @@ class Main:
         # User input for menu option
         self.choice = int(input("Enter choice: "))
 
-    # Run main application
+    # Run main application - Done by Edward
     def start(self):
         """
         The start function is the main function that runs the application.

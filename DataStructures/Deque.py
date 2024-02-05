@@ -30,6 +30,7 @@ class Deque:
         # Initialize length variable to 0 
         self.length = 0 
 
+    # Override length len() function - Done by Edward
     def __len__(self):
         """
         The __len__ function is a special function that returns the length of an object.
@@ -41,6 +42,7 @@ class Deque:
         # Return length
         return self.length
 
+    # Is empty function - Done by Edward
     @property
     def is_empty(self):
         """
@@ -52,6 +54,7 @@ class Deque:
         # Return boolean of length == 0
         return self.length == 0
 
+    # Add head function - Done by Edward
     def add_head(self, data):
         """
         The add_head function adds a new node to the head of the Deque.
@@ -90,6 +93,7 @@ class Deque:
         # Increment length by 1
         self.length += 1
 
+    # Add tail function - Done by Edward
     def add_tail(self, data):
         """
         The add_tail function adds a new node to the end of the Deque.
@@ -127,6 +131,7 @@ class Deque:
         # Increment length by 1
         self.length += 1
 
+    # Remove head function - Done by Edward
     def remove_head(self):
         """
         The remove_head function removes the head of the Deque and returns it.
@@ -191,6 +196,7 @@ class Deque:
         else:
             raise IndexError("Deque is empty")
     
+    # Remove current function - Done by Edward
     def remove_current(self):
         """
         The remove_current function removes the current node from the Deque.
@@ -226,7 +232,7 @@ class Deque:
         self.length -= 1
         return removed_data
 
-
+    # Go back function - Done by Edward
     def go_back(self):
         """
         The go_back function allows the user to go back one node in the Deque.
@@ -245,7 +251,8 @@ class Deque:
         # Else return error message
         else:
             return "No previous item."
-
+        
+    # Go forward function - Done by Edward
     def go_forward(self):
         """
         The go_forward function moves the current node to the next node in the Deque.
@@ -265,6 +272,7 @@ class Deque:
         else:
             return "No next item."
 
+    # Clear function - Done by Edward
     def clear(self):
         """
         The __clear function sets the head and tail to None, and resets the length of the Deque to 0.
@@ -277,9 +285,10 @@ class Deque:
         # Set length to 0 (reset Deque)
         self.length = 0
 
-    def contains(self, item):
+    # Contains function - Done by Edward
+    def __contains__(self, item):
         """
-        The contains function takes in a tuple of the form (key, value) and returns True if the key is present in the Deque.
+        The __contains__ function takes in a tuple of the form (key, value) and returns True if the key is present in the Deque.
         If it is not present, then it returns False.
         
         :param self: Refer to the instance of the class
@@ -293,6 +302,7 @@ class Deque:
             current_node = current_node.next_node
         return False
     
+    # Reset to head function - Done by Edward
     def reset_to_head(self):
         """
         The reset_to_head function resets the current pointer back to the head of the Deque.
@@ -306,6 +316,7 @@ class Deque:
         # Set current to head
         self.current = self.head
 
+    # Get all items function - Done by Edward
     @property
     def items(self):
         """
@@ -321,6 +332,7 @@ class Deque:
             current_node = current_node.next_node
         return all_objects
     
+    # Get item function - Done by Edward
     def __getitem__(self, variable):
         all_items = self.items
         for item in all_items:

@@ -27,6 +27,7 @@ class HashTable:
         # Count of items stored
         self.count = 0 
 
+    # Get all keys function - Done by Edward
     @property
     def keys(self):
         """
@@ -37,6 +38,7 @@ class HashTable:
         """
         return self._keys
     
+    # Get filtered keys function (no None values) - Done by Edward
     @property
     def filtered_keys(self):
         """
@@ -47,6 +49,7 @@ class HashTable:
         """
         return [key for key in self.keys if key is not None]
     
+    # Get buckets function - Done by Edward
     @property
     def buckets(self):
         """
@@ -57,7 +60,7 @@ class HashTable:
         """
         return self._buckets
 
-    # Hash Function to convert key to index
+    # Hash Function to convert key to index - Done by Edward
     def _hash_function(self, key):
         """
         The _hash_function function takes a key and returns an index in the hash table.
@@ -68,7 +71,7 @@ class HashTable:
         """
         return hash(key) % self.size
     
-    # Collision Resolution
+    # Collision Resolution - Done by Edward
     def _rehash_function(self, old_hash):
         """
         The _rehash_function function is used to rehash the hash value of a key.
@@ -80,7 +83,7 @@ class HashTable:
         """
         return hash(old_hash+1) % self.size
     
-    # Dynamic Resizing of Hashtable
+    # Dynamic Resizing of Hashtable - Done by Edward
     def _resize(self):
         """
         The _resize function is called when the load factor of the Hashtable exceeds 0.85.
@@ -108,7 +111,7 @@ class HashTable:
             if key is not None:
                 self[key] = value
     
-    # Clear Hashtable
+    # Clear Hashtable - Done by Edward
     def clear(self):
         """
         The clear function resets the hash table, removing all key-value pairs and setting the count of items back to 0.
@@ -120,7 +123,7 @@ class HashTable:
         self._buckets = [None] * self.size
         self.count = 0
 
-    # Length of hash table
+    # Length of hash table - Done by Edward
     def __len__(self):
         """
         The __len__ function is a special function that returns the length of the hash table
@@ -130,7 +133,7 @@ class HashTable:
         """
         return self.count
         
-    # Add Item into Hashtable
+    # Add Item into Hashtable - Done by Edward
     def __setitem__(self, key, value):
         """
         The __setitem__ function is used to set a value in the Hashtable.
@@ -169,7 +172,7 @@ class HashTable:
                     if index == startIndex:
                         break
 
-    # Get item from Hashtable
+    # Get item from Hashtable - Done by Edward
     def __getitem__(self,key):
         """
         The __getitem__ function is a special function that allows us to use the [] operator on our HashTable object.
@@ -195,7 +198,7 @@ class HashTable:
         # If the key is not found return None
         return None
     
-    # Check if key in Hashtable
+    # Check if key in Hashtable - Done by Edward
     def __contains__(self, key):
         """
         The __contains__ function checks if a key is in the hash table.
@@ -216,7 +219,7 @@ class HashTable:
                 break
         return False
     
-    # Remove Item from Hashtable
+    # Remove Item from Hashtable - Done by Edward
     def __delitem__(self, key):
         """
         The __delitem__ function is a special function that allows us to use the del operator on the hash table.

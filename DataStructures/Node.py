@@ -9,6 +9,7 @@
 
 # Node class
 class Node:
+    # Initialization
     def __init__(self, data):
         """
         The __init__ function is a special function in Python classes. It is run as soon as an object of a class is instantiated. 
@@ -25,6 +26,7 @@ class Node:
         # Pointer for previous node
         self.prev_node = None
     
+    # Less than operator overriding - Done by Edward
     def __lt__(self, other):
         """
         The __lt__ function is a special function that allows us to compare two objects of the same class.

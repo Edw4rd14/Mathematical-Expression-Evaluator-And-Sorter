@@ -21,6 +21,7 @@ class InputHandler:
         # Error message
         self.err_msg = 'Please try again or CRTL + C to return back to main menu.\n'
 
+    # Format error - Done by Edward
     def format_error(self, error, menu, var=""):
         """
         The format_error function is used to format error messages for the user.
@@ -32,6 +33,7 @@ class InputHandler:
         """
         return f"\nInvalid format{' for variable ' + var if var else ''}! {error}. {self.err_msg if menu else ''}"
 
+    # Prompt polar question (yes/no) - Done by Edward
     def prompt_polar_question(self,question:str)->bool:
         """
         The prompt_polar_question function prompts the user with a question that requires a Yes or No answer.

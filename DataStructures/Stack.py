@@ -12,6 +12,7 @@ Description:
 '''
 # Stack Class
 class Stack:
+    # Initialization
     def __init__(self):
         """
         The __init__ function is called when the class is instantiated.
@@ -23,6 +24,7 @@ class Stack:
         # Use a list to store stack items
         self._items = []  
 
+    # Length of stack - Done by Edward
     def __len__(self):
         """
         The __len__ function is a special function that returns the length of an object.
@@ -34,6 +36,7 @@ class Stack:
         # Length of the stack is the length of the list
         return len(self._items)  
 
+    # Push to stack - Done by Edward
     def push(self, data):
         """
         The push function adds an item to the end of the stack.
@@ -45,6 +48,7 @@ class Stack:
         # Add an item to the end of the list
         self._items.append(data)  
 
+    # Pop from stack - Done by Edward
     def pop(self):
         """
         The pop function removes and returns the last item of the stack.
@@ -58,6 +62,7 @@ class Stack:
             raise Exception("Stack is empty")
         return self._items.pop() 
     
+    # Get all items in stack - Done by Edward
     @property
     def items(self):
         """
@@ -68,6 +73,7 @@ class Stack:
         """
         return self._items
 
+    # Check if stack is empty - Done by Edward
     @property
     def is_empty(self):
         """

@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 
 # Sorter class
 class Sorter(ABC):
+    # Sort abstract method - Done by Edward
     @staticmethod
     @abstractmethod
     def sort(arr, reverse=False):

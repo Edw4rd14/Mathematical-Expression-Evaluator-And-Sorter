@@ -48,7 +48,7 @@ class AssignmentStatement:
         self.input_handler = InputHandler()
         self.file_handler = FileHandler()
     
-    # Option 1: Add/modify assignment statement
+    # Option 1: Add/modify assignment statement - Done by Edward
     def add_modify_statement(self):
         """
         The add_modify_statement function is for option 1 where users add or modify statements. 
@@ -76,7 +76,7 @@ class AssignmentStatement:
             self.update_statements()
             break
 
-    # Evaluate current assignment statements
+    # Evaluate current assignment statements - Done by Edward
     def sort_and_evaluate_statements(self):
         """
         The sort_and_evaluate_statements function will take the hash table keys (variables) that are not none, use the merge sort algorithm
@@ -109,7 +109,7 @@ class AssignmentStatement:
                     pass
         return deque
 
-    # Option 2: Display current assignment statements
+    # Option 2: Display current assignment statements - Done by Edward
     def display_statements(self):
         """
         The display_statements function takes the sorted assignment statements
@@ -126,7 +126,7 @@ class AssignmentStatement:
             key, value, evaluated = deque.remove_head()
             print(f"{key}={value}=> {evaluated}")
 
-    # Update history and sorted list
+    # Update history and sorted list - Done by Edward
     def update_statements(self):
         """
         The update_statements function is responsible for updating the sorted_list and history.
@@ -141,7 +141,7 @@ class AssignmentStatement:
             self.sorted_list.insert(new_data=(f"{key}={value}", evaluated))
             self.history.add_history(item=(key, value, evaluated, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
-    # Option 3: Evaluate and print parse tree for an individual variable
+    # Option 3: Evaluate and print parse tree for an individual variable - Done by Edward & Ashwin
     def evaluate_single_variable(self):
         """
         The evaluate_single_variable function is for option 3 where users evaluate one variable and view 
@@ -175,7 +175,7 @@ class AssignmentStatement:
             except:
                 pass
 
-    # Option 4: Read statements from a file
+    # Option 4: Read statements from a file - Done by Edward & Ashwin
     def read_statements_from_file(self):
         """
         The read_statements_from_file function is for option 4 where users read assignment statements from a file. This option
@@ -211,7 +211,19 @@ class AssignmentStatement:
             except Exception as e:
                 print(e)
 
-    # Option 5: Sort assignment statements
+    def add_many_statements(self, hash_table, statements):
+        # Loop each statement
+        for statement in statements:
+            # Check equal sign
+            if self.expression_handler.check_eq_sign(statement, False):
+                # Get key and value from statement
+                key, value = self.expression_handler.get_key_and_value(statement)
+                # Validate key and value
+                if self.expression_handler.validate_key_and_value(key,value,False):
+                    # Expression satisfies all conditions, add to HashTable
+                    hash_table[key] = value
+
+    # Option 5: Sort assignment statements - Done by Edward
     def sort_statements(self):
         """
         The sort_statements function is for option 5 where users sort their assignment statements and outputs them
@@ -234,7 +246,7 @@ class AssignmentStatement:
             except Exception as e:
                 print(e)
 
-    # Option 6:
+    # Option 6: Batch process files - Done by Edward
     def batch_process(self):
         """
         The batch_process function is used to process multiple files at once.
@@ -255,91 +267,95 @@ class AssignmentStatement:
         # Initialize logs
         logs = "Batch Processing Logs\n" + "="*25 + "\nInput file => Output file\n" + "=" * 25
         # Process each file in the deque
-        while not file_deque.is_empty:
-            # Temporary storage for variables and their values
-            temp_hashtable = HashTable()  
-            # String to hold variable dependencies
-            var_dependency = ""  
-            # Get the next file's name and content
-            file_name, file_content = file_deque.remove_head()  
-            # Prepare a sorted list for evaluated expressions
-            sorted_list = SortedList()  
-            # String to accumulate errors found during processing
-            errors = "" 
-            # Statement error flag
-            statement_error_flag = False
-            # Print formatting
-            print("\n"+border)
-            print(f"File '{file_name}':")
-            # Process each statement in the file content
-            for statement in file_content:
-                # Check if the statement contains an equal sign, skip if not
-                if not self.expression_handler.check_eq_sign(statement, False):
-                    statement_error_flag = True
-                    continue
-                # Extract key (variable) and value from the statement
-                key, value = self.expression_handler.get_key_and_value(statement)
-                # Validate the extracted key and value
-                if self.expression_handler.validate_key_and_value(key, value, False):
-                    # Store the valid key-value pair in the hashtable
-                    temp_hashtable[key] = value
-                else:
-                    statement_error_flag = True
-            # Evaluate expressions and dependencies for each key in the hashtable
-            for key in MergeSort.sort(temp_hashtable.filtered_keys):
-                if key is not None:
-                    try:
-                        # Evaluate the expression for the current key and add to sorted list
-                        value = temp_hashtable[key]
-                        evaluated = ParseTree(variable=key, expression=value, hash_table=temp_hashtable).evaluate()
-                        sorted_list.insert(new_data=(f"{key}={value}", evaluated))
-                        # Get dependencies of the current variable
-                        key_value_pairs = [self.expression_handler.get_key_and_value(stmt) for stmt in file_content]
-                        relevant_vars = self.expression_handler.get_related_variables(key, key_value_pairs)
-                        var_dependency += self.expression_handler.format_dependency(variable=key, dependencies=relevant_vars)
-                    except ValueError as ve:
-                        # Accumulate errors encountered during evaluation
-                        errors += str(ve)
-            # Prepare evaluated statements for output
-            evaluated_statements = sorted_list.print_sorted()
-            # Handle cases where no errors, no evaluated statements, or no variable dependencies were found
-            if evaluated_statements == "":
-                evaluated_statements = "Please double check the original file and ensure that it is not empty or has unresolved errors." 
-                errors = "\nThere are unresolved error(s) in the file."
-            if var_dependency == "":
-                var_dependency = "Please double check the original file and ensure that it is not empty or has unresolved errors." 
-                errors = "\nThere are unresolved error(s) in the file."
-            # Print errors from processing the file
-            if errors:
-                print(errors)
-            if statement_error_flag:
-                print("\nStatement error(s) occurred while processing file.")
-            if not errors and not statement_error_flag:
-                print("\nNo errors while processing file.")
-            print(border)
-            # Compile content for output file and write it to file
-            content = (
-                f"Original Filename: {file_name}\n\n"
-                "====================\n"
-                "Evaluated Statements\n"
-                "====================\n\n"
-                f"{evaluated_statements}\n\n"
-                "========================\n"
-                "Variable Dependency List\n"
-                "========================\n\n"
-                f"{var_dependency}"
-            )
-            # Output file name
-            output_file_name = f"file-{count}.txt"
-            # Write to output file
-            self.file_handler.file_operation(file_path=f"{dir_name}/{output_file_name}", mode='w', content=content, menu=False)
-            # Increment file counter
-            count += 1  
-            # Update logs
-            logs += f"\n{file_name} => {output_file_name}"
-        # Write logs to logs.txt
-        self.file_handler.file_operation(file_path=f"{dir_name}/logs.txt", mode='w', content=logs, menu=False)
-    # Option 7: Manage assignment statement history
+        if not file_deque.is_empty:
+            while not file_deque.is_empty:
+                # Temporary storage for variables and their values
+                temp_hashtable = HashTable()  
+                # String to hold variable dependencies
+                var_dependency = ""  
+                # Get the next file's name and content
+                file_name, file_content = file_deque.remove_head()  
+                # Prepare a sorted list for evaluated expressions
+                sorted_list = SortedList()  
+                # String to accumulate errors found during processing
+                errors = "" 
+                # Statement error flag
+                statement_error_flag = False
+                # Print formatting
+                print("\n"+border)
+                print(f"File '{file_name}':")
+                # Process each statement in the file content
+                for statement in file_content:
+                    # Check if the statement contains an equal sign, skip if not
+                    if not self.expression_handler.check_eq_sign(statement, False):
+                        statement_error_flag = True
+                        continue
+                    # Extract key (variable) and value from the statement
+                    key, value = self.expression_handler.get_key_and_value(statement)
+                    # Validate the extracted key and value
+                    if self.expression_handler.validate_key_and_value(key, value, False):
+                        # Store the valid key-value pair in the hashtable
+                        temp_hashtable[key] = value
+                    else:
+                        statement_error_flag = True
+                # Evaluate expressions and dependencies for each key in the hashtable
+                for key in MergeSort.sort(temp_hashtable.filtered_keys):
+                    if key is not None:
+                        try:
+                            # Evaluate the expression for the current key and add to sorted list
+                            value = temp_hashtable[key]
+                            evaluated = ParseTree(variable=key, expression=value, hash_table=temp_hashtable).evaluate()
+                            sorted_list.insert(new_data=(f"{key}={value}", evaluated))
+                            # Get dependencies of the current variable
+                            key_value_pairs = [self.expression_handler.get_key_and_value(stmt) for stmt in file_content]
+                            relevant_vars = self.expression_handler.get_related_variables(key, key_value_pairs)
+                            var_dependency += self.expression_handler.format_dependency(variable=key, dependencies=relevant_vars)
+                        except ValueError as ve:
+                            # Accumulate errors encountered during evaluation
+                            errors += str(ve)
+                # Prepare evaluated statements for output
+                evaluated_statements = sorted_list.print_sorted()
+                # Handle cases where no errors, no evaluated statements, or no variable dependencies were found
+                if evaluated_statements == "":
+                    evaluated_statements = "Please double check the original file and ensure that it is not empty or has unresolved errors." 
+                    errors = "\nThere are unresolved error(s) in the file."
+                if var_dependency == "":
+                    var_dependency = "Please double check the original file and ensure that it is not empty or has unresolved errors." 
+                    errors = "\nThere are unresolved error(s) in the file."
+                # Print errors from processing the file
+                if errors:
+                    print(errors)
+                if statement_error_flag:
+                    print("\nStatement error(s) occurred while processing file.")
+                if not errors and not statement_error_flag:
+                    print("\nNo errors while processing file.")
+                print(border)
+                # Compile content for output file and write it to file
+                content = (
+                    f"Original Filename: {file_name}\n\n"
+                    "====================\n"
+                    "Evaluated Statements\n"
+                    "====================\n\n"
+                    f"{evaluated_statements}\n\n"
+                    "========================\n"
+                    "Variable Dependency List\n"
+                    "========================\n\n"
+                    f"{var_dependency}"
+                )
+                # Output file name
+                output_file_name = f"file-{count}.txt"
+                # Write to output file
+                self.file_handler.file_operation(file_path=f"{dir_name}/{output_file_name}", mode='w', content=content, menu=False)
+                # Increment file counter
+                count += 1  
+                # Update logs
+                logs += f"\n{file_name} => {output_file_name}"
+            # Write logs to logs.txt
+            self.file_handler.file_operation(file_path=f"{dir_name}/logs.txt", mode='w', content=logs, menu=False)
+        else:
+            print(f"There were no text files detected in '{dir_name}'.")
+
+    # Option 7: Manage assignment statement history - Done by Edward
     def manage_history(self):
         if not self.history.deque.is_empty:
             index = 1
@@ -396,7 +412,7 @@ class AssignmentStatement:
         else:
             print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 4.")
 
-    # Update history function
+    # Update history function - Done by Edward
     def update_history(self):
         """
         The update_history function is the public interface method for the
@@ -407,7 +423,7 @@ class AssignmentStatement:
         """
         self.history.update_file()
 
-    # Option 8: Remove all assignment statements
+    # Option 8: Remove all assignment statements - Done by Aswhin
     def remove_all_statements(self):
         """
         The remove_all_statements function removes all assignment statements from the hash table, sorted list and history.
@@ -434,7 +450,7 @@ class AssignmentStatement:
             # Display a message indicating that no changes have been made
             print("\nNo changes have been made.")
 
-    # Option 9:
+    # Option 9: Display statistics - Done by Aswhin
     def display_statistics(self):
         """
         The display_statistics function calculates and displays basic statistics about the assignment statements.

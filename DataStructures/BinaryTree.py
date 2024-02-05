@@ -27,7 +27,7 @@ class BinaryTree(AbstractTree):
         self._left_tree = None
         self._right_tree = None
 
-    # Get the right tree of the current node
+    # Get the right tree of the current node - Done by Edward
     @property
     def right_tree(self):
         """
@@ -38,7 +38,7 @@ class BinaryTree(AbstractTree):
         """
         return self._right_tree
     
-    # Set the right tree of the current node
+    # Set the right tree of the current node - Done by Edward
     @right_tree.setter
     def right_tree(self, value):
         """
@@ -50,7 +50,7 @@ class BinaryTree(AbstractTree):
         """
         self._right_tree = value
 
-    # Get the left tree of the current node
+    # Get the left tree of the current node - Done by Edward
     @property
     def left_tree(self):
         """
@@ -61,7 +61,7 @@ class BinaryTree(AbstractTree):
         """
         return self._left_tree    
     
-    # Set the left tree of the current node
+    # Set the left tree of the current node - Done by Edward
     @left_tree.setter
     def left_tree(self, value):
         """
@@ -74,7 +74,7 @@ class BinaryTree(AbstractTree):
         """
         self._left_tree = value
 
-    # Insert left
+    # Insert left - Done by Edward
     def insert_left(self, new_node):
         """
         The insert_left function inserts a new sub-tree as the left child of the current root.
@@ -98,7 +98,7 @@ class BinaryTree(AbstractTree):
             # Update the left tree of the current node to be the new node
             self.left_tree = t
 
-    # Insert right
+    # Insert right - Done by Edward
     def insert_right(self, new_node):
         """
         The insert_right function inserts a new sub-tree as the right child of the current root.
@@ -122,7 +122,7 @@ class BinaryTree(AbstractTree):
             # Update the right tree of the current node to be the new node
             self.right_tree = t
     
-    # Get the value of the root node
+    # Get the value of the root node - Done by Edward
     @property
     def root_value(self):
         """
@@ -133,7 +133,7 @@ class BinaryTree(AbstractTree):
         """
         return self._key
 
-    # Set the value of the root node
+    # Set the value of the root node - Done by Edward
     @root_value.setter
     def root_value(self, value):
         """
