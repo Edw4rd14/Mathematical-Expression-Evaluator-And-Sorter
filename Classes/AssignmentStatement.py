@@ -435,17 +435,23 @@ class AssignmentStatement:
             print("\nNo changes have been made.")
 
     # Option 9:
-    def calculate_total(self):
-        total_value = 0
+    def display_statistics(self):
+        """
+        The display_statistics function calculates and displays basic statistics about the assignment statements.
 
-        # Iterate through each statement and accumulate the total value
-        for statement in super().get_statements():
-            try:
-                key, value = self.expression_handler.get_key_and_value(statement)
-                evaluated_value = super().evaluate_expression(value)
-                total_value += evaluated_value
-            except Exception as e:
-                print(f"Error processing statement: {statement}. {str(e)}")
+        :param self: Refer to the instance of the class
+        :return: Nothing
+        """
+        total_statements = sum(1 for bucket in self.hash_table.buckets if bucket is not None)
+        
+        total_length = sum(len(bucket) for bucket in self.hash_table.buckets if bucket is not None)
 
-        # Output the total value
-        print(f"\nTotal value of all statements: {total_value}\n")
+        average_length = total_length / total_statements if total_statements > 0 else 0
+
+        print(f"\nBasic Statistics:")
+        print(f"Total Assignment Statements: {total_statements}")
+        print(f"Average Length of Statements: {average_length:.2f} characters")
+
+
+
+
