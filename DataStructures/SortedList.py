@@ -28,12 +28,10 @@ class SortedList:
         # Initialize length
         self._length = 0 
     
-    # Length of sorted list - Done by Edward
+    # Length of sorted list - Done by Ashwin
     def __len__(self): 
         """
-        The __len__ function is a special function that returns the length of an object.
-        It is called by Python's built-in len() function.
-        This function returns the length of the sorted list
+        This function returns the length of the sorted list with Python's built-in len() function
         
         :param self: Refer to the instance of the class
         :return: The length of the queue
@@ -41,7 +39,7 @@ class SortedList:
         # Return length
         return self._length
 
-    # Iterator for sorted list - Done by Edward
+    # Iterator for sorted list - Done by Ashwin
     def __iter__(self):
         """
         The __iter__ function is called when an iterator object is required for a container. 
@@ -55,7 +53,7 @@ class SortedList:
         # Return self as iterator object to be looped
         return self
 
-    # Get next iterator for iteration for sorted list - Done by Edward
+    # Get next iterator for iteration for sorted list - Done by Ashwin
     def __next__(self):
         """
         The __next__ function is called by the Python interpreter to get each item from an iterator. 
@@ -75,7 +73,7 @@ class SortedList:
         else:
             raise StopIteration
         
-    # Format and print sorted list items - Done by Edward
+    # Format and print sorted list items - Done by Ashwin
     def print_sorted(self): 
         """
         The print_sorted function will print the statements in sorted order.
@@ -115,7 +113,7 @@ class SortedList:
         # Return output string
         return output_string
 
-    # Append to head - Done by Edward
+    # Append to head - Done by Ashwin
     def __append_to_head(self, new_node): 
         """
         The __append_to_head function is a private function that appends a new node to the head of the sorted list.
@@ -135,7 +133,7 @@ class SortedList:
         # Increment length by 1
         self._length += 1
 
-    # Insert to sorted list - Done by Edward
+    # Insert to sorted list - Done by Ashwin
     def insert(self, new_data): 
         """
         The insert function takes in a new_data parameter, which is a tuple of the form (key, value).
@@ -188,7 +186,7 @@ class SortedList:
         # If end of the list is reached, new node is appended to the end
         left_node.next_node = new_node
 
-    # Clear sorted list - Done by Edward & Ashwin
+    # Clear sorted list - Done by Ashwin
     def clear(self):
         """
         The clear function resets the sorted list to an empty state.

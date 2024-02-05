@@ -7,10 +7,13 @@
 # FILENAME: HashTable.py
 # =================================================================================================
 
+# Import Modules
+import math
+
 # Hashtable Class
 class HashTable:
     # Initialization
-    def __init__(self, size=10):
+    def __init__(self, size=11):
         """
         The __init__ function is called when the class is instantiated.
         It initializes all of the attributes that are required for this class.
@@ -63,13 +66,21 @@ class HashTable:
     # Hash Function to convert key to index - Done by Edward
     def _hash_function(self, key):
         """
-        The _hash_function function takes a key and returns an index in the hash table.
+        The _hash_function function takes a key and returns an index in the hash table. The hash function
+        utilizes the multiplication method to convert the key into an index to be stored in the hash table.
             
         :param self: Refer to the instance of the class
         :param key: Key for hash table
         :return: The hash value of the key
         """
-        return hash(key) % self.size
+        # Knuth's suggestion constant
+        c = (math.sqrt(5) - 1) / 2
+        # Convert key to integer
+        hash_code = sum(ord(char) for char in key)
+        # Get hash value by multiplying the key to the constant c and modulus 1 for the fractional part
+        hash_value = (hash_code * c) % 1 
+        # Return hash value within size of hash table
+        return int(hash_value * self.size)  
     
     # Collision Resolution - Done by Edward
     def _rehash_function(self, old_hash):
@@ -91,7 +102,7 @@ class HashTable:
         the new hash function.
         
         :param self: Refer to the instance of the class
-        :return: A new hashtable with a larger size, and the same items as the old one
+        :return: Nothing
         """
         # Double size of Hashtable
         new_size = self.size * 2
@@ -126,7 +137,7 @@ class HashTable:
     # Length of hash table - Done by Edward
     def __len__(self):
         """
-        The __len__ function is a special function that returns the length of the hash table
+        This function returns the length of the hashtable with Python's built-in len() function
         
         :param self: Refer to the instance of the class
         :return: The number of items in the hash table
@@ -139,6 +150,7 @@ class HashTable:
         The __setitem__ function is used to set a value in the Hashtable.
         It takes two parameters, the key and value. The key is hashed using the hash function, 
         and then stored in that bucket with its corresponding value.
+        This is similar to dictionaries.
         
         :param self: Refer to the instance of the class
         :param key: Key to be stored in hash table
@@ -175,11 +187,11 @@ class HashTable:
     # Get item from Hashtable - Done by Edward
     def __getitem__(self,key):
         """
-        The __getitem__ function is a special function that allows us to use the [] operator on our HashTable object.
+        The __getitem__ function is a special function that allows us to get an item from the hashtable similar to dictionaries.
         This function takes in a key and returns the value associated with that key if it exists, otherwise it returns None.
         
         :param self: Refer to the instance of the class
-        :param key: Find the index of the bucket that contains our value associated with the key
+        :param key: Key to be used to find the value associated with it
         :return: The value associated with the key
         """
         # Use the hash function to calculate the index where the key should be stored.
@@ -201,12 +213,12 @@ class HashTable:
     # Check if key in Hashtable - Done by Edward
     def __contains__(self, key):
         """
-        The __contains__ function checks if a key is in the hash table.
+        The __contains__ function checks if a key is in the hash table, such as x in hashtable.
         It does this by using the _hash_funciton to find where it should be, and then checking that location for the key.
         If it's not there, we use our rehash function to check other locations until we either find what we're looking for or return False.
         
         :param self: Refer to the instance of the class
-        :param key: Check if the key is in the hash table
+        :param key: Key to be checked
         :return: True if the key is found, and False otherwise
         """
         index = self._hash_function(key)

@@ -29,7 +29,8 @@ class ExpressionHandler(InputHandler):
         # Initialize regular expressions
         self.operator_regex = re.compile(r'\*\*|[\+\-\*/]')
         self.parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
-        self.variable_regex = re.compile("^[A-Za-z]+$")
+        # Operators list
+        self.operators = ["+","-","**","*","/"]
 
     # Tokenize expression - Done by Edward
     @staticmethod
@@ -64,7 +65,6 @@ class ExpressionHandler(InputHandler):
         """
         return [x.strip() for x in statement.split('=')]
 
-
     # Check if expression contains operator - Done by Edward
     def contain_operator(self, expression: str) -> bool:
         """
@@ -74,7 +74,6 @@ class ExpressionHandler(InputHandler):
         :param expression: str: Pass in the expression that is being evaluated
         :return: A boolean value of whether the expression contains operators
         """
-        # Check for the existence of operators
         return bool(self.operator_regex.search(expression))
 
     # Check juxtaposition of parenthesis in expression - Done by Edward
@@ -122,7 +121,7 @@ class ExpressionHandler(InputHandler):
         If there is one, it returns True.
         
         :param self: Refer to the instance of the class
-        :param statement: str: Get the string that is passed in
+        :param statement: str: Statement to check
         :return: A boolean value of whether there is only 1 equal sign
         """
         # Get count of number of equal signs
@@ -137,22 +136,26 @@ class ExpressionHandler(InputHandler):
     def check_incomplete_expression(self, expression: str) -> bool:
         """
         The check_incomplete_expression function checks for incomplete expressions.
-        It does this by checking if the expression starts or ends with an operator,
-        and also checks that it is an expression (e.g. x=a+2, c=apple+banana) and not 
-        an incomplete expession (e.g. a=b). If any of these conditions are met, then 
-        the function returns True.
+        The function returns True for an incomplete expression, otherwise False.
         
         :param self: Refer to the instance of the class
-        :param expression: str: Check if the expression is incomplete
+        :param expression: str: Expression to check
         :return: True if the expression is incomplete and false otherwise
         """
-        if (
-            self.contain_operator(expression[0]) or
-            self.contain_operator(expression[-1]) or
-            not self.contain_operator(expression) or
-            len(self.tokenize(expression)) == 1
-        ):
+        # Check if the expression starts or ends with an operator
+        if self.contain_operator(expression[0]) or self.contain_operator(expression[-1]):
             return True
+        # Check for absence of operators in the expression
+        if not self.contain_operator(expression):
+            return True
+        # Check if expression is a single token
+        if len(self.tokenize(expression)) == 1:
+            return True
+        # Additional check for operator next to parenthesis
+        for i in range(len(expression) - 1):
+            if (expression[i] in self.operators and expression[i+1] == ')') or (expression[i] == '(' and expression[i+1] in self.operators):
+                return True
+        
         return False
 
     # Check parenthesis in expression - Done by Edward
@@ -194,11 +197,14 @@ class ExpressionHandler(InputHandler):
         return all(item[0] != '(' for item in stack.items)
     
     # Run key and value through all validation - Done by Edward
-    def validate_key_and_value(self, key: str, value: str, menu:bool=True) -> tuple:
+    def validate_key_and_value(self, key: str, value: str, hash_table, menu:bool=True) -> tuple:
         """
         The validate_key_and_value function takes in a key and value, and runs a series of
-        validation to ensure that the key (variable) and value (expression) are valid, returning the
+        validation to ensure that the key (variable) and value (expression) are valid, returning True for valid and False for invalid.
 
+        The function also checks for circular dependency, by firstly adding the key and value into the hashtable, evaluating whether
+        there is circular dependency from that key and value, and removing it before throwing an error or returning True so that the
+        adding can be done outside the function (as this function should ONLY validate).
         
         :param self: Refer to the instance of the class
         :param key: str: Check if the key is empty
@@ -226,19 +232,30 @@ class ExpressionHandler(InputHandler):
             return False
 
         # Check if key matches regex to only contain letters
-        if not self.variable_regex.match(key):
+        if not key.isalpha():
             print(self.format_error("Variable names should only contain letters",menu,key))
+            return False
+        
+        # Check for any unmatched parenthesis
+        if not self.check_parenthesis(value):
+            print(self.format_error("Please check that the expression is fully parenthesized",menu,key))
             return False
         
         if self.check_juxtaposition_parenthesis(value):
             print(self.format_error("Please check juxtaposition of variables and numbers to parenthesis",menu,key))
             return False
 
-        # Check for any unmatched parenthesis
-        if not self.check_parenthesis(value):
-            print(self.format_error("Please check that the expression is fully parenthesized",menu,key))
+        # Checks for circular dependency
+        # Add to hash table first
+        hash_table[key] = value
+        # Check for circular dependency after adding to hash
+        if self.has_circular_dependency(key, hash_table):
+            print(self.format_error("Circular dependency detected. The assignment is not added", menu, var=key))
+            del hash_table[key]
             return False
+        del hash_table[key]
 
+        # Return True for no errors
         return True
     
     # Extract variable - Done by Edward
@@ -246,23 +263,42 @@ class ExpressionHandler(InputHandler):
         """
         The extract_variables returns the variables in an expression.
         
+        :param self: Refer to the instance of the class
         :param item: Expression to be extracted
         :return: A list of all the variables from the expression
         """
+        # Variables list
         variables = []
+        # For each item in expression
         for t in self.tokenize(item):
+            # If it is a variable
             if t.isalpha():
+                # Append to list
                 variables.append(t)
         return variables
     
     # Format variable dependency - Done by Edward
     @staticmethod
     def format_dependency(variable, dependencies):
+        """
+        The format_dependency function takes a variable and its dependencies and formats it as a string
+        for outputting to a file for batch processing.
+        If a variable is independent, it will return "{variable} is independent."
+        If the variable is dependent, it will return "{variable} is dependent on ..."
+        
+        :param variable: Variable that was checked for dependencies
+        :param dependencies: Dependencies of that variable
+        :return: A formatted string that describes the dependencies of a variable
+        """
+        # List of dependencies
         dependency_list = list(dependencies)
+        # If list is more than 1, format with an "and"
         if len(dependency_list) > 1:
             result_string = ', '.join(dependency_list[:-1]) + f' and {dependency_list[-1]}.'
+        # Else just format with the dependency
         elif len(dependency_list) == 1:
             result_string = dependency_list[0]
+        # Return formatted string, with "is independent" if there is no dependency for that variable
         return f"{variable} {'is dependent on ' + result_string if dependency_list else 'is independent.'}\n\n"
     
     # Get relevant variables recursively - Done by Edward
@@ -303,17 +339,36 @@ class ExpressionHandler(InputHandler):
 
     # Check circular dependency - Done by Edward
     def has_circular_dependency(self, variable, hash_table, seen=None):
+        """
+        The has_circular_dependency function takes a variable and hash_table as input.
+        It returns True if the variable has a circular dependency, False otherwise.
+        A circular dependency example is where A depends on B, B depends on A
+        
+        :param self: Refer to the instance of the class
+        :param variable: Variable to be checked
+        :param hash_table: Hash table of all statements to be checked against
+        :param seen: Keep track of the variables that have been seen so far
+        :return: True if a circular dependency is detected, False if there is no circular dependency
+        """
+        # Initialize seen if it has not been initialized
         if seen is None:
             seen = set()
+        # Check if the current variable has already been seen, indicating circular dependency
         if variable in seen:
-            return True  # Circular dependency detected
+            return True 
+        # Check if the variable is not in the hash_table, meaning it is undefined and has no circular dependency
         if variable not in hash_table:
-            return False  # Variable not defined, no circular dependency
+            return False 
+        # Add the current variable to the seen set
         seen.add(variable)
-        # Tokenize the expression associated with the variable to extract referenced variables
+        # Tokenize the expression to get tokens
         tokens = self.tokenize(hash_table[variable])
+        # Iterate over each token to check for circular dependencies
         for token in tokens:
+            # If token is a variable in hash_table, recursively check for circular dependencies
             if token in hash_table and self.has_circular_dependency(token, hash_table, seen.copy()):
-                return True
+                return True 
+        # Remove the current variable from the 'seen' set after checking all referenced variables
         seen.remove(variable)
+        # Return False if no circular dependencies are detected after checking all referenced variables
         return False

@@ -30,13 +30,10 @@ class FileHandler(InputHandler):
     # Prompt and validate file path - Done by Edward
     def validate_file(self,question:str, mode:str=None)->str:
         """
-        The validate_file function is used to validate user input for file paths.
-        It takes two arguments: a question string and an optional mode string.
-        The question argument is the prompt that will be displayed to the user, asking them for their input.
-        The mode argument can either be 'r' or 'w', which stands for read or write respectively, and defaults to None if not specified by the caller.
+        The validate_file function is used to prompt user input for file paths and validate them.
         
         :param self: Refer to the instance of the class
-        :param question: str: Prompt the user for a file path
+        :param question: str: Prompt for the user to provide file path
         :param mode: str: Determine if the file is being read or written to
         :return: The file path
         """
@@ -53,6 +50,13 @@ class FileHandler(InputHandler):
     
     # Prompt and validate folder path - Done by Edward
     def validate_folder(self, question: str) -> str:
+        """
+        The validate_folder function is used to prompt user input for file paths and validate them.
+        
+        :param self: Refer to the instance of the class
+        :param question: str: Prompt for the user to provide folder path
+        :return: The folder path
+        """
         while True:
             folder_path = input(question).strip()  # Trim whitespace
             # Check if the path is a directory and not one of the disallowed paths
@@ -63,18 +67,28 @@ class FileHandler(InputHandler):
     # Check folder path - Done by Edward
     @staticmethod
     def check_folder_path(path: str) -> bool:
-        # Disallowed characters in folder path such as . or /
-        disallowed = {"../", "./", "/", '.', "\\"}
-        # Check if the path ends with or contains any disallowed characters such as . or /
-        for disallowed_path in disallowed:
-            # Return false if invalid folder path
-            if path == disallowed_path or path.startswith(disallowed_path) or path.endswith(disallowed_path):
-                return False
-        # Return True if valid
-        return True
+        """
+        The check_folder_path function checks if the folder path is valid.
+        It does this by checking if the path contains any disallowed characters such as . or /
+        If it does, then it returns False. Otherwise, it returns True.
+        
+        :param path: str: Specify the path to be checked
+        :return: True if the path is valid and false if it is not
+        """
+        # Define disallowed characters and substrings
+        disallowed = {"..", ".", "/", "\\"}
+        # Check if the path contains any disallowed characters or substrings
+        return not any(d in path for d in disallowed)
 
     # Read folder path - Done by Edward
     def read_folder(self, folder_path:str):
+        """
+        The read_folder function takes a folder path as an argument and returns a deque object containing the contents of all text files in that folder.
+        
+        :param self: Refer to the instance of the class
+        :param folder_path:str: Folder path to be read
+        :return: A tuple of the file deque and directory name
+        """
         # File deque
         file_deque = Deque()
         # Loop folder content
@@ -96,6 +110,16 @@ class FileHandler(InputHandler):
     
     # File operation (read/write) - Done by Edward
     def file_operation(self, file_path: str, mode: str, content: str = None, menu=True):
+        """
+        The file_operation function is used to write or read a file.
+            
+        :param self: Refer to the instance of the class
+        :param file_path: str: File path to be operated on
+        :param mode: str: Determine if the file should be opened in read or write mode
+        :param content: str: Content to be written to the file if mode is write
+        :param menu: Boolean for whether the back to menu message should be printed
+        :return: File content from reading / Nothing for writing
+        """
         # Try and except to catch errors
         try:
             # Check if file exists and mode is 'write'

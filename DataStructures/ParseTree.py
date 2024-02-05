@@ -6,11 +6,6 @@
 # =================================================================================================
 # FILENAME: ParseTree.py
 # =================================================================================================
-'''
-Description:
-This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
-and running the Class methods to perform the menu option's functions.
-'''
 
 # Import Data Structures
 from DataStructures.Stack import Stack
@@ -53,17 +48,14 @@ class ParseTree:
         :param expression: Build the parse tree
         :return: A tree with the root node set to none
         """
-        if self.variable and self.expression_handler.has_circular_dependency(self.variable,self.hash_table):
-            del self.hash_table[self.variable]
-            raise ValueError(f"\nCircular dependency detected for variable '{self.variable}'. Evaluation aborted. Please re-evaluate these assignment statements.")
         stack = Stack()
         tree = BinaryTree(root_object=None)
         stack.push(tree)
         current_tree = tree
         try:
-            tokens = ExpressionHandler.tokenize(expression)
+            tokens = self.expression_handler.tokenize(expression)
         except:
-            return None
+            raise
         for t in tokens:
             # RULE 1: If token is '(' add a new node as left tree and descend into that node
             if t == '(':
@@ -97,7 +89,7 @@ class ParseTree:
                 if not stack.is_empty:
                     current_tree = stack.pop()
             else:
-                return None
+                raise
         return tree
     
     # Return evaluate tree result - Done by Edward
@@ -118,8 +110,7 @@ class ParseTree:
         The _evaluate_tree function is recursive, so it calls itself on each node in the tree until it reaches a leaf node.
         When it reaches a leaf node, if that leaf is an operand (a number), then we return its value as an integer.
         If that leaf is an operator (+,-,*,/), then we call evaluate on its left and right children to get their values 
-        (which are integers) and perform some operation with those two integers based on what kind of operator this 
-        particular node.
+        (which are integers) and perform the operation between the two nodes.
         
         :param self: Refer to the instance of the class
         :param tree: Store the tree structure of the expression
@@ -159,7 +150,6 @@ class ParseTree:
     def print_in_order(self):
         """
         The print_in_order function prints the tree in order.
-                
         
         :param self: Refer to the instance of the class
         :return: The in-order traversal of the tree

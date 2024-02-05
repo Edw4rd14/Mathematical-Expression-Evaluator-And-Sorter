@@ -33,8 +33,7 @@ class Deque:
     # Override length len() function - Done by Edward
     def __len__(self):
         """
-        The __len__ function is a special function that returns the length of an object.
-        It is called by Python's built-in len() function and is used to determine how many items are in the Deque.
+        This function returns the length of the Deque with Python's built-in len() function
         
         :param self: Refer to the instance of the class
         :return: The length of the Deque
@@ -208,7 +207,7 @@ class Deque:
         :return: The data of the node that was removed
         """
         if self.current is None:
-            raise IndexError("No current item to remove")
+            raise IndexError("No current item to remove.")
         removed_data = self.current.data
         if self.current.prev_node:
             self.current.prev_node.next_node = self.current.next_node

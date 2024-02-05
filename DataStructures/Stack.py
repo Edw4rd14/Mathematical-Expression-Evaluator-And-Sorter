@@ -24,11 +24,10 @@ class Stack:
         # Use a list to store stack items
         self._items = []  
 
-    # Length of stack - Done by Edward
+    # Length of stack - Done by Ashwin
     def __len__(self):
         """
-        The __len__ function is a special function that returns the length of an object.
-        In this case, it returns the length of our stack.
+        This function returns the length of the stack with Python's built-in len() function
         
         :param self: Refer to the instance of the class
         :return: The length of the stack
@@ -36,7 +35,7 @@ class Stack:
         # Length of the stack is the length of the list
         return len(self._items)  
 
-    # Push to stack - Done by Edward
+    # Push to stack - Done by Ashwin
     def push(self, data):
         """
         The push function adds an item to the end of the stack.
@@ -48,7 +47,7 @@ class Stack:
         # Add an item to the end of the list
         self._items.append(data)  
 
-    # Pop from stack - Done by Edward
+    # Pop from stack - Done by Ashwin
     def pop(self):
         """
         The pop function removes and returns the last item of the stack.
@@ -62,7 +61,7 @@ class Stack:
             raise Exception("Stack is empty")
         return self._items.pop() 
     
-    # Get all items in stack - Done by Edward
+    # Get all items in stack - Done by Ashwin
     @property
     def items(self):
         """
@@ -73,7 +72,7 @@ class Stack:
         """
         return self._items
 
-    # Check if stack is empty - Done by Edward
+    # Check if stack is empty - Done by Ashwin
     @property
     def is_empty(self):
         """

@@ -12,8 +12,8 @@ class Node:
     # Initialization
     def __init__(self, data):
         """
-        The __init__ function is a special function in Python classes. It is run as soon as an object of a class is instantiated. 
-        The method __init__() is called automatically every time the class is being used to create a new object.
+        The __init__ function is called when the class is instantiated.
+        It initializes all of the attributes that are required for this class.
         
         :param self: Refer to the instance of the class
         :param data: Store the data in the node
@@ -26,7 +26,7 @@ class Node:
         # Pointer for previous node
         self.prev_node = None
     
-    # Less than operator overriding - Done by Edward
+    # Less than operator overriding - Done by Ashwin
     def __lt__(self, other):
         """
         The __lt__ function is a special function that allows us to compare two objects of the same class.

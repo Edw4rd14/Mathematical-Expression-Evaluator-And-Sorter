@@ -68,9 +68,9 @@ class AssignmentStatement:
             # Split the statement by '='
             key, value = self.expression_handler.get_key_and_value(statement)
             # Validate key and value
-            if not self.expression_handler.validate_key_and_value(key,value):
+            if not self.expression_handler.validate_key_and_value(key, value, self.hash_table):
                 continue
-            # Expression satisfies all conditions, add to HashTable and break out of the loop
+            # Add to hash table
             self.hash_table[key] = value
             # Update sorted statements in SortedList for option 5 and 7
             self.update_statements()
@@ -85,6 +85,7 @@ class AssignmentStatement:
         :param self: Refer to the instance of the class
         :return: A deque with the expressions and evaluated values
         """
+        # Deque
         deque = Deque()
         # Loop each sorted key from merge sort
         for key in MergeSort.sort(self.hash_table.filtered_keys):
@@ -123,7 +124,7 @@ class AssignmentStatement:
         if deque.is_empty:
             print("There are no current assignment statements.")
         while not deque.is_empty:
-            key, value, evaluated = deque.remove_head()
+            key, value, evaluated = deque.remove_tail()
             print(f"{key}={value}=> {evaluated}")
 
     # Update history and sorted list - Done by Edward
@@ -200,7 +201,7 @@ class AssignmentStatement:
                         # Get key and value from statement
                         key, value = self.expression_handler.get_key_and_value(statement)
                         # Validate key and value
-                        if self.expression_handler.validate_key_and_value(key,value,False):
+                        if self.expression_handler.validate_key_and_value(key,value,self.hash_table,False):
                             # Expression satisfies all conditions, add to HashTable
                             self.hash_table[key] = value
                 # Display the list of current assignments (same as Option 2) and store new statements
@@ -219,7 +220,7 @@ class AssignmentStatement:
                 # Get key and value from statement
                 key, value = self.expression_handler.get_key_and_value(statement)
                 # Validate key and value
-                if self.expression_handler.validate_key_and_value(key,value,False):
+                if self.expression_handler.validate_key_and_value(key,value,hash_table,False):
                     # Expression satisfies all conditions, add to HashTable
                     hash_table[key] = value
 
@@ -259,7 +260,7 @@ class AssignmentStatement:
         # Validate and get the folder path for batch processing
         folder_path = self.file_handler.validate_folder(question='Please enter folder to batch process: ')
         # Border for formatting
-        border = "="*60
+        border = "="*100
         # Read files from the folder and initialize processing
         file_deque, dir_name = self.file_handler.read_folder(folder_path=folder_path)
         # Initialize file counter
@@ -293,7 +294,7 @@ class AssignmentStatement:
                     # Extract key (variable) and value from the statement
                     key, value = self.expression_handler.get_key_and_value(statement)
                     # Validate the extracted key and value
-                    if self.expression_handler.validate_key_and_value(key, value, False):
+                    if self.expression_handler.validate_key_and_value(key, value, temp_hashtable, False):
                         # Store the valid key-value pair in the hashtable
                         temp_hashtable[key] = value
                     else:
@@ -353,21 +354,40 @@ class AssignmentStatement:
             # Write logs to logs.txt
             self.file_handler.file_operation(file_path=f"{dir_name}/logs.txt", mode='w', content=logs, menu=False)
         else:
-            print(f"There were no text files detected in '{dir_name}'.")
+            print(f"\nThere were no text files detected in '{dir_name}'.")
 
     # Option 7: Manage assignment statement history - Done by Edward
     def manage_history(self):
+        """
+        The manage_history function allows the user to view, import, and clear their history of assignment statements.
+            The function will print out a list of all the assignment statements in order from oldest to newest.
+            The user can then choose whether they want to go forward or backward through this list using option 1 or 2 respectively.
+            If they wish to import one of these variables into their current session, they can use option 3 which will return them back 
+            to the main menu with that variable imported into their current session.
+        
+        :param self: Refer to the current instance of the class
+        :return: Nothing
+        :doc-author: Trelent
+        """
+        # If history is not empty
         if not self.history.deque.is_empty:
+            # Initialize index
             index = 1
+            # Total length of history
             total = len(self.history)
+            # While loop
             while True:
+                # Try
                 try:
+                    # Next message if at first index
                     next_msg = "" if index < total else " (At the end of the list)"
+                    # Previous message if at last index
                     prev_msg = "" if index > 1 else " (At the start of the list)"
+                    # Print history with current index position
                     self.history.print_history(position=index)
                     # Get input for menu action
                     action = int(input(f"\n1. Next{next_msg}\n2. Previous{prev_msg}\n3. Import this variable\n4. Clear History \n5. Exit\nSelect your choice: "))
-                    # If menu action is 1, go forward in history list (down the list)
+                    # If menu action is 1, go forward in history list
                     if action == 1:
                         # Change current data to next node
                         self.history.forward()
@@ -375,7 +395,7 @@ class AssignmentStatement:
                         if index != total:
                             # Increment index by 1
                             index += 1
-                    # Else if action is 2, go back in history list (up the list)
+                    # Else if action is 2, go back in history list 
                     elif action == 2:
                         # Change current data to previous node
                         self.history.backward()
@@ -402,13 +422,16 @@ class AssignmentStatement:
                         # Reset history back to head
                         self.history.reset_to_head()
                         return
+                # If user input is not integer
                 except ValueError:
                     print(f"\nInput must be an integer. {self.input_handler.err_msg}")
+                # If keyboard interrupt
                 except KeyboardInterrupt:
                     print("\nReturning back to main menu...")
                     # Reset history back to head
                     self.history.reset_to_head()
                     break
+        # Print error message if history is empty
         else:
             print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 4.")
 

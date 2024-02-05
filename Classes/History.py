@@ -100,7 +100,7 @@ class History:
         
         :param self: Refer to the instance of the class
         :param item: Item to be added to deque
-        :return: None
+        :return: Nothing
         """
         if len(self.deque) >= self.max_length:
             # Remove the last item from the deque
@@ -114,7 +114,7 @@ class History:
         The remove_history function is a public interface for removing the current item from the deque.   
         
         :param self: Refer to the instance of the class
-        :return: None
+        :return: Removed data
         """
         self.deque.remove_current()
 
@@ -126,7 +126,7 @@ class History:
         
         :param self: Refer to the instance of the class
         :param position: Current position of history
-        :return: None
+        :return: Nothing
         """
         print(f"\nCurrent History Position: {position}/{len(self.deque)}")
         # Labels for each row
@@ -158,7 +158,7 @@ class History:
         If so, then it will use the function get_related_variables to get all related variables recursively and
         add them to the hash table.
         
-        :param self: Refer to the object that is calling the function
+        :param self: Refer to the instance of the class
         :return: Nothing
         """
         # Prompt user on whether to import relevant variables
@@ -176,19 +176,23 @@ class History:
                 # For each relevant variable
                 for variable in relevant_variables:
                     try:
-                        # Add relevant variable and its expression into the hash table
-                        self.hash_table[variable] = self.deque[variable][1]
-                        # Increment count 
-                        count += 1
+                        expression = self.deque[variable][1]
+                        if not self.expression_handler.validate_key_and_value(variable, expression):
+                            # Add relevant variable and its expression into the hash table
+                            self.hash_table[variable] = expression
+                            # Increment count 
+                            count += 1
                     except:
                         # Catch errors for missing variables in history
                         print(f'\nFailed to import variable "{variable}".')
-            # Add current varaible they wanted to import
-            self.hash_table[current_variable] = self.deque[current_variable][1]
-            # Increment count
-            count += 1
+            expression = self.deque[current_variable][1]
+            if not self.expression_handler.validate_key_and_value(current_variable, expression):
+                # Add current variable they wanted to import
+                self.hash_table[current_variable] = expression
+                # Increment count
+                count += 1
             # Print success message if not errors thus far
-            print(f"\n{count} variable(s) have been successfully imported. Please use option 2 to verify them.")
+            print(f"\n{count} variable(s) have been imported. Please use option 2 to verify them.")
         except:
             # Print random error message if error occurs
             print("\nAn error occurred while importing statements. Please restart the application or try again. Returning back to main menu...")
@@ -196,28 +200,27 @@ class History:
     # Public interface for forward in deque - Done by Edward
     def forward(self):
         """
-        The forward function moves the deque forward one position.
+        The forward function moves the Deque forward one position.
                 
         :param self: Refer to the instance of the class
-        :return: None
+        :return: Item after moving forward
         """
         self.deque.go_forward()
 
     # Public interface for backwards in deque - Done by Edward
     def backward(self):
         """
-        The backward function moves the current node to the previous node in the deque.
+        The backward function moves the Deque backwards one position.
                 
-        
         :param self: Refer to the instance of the class
-        :return: None
+        :return: Item after moving backwards
         """
         self.deque.go_back()
 
     # Public interface clearing deque - Done by Edward
     def clear_history(self):
         """
-        The clear_history function clears the deque storing the history
+        The clear_history function clears the Deque storing the history
         
         :param self: Refer to the instance of the class
         :return: Nothing
@@ -227,10 +230,10 @@ class History:
     # Public interface for resetting deque to head - Done by Edward
     def reset_to_head(self):
         """
-        The reset_to_head function resets the current node to the head of the deque.
+        The reset_to_head function resets the current node to the head of the Deque.
                 
         :param self: Refer to the instance of the class
-        :return: None
+        :return: Nothing
         """
         self.deque.reset_to_head()
 
