@@ -48,27 +48,34 @@ class ParseTree:
         :param expression: Build the parse tree
         :return: A tree with the root node set to none
         """
+        # Initialize stack
         stack = Stack()
+        # Initialize binary tree
         tree = BinaryTree(root_object=None)
+        # Push binary tree to stack
         stack.push(tree)
+        # Set current tree to binary tree
         current_tree = tree
+        # Try to tokenize expression
         try:
             tokens = self.expression_handler.tokenize(expression)
+        # Catch any errors
         except:
             raise
+        # For each token
         for t in tokens:
-            # RULE 1: If token is '(' add a new node as left tree and descend into that node
+            # If token is '(' add a new node as left tree and descend into that node
             if t == '(':
                 current_tree.insert_left(None)
                 stack.push(current_tree)
                 current_tree = current_tree.left_tree
-            # RULE 2: If token is operator set key of current node to that operator and add a new node as right tree and descend into that node
+            # If token is operator
             elif t in ['+', '-', '*', '**', '/']:
                 current_tree.root_value = (t,None)
                 current_tree.insert_right(None)
                 stack.push(current_tree)
                 current_tree = current_tree.right_tree
-            # RULE 3: If token is number, set key of the current node to that number and return to parent
+            # If token is number or variable
             elif t not in ['+', '-', '*',  '**', '/', ')']:
                 # Try converting t to float, then to integer (if it is an integer) before checking whether it is a variable or not 
                 try:
@@ -84,7 +91,7 @@ class ParseTree:
                         current_tree.root_value = (t,None)
                 if not stack.is_empty:
                     current_tree = stack.pop()
-            # RULE 4: If token is ')' go to parent of current node
+            # If token is ')' go to parent of current node
             elif t == ')':
                 if not stack.is_empty:
                     current_tree = stack.pop()
@@ -97,11 +104,13 @@ class ParseTree:
         """
         The evaluate function calls the protected function _evaluate_tree to evaluate the root binary tree expression. 
         The evaluate function is the public interface of the _evaluate_tree function.
+        The evaluate function also round the value to 3 decimal places if it is a float.
         
         :param self: Refer to the instance of the class
         :return: The value of the root node
         """
-        return self._evaluate_tree(tree=self.root)
+        evaluated_value = self._evaluate_tree(tree=self.root)
+        return round(evaluated_value,3) if isinstance(evaluated_value,float) else evaluated_value
 
     # Evaluate tree function - Done by Edward
     def _evaluate_tree(self,tree):
@@ -139,11 +148,11 @@ class ParseTree:
                     left = self._evaluate_tree(left_tree)
                     right = self._evaluate_tree(right_tree)
                     return operator_functions[original_token](left,right)
+                # Else return evaluated value
                 else:
-                    # If it's a variable, return original value
-                    return None
+                    return evaluated_value
+        # Handle exceptions and return None if there are any errors
         except Exception:
-            # Handle exceptions or return None if there are any errors
             return None
         
     # Print the expression tree in in-order format with indentation - Done by Ashwin

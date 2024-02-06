@@ -23,12 +23,12 @@ class HashTable:
         :return: Nothing
         """
         # Set size of Hastable
-        self.size = size
+        self.__size = size # Strictly for internal usage
         # Keys and Buckets
         self._keys = [None] * size
         self._buckets = [None] * size
         # Count of items stored
-        self.count = 0 
+        self._count = 0 
 
     # Get all keys function - Done by Edward
     @property
@@ -80,7 +80,7 @@ class HashTable:
         # Get hash value by multiplying the key to the constant c and modulus 1 for the fractional part
         hash_value = (hash_code * c) % 1 
         # Return hash value within size of hash table
-        return int(hash_value * self.size)  
+        return int(hash_value * self.__size)  
     
     # Collision Resolution - Done by Edward
     def _rehash_function(self, old_hash):
@@ -92,7 +92,7 @@ class HashTable:
         :param old_hash: Old hash value to be rehashed
         :return: The hash of the old_hash plus one, modulo the size of the table
         """
-        return hash(old_hash+1) % self.size
+        return hash(old_hash+1) % self.__size
     
     # Dynamic Resizing of Hashtable - Done by Edward
     def _resize(self):
@@ -105,7 +105,7 @@ class HashTable:
         :return: Nothing
         """
         # Double size of Hashtable
-        new_size = self.size * 2
+        new_size = self.__size * 2
         new_keys = [None] * new_size
         new_buckets = [None] * new_size
         # Store old keys and buckets
@@ -114,9 +114,9 @@ class HashTable:
         # Update the instance variables to the new arrays and size
         self._keys = new_keys
         self._buckets = new_buckets
-        self.size = new_size
+        self.__size = new_size
         # Reset count of items
-        self.count = 0
+        self._count = 0
         # Re-add all items using the new hash function
         for key, value in zip(old_keys, old_buckets):
             if key is not None:
@@ -130,9 +130,9 @@ class HashTable:
         :param self: Refer to the instance of the class
         :return: Nothing
         """
-        self._keys = [None] * self.size
-        self._buckets = [None] * self.size
-        self.count = 0
+        self._keys = [None] * self.__size
+        self._buckets = [None] * self.__size
+        self._count = 0
 
     # Length of hash table - Done by Edward
     def __len__(self):
@@ -142,7 +142,7 @@ class HashTable:
         :param self: Refer to the instance of the class
         :return: The number of items in the hash table
         """
-        return self.count
+        return self._count
         
     # Add Item into Hashtable - Done by Edward
     def __setitem__(self, key, value):
@@ -158,7 +158,7 @@ class HashTable:
         :return: Nothing
         """
         # Double the size of the Hashtable if load factor exceeds 85%
-        if self.count / self.size > 0.85:
+        if self._count / self.__size > 0.85:
             self._resize()
         # Get hash key of item
         index = self._hash_function(key)
@@ -170,7 +170,7 @@ class HashTable:
             if self._buckets[index] is None:
                 self._buckets[index] = value
                 self._keys[index] = key
-                self.count += 1
+                self._count += 1
                 break
             else:
                 # If it is not empty and has the same key, overwrite it
@@ -250,7 +250,7 @@ class HashTable:
                 # Key found, remove the corresponding key-value pair
                 self._keys[index] = None
                 self._buckets[index] = None
-                self.count -= 1
+                self._count -= 1
                 break
             # Move to the next index
             index = self._rehash_function(index)

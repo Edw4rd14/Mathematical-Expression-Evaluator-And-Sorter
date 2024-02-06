@@ -151,34 +151,62 @@ class SortedList:
         :param new_data: Create a new node with the data
         :return: None
         """
-        # Create new node
+        key, value = new_data[0][0], new_data[1]
+        # Make new data a node
         new_node = Node(new_data)
+        # Increment length by 1
+        self._length += 1
+        # Check if the key already exists, and replace it if found
+        current = self.head_node
+        while current:
+            # If current key matches new key, replace old key and value
+            if current.data[0][0] == key:
+                current.data = new_data
+                return
+            # Point to next node
+            current = current.next_node
+        # If there is no head node, set head node to new node
         if self.head_node is None:
             self.head_node = new_node
-            # Increment length
-            self._length += 1
             return
-        # Use iterator to find where to insert new node
-        previous_node = None
-        for current_node in self:
-            # Update existing node if keys match (no need to increment length)
-            if current_node.data[0][0] == new_data[0][0]:
-                current_node.data = new_data
-                return
-            # If new data should be inserted before the current node
-            if new_data[1] is not None and (current_node.data[1] is None or new_data[1] > current_node.data[1]):
-                break
-            previous_node = current_node
-        # Insert new node at the beginning if previous_node is None
-        if previous_node is None:
+        # If new data's evaluated value is None, append to the end of the list
+        if value is None:
+            # Point to head node
+            current = self.head_node
+            # While next node exists, keep goign down the list to the end
+            while current.next_node:
+                # Point to next node
+                current = current.next_node
+            # Set last node's next node to the new node
+            current.next_node = new_node
+            return
+        # Check if it is going to be the new head
+        if self.head_node.data[1] is None or value >= self.head_node.data[1]:
+            # Set new head node to new node
             new_node.next_node = self.head_node
             self.head_node = new_node
-        else:
-            # Insert new_node in the found position
-            new_node.next_node = previous_node.next_node
-            previous_node.next_node = new_node
-        # Increment length
-        self._length += 1
+            return
+        # Set left and right node for traversal
+        left_node = self.head_node
+        right_node = self.head_node.next_node
+        # Iterate through nodes while it has not reached the end
+        while right_node is not None:
+            # Check if right node's evaluated value is None
+            if right_node.data[1] is None:
+                # If it is, append the new node at the end of the list
+                left_node.next_node = new_node
+                new_node.next_node = right_node
+                return
+            # If correct position of node has been found, insert between left and right node
+            if value >= right_node.data[1]:
+                left_node.next_node = new_node
+                new_node.next_node = right_node
+                return
+            # Traverse to the next pair of nodes
+            left_node = right_node
+            right_node = right_node.next_node
+        # If end of the list is reached, new node is appended to the end
+        left_node.next_node = new_node
 
     # Clear sorted list - Done by Ashwin
     def clear(self):

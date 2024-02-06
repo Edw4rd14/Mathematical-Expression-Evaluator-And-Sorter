@@ -4,12 +4,10 @@ Original Filename: broken_test.txt
 Evaluated Statements
 ====================
 
-*** Statements with value=> 18
-a=(15+2+3)
+Please double check the original file and ensure that it is not empty or has unresolved errors.
 
 ========================
 Variable Dependency List
 ========================
 
-a is independent.
-
+Please double check the original file and ensure that it is not empty or has unresolved errors.

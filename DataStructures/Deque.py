@@ -22,13 +22,13 @@ class Deque:
         :return: Nothing
         """
         # Initialize head variable
-        self.head = None 
+        self._head = None 
         # Initialize tail variable
-        self.tail = None
+        self._tail = None
         # Initialize current variable
-        self.current = None
+        self._current = None
         # Initialize length variable to 0 
-        self.length = 0 
+        self._length = 0 
 
     # Override length len() function - Done by Edward
     def __len__(self):
@@ -39,7 +39,7 @@ class Deque:
         :return: The length of the Deque
         """
         # Return length
-        return self.length
+        return self._length
     
     # Get item function - Done by Edward
     def __getitem__(self, variable):
@@ -68,7 +68,7 @@ class Deque:
         :return: True if the item is in the Deque, and false otherwise
         """
         # Set current node
-        current_node = self.head
+        current_node = self._head
         # Loop through each current node that is not None
         while current_node:
             # If first item of current node data matches first item (variable)
@@ -81,8 +81,19 @@ class Deque:
         return False
         
     # Getter for current deque item - Done by Edward
-    def get_current(self):
-        return self.current.data
+    @property
+    def current(self):
+        return self._current.data
+    
+    # Getter for head deque item - Done by Edward
+    @property
+    def head(self):
+        return self._head.data
+    
+    # Getter for tail deque item - Done by Edward
+    @property
+    def tail(self):
+        return self._tail.data
 
     # Is empty function - Done by Edward
     @property
@@ -94,7 +105,7 @@ class Deque:
         :return: A boolean value of length == 0
         """
         # Return boolean of length == 0
-        return self.length == 0
+        return self._length == 0
 
     # Add head function - Done by Edward
     def add_head(self, data):
@@ -109,7 +120,7 @@ class Deque:
         # Create new node of data
         new_node = Node(data)
         # Check for duplicates and replace if found
-        current_node = self.head
+        current_node = self._head
         while current_node:
             if current_node.data[0] == data[0]:
                 # Replace the existing data
@@ -117,21 +128,21 @@ class Deque:
                 return 
             current_node = current_node.next_node
         # If head is None or no duplicates found, add a new node
-        if not self.head:
+        if not self._head:
             # Set head, tail, and current to new node
-            self.head = self.tail = self.current = new_node
+            self._head = self._tail = self._current = new_node
         # Else, Deque is not empty
         else:
             # Set new node's next node to current head
-            new_node.next_node = self.head
+            new_node.next_node = self._head
             # Set current head's previous node to new node
-            self.head.prev_node = new_node
+            self._head.prev_node = new_node
             # Set new head as new node
-            self.head = new_node
+            self._head = new_node
             # Set current as new head
-            self.current = self.head
+            self._current = self._head
         # Increment length by 1
-        self.length += 1
+        self._length += 1
 
     # Add tail function - Done by Edward
     def add_tail(self, data):
@@ -146,28 +157,28 @@ class Deque:
         # Create new node of data
         new_node = Node(data)
         # Check for duplicates and replace if found
-        current_node = self.head
+        current_node = self._head
         while current_node:
             if current_node.data[0] == data[0]: 
                 current_node.data = data 
                 return 
             current_node = current_node.next_node
         # If head is None or no duplicates found, add a new node
-        if not self.head:
+        if not self._head:
             # Set head, tail, and current to new node
-            self.head = self.tail = self.current = new_node
+            self._head = self._tail = self._current = new_node
         # Else, Deque is not empty
         else:
             # Set new node's previous node to current tail
-            new_node.prev_node = self.tail
+            new_node.prev_node = self._tail
             # Set current tail's next node to new node
-            self.tail.next_node = new_node
+            self._tail.next_node = new_node
             # Set new tail as new node
-            self.tail = new_node
+            self._tail = new_node
             # Set current to new tail
-            self.current = self.tail
+            self._current = self._tail
         # Increment length by 1
-        self.length += 1
+        self._length += 1
 
     # Remove head function - Done by Edward
     def remove_head(self):
@@ -184,19 +195,19 @@ class Deque:
         # If Deque is not empty
         if not self.is_empty:
             # Store item to be removed, which is data at head
-            removed_item = self.head.data
+            removed_item = self._head.data
             # If Deque only has 1 item, and it is being removed
-            if self.length == 1:
+            if self._length == 1:
                 # Set head and tail to None as Deque will be empty
-                self.head = self.tail = None
+                self._head = self._tail = None
             # Else Deque has more than 1 item
             else:
                 # Set new head to the node following the current head
-                self.head = self.head.next_node
+                self._head = self._head.next_node
                 # Set new head's previous node to None as it is the new head
-                self.head.prev_node = None
+                self._head.prev_node = None
             # Decrement length by 1
-            self.length -= 1
+            self._length -= 1
             # Return removed item
             return removed_item
         # Else raise error
@@ -215,19 +226,19 @@ class Deque:
         # If Deque is not empty
         if not self.is_empty:
             # Store item to be removed, which is data at tail
-            removed_item = self.tail.data
+            removed_item = self._tail.data
             # If Deque only has 1 item, and it is being removed
-            if self.length == 1:
+            if self._length == 1:
                 # Set head and tail to None as Deque will be empty
-                self.head = self.tail = None
+                self._head = self._tail = None
             # Else Deque has more than 1 item
             else:
                 # Set new tail to the node to the tail's previous node
-                self.tail = self.tail.prev_node
+                self._tail = self._tail.prev_node
                 # Set new tail's next node to None as it is the new tail
-                self.tail.next_node = None
+                self._tail.next_node = None
             # Decrement length by 1
-            self.length -= 1
+            self._length -= 1
             # Return removed item
             return removed_item
         # Else raise error
@@ -245,11 +256,11 @@ class Deque:
         :return: The previous node
         """
         # If current node and previous node exists
-        if self.current and self.current.prev_node:
+        if self._current and self._current.prev_node:
             # Set current node to previous node
-            self.current = self.current.prev_node
+            self._current = self._current.prev_node
             # Return current node (the previous node), effectively going backwards
-            return self.current.data
+            return self._current.data
         # Else return error message
         else:
             return "No previous item."
@@ -265,11 +276,11 @@ class Deque:
         :return: The data of the next node
         """
         # If current node and next node exists
-        if self.current and self.current.next_node:
+        if self._current and self._current.next_node:
             # Set current node to next node
-            self.current = self.current.next_node
+            self._current = self._current.next_node
             # Return current node (the next node), effectively going forward
-            return self.current.data
+            return self._current.data
         # Else return error message
         else:
             return "No next item."
@@ -283,9 +294,9 @@ class Deque:
         :return: Nothing
         """
         # Set head and tail to None
-        self.head = self.tail = self.current = None
+        self._head = self._tail = self._current = None
         # Set length to 0 
-        self.length = 0
+        self._length = 0
     
     # Reset to head function - Done by Edward
     def reset_to_head(self):
@@ -300,7 +311,7 @@ class Deque:
         if self.is_empty:
             raise IndexError("Deque is empty")
         # Set current to head
-        self.current = self.head
+        self._current = self._head
 
     # Get all items function - Done by Edward
     @property
@@ -314,7 +325,7 @@ class Deque:
         # Initialize list
         all_objects = []
         # Set current node to head node
-        current_node = self.head
+        current_node = self._head
         # Iterate through all possible nodes
         while current_node:
             # Append current node data to list

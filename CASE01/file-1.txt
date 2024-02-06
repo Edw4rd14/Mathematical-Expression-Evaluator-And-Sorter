@@ -32,7 +32,7 @@ Banana is independent.
 
 Blueberry is dependent on Pear
 
-Cherry is dependent on Lemon, Pear and Tangerine.
+Cherry is dependent on Lemon, Tangerine and Pear.
 
 Coconut is independent.
 
@@ -40,7 +40,7 @@ Durian is dependent on Apple and Pear.
 
 Lemon is dependent on Tangerine and Pear.
 
-Mango is dependent on Pear, Strawberry, Blueberry, Apple, Coconut and Durian.
+Mango is dependent on Strawberry, Pear, Coconut, Durian, Blueberry and Apple.
 
 Starfruit is independent.
 

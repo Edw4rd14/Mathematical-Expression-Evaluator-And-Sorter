@@ -34,7 +34,7 @@ Grape=(2*2)
 *** Statements with value=> 2
 Coconut=(2+0)
 
-*** Statements with value=> 1.3333333333333333
+*** Statements with value=> 1.333
 Cherry=(Grape/3)
 
 ========================
@@ -45,21 +45,21 @@ Apple is independent.
 
 Banana is independent.
 
-Blueberry is dependent on Apple and Orange.
+Blueberry is dependent on Orange and Apple.
 
 Cherry is dependent on Grape
 
 Coconut is independent.
 
-Durian is dependent on Apple, Banana and Orange.
+Durian is dependent on Banana, Orange and Apple.
 
 Grape is independent.
 
-Lemon is dependent on Apple, Grape and Orange.
+Lemon is dependent on Orange, Apple and Grape.
 
 Orange is dependent on Apple
 
 Starfruit is independent.
 
-Strawberry is dependent on Apple and Orange.
+Strawberry is dependent on Orange and Apple.
 

@@ -18,7 +18,7 @@ import json
 # History class
 class History:
     # Initialization
-    def __init__(self, hash_table, max_length=25):
+    def __init__(self, hash_table, max_length=50):
         """
         The __init__ function is called when the class is instantiated.
         It initializes all of the attributes that are required for this class.
@@ -33,9 +33,9 @@ class History:
         # Hash table
         self.hash_table = hash_table
         # Max length of history
-        self.max_length = max_length
+        self.__max_length = max_length # Strictly for internal usage
         # JOSN file Path to store history
-        self.__file_path = "./history.json"
+        self.__file_path = "./history.json" # Strictly for internal usage
         # Input handlers
         self.input_handler = InputHandler()
         self.expression_handler = ExpressionHandler()
@@ -190,7 +190,7 @@ class History:
         :return: Nothing
         """
         # If length of deque exceed max history length
-        if len(self.deque) >= self.max_length:
+        if len(self.deque) >= self.__max_length:
             # Remove the last item from the deque
             self.deque.remove_tail()
         # Add the new item to the head of the deque
@@ -211,7 +211,7 @@ class History:
         # Labels for each row
         labels = ['Variable:', 'Expression:', 'Evaluated Value:', 'Timestamp:']
         # Data corresponding to each label
-        data = self.deque.get_current()
+        data = self.deque.current
         # Find the maximum length for the labels and data
         max_label_len = max(len(label) for label in labels)
         max_data_len = max(len(str(d)) for d in data)
@@ -244,7 +244,7 @@ class History:
             # Count of items imported
             count = 0
             # Current variable they want to import
-            current_variable = self.deque.get_current()[0]
+            current_variable = self.deque.current[0]
             # If they decide to import relevant variables
             if load_relevant:
                 # Get relevant variables
