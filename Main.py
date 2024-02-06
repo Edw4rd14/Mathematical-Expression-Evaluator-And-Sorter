@@ -53,6 +53,7 @@ class Main:
         # Print banner
         for order in self.__banner_order:
             print(self._banner[order])
+        # Print newline
         print("\n")
 
     # Menu prompt - Done by Edward
@@ -66,7 +67,9 @@ class Main:
         """
         # Print menu
         print("Please select a choice ('1','2','3','4','5','6','7','8','9','10'):")
+        # For each menu option
         for i in range(len(self._menu_options)):
+            # Format and print menu option
             print(f"    {i+1}. {self._menu_options[i]}")
         # User input for menu option
         self.choice = int(input("Enter choice: "))
@@ -115,9 +118,9 @@ class Main:
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")
                 break
-            # # Handle any other errors (as a precaution, and not leak error messages)
-            # except Exception:
-            #     print("\nAn error has occurred with the application. Try restarting the application.\n")
+            # Handle any other errors (as a precaution, and not leak error messages)
+            except Exception:
+                print("\nAn error has occurred with the application. Try restarting the application.\n")
         # Update history
         self.assignment_statement.history.update_history()
 

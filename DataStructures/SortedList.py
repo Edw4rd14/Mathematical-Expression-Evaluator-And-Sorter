@@ -7,7 +7,7 @@
 # FILENAME: SortedList.py
 # =================================================================================================
 
-# Import data structures
+# Import Data Structures
 from DataStructures.Node import Node
 
 # SortedList class
@@ -151,17 +151,17 @@ class SortedList:
         :param new_data: Create a new node with the data
         :return: None
         """
+        # Create new node
         new_node = Node(new_data)
-        self._length += 1
-
         if self.head_node is None:
             self.head_node = new_node
+            # Increment length
+            self._length += 1
             return
-
         # Use iterator to find where to insert new node
         previous_node = None
         for current_node in self:
-            # Update existing node if keys match
+            # Update existing node if keys match (no need to increment length)
             if current_node.data[0][0] == new_data[0][0]:
                 current_node.data = new_data
                 return
@@ -169,7 +169,6 @@ class SortedList:
             if new_data[1] is not None and (current_node.data[1] is None or new_data[1] > current_node.data[1]):
                 break
             previous_node = current_node
-
         # Insert new node at the beginning if previous_node is None
         if previous_node is None:
             new_node.next_node = self.head_node
@@ -178,6 +177,8 @@ class SortedList:
             # Insert new_node in the found position
             new_node.next_node = previous_node.next_node
             previous_node.next_node = new_node
+        # Increment length
+        self._length += 1
 
     # Clear sorted list - Done by Ashwin
     def clear(self):

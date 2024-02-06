@@ -28,10 +28,15 @@ class History:
         :param max_length: Set the max length of the history deque
         :return: Nothing
         """
+        # Deque
         self.deque = Deque()
+        # Hash table
         self.hash_table = hash_table
+        # Max length of history
         self.max_length = max_length
+        # JOSN file Path to store history
         self.__file_path = "./history.json"
+        # Input handlers
         self.input_handler = InputHandler()
         self.expression_handler = ExpressionHandler()
 
@@ -45,6 +50,7 @@ class History:
         """
         return len(self.deque)
     
+    # History submenu - Done by Edward
     def submenu(self):
         """
         The submenu function is a menu that allows the user to navigate through their history of assignment statements.
@@ -183,6 +189,7 @@ class History:
         :param item: Item to be added to deque
         :return: Nothing
         """
+        # If length of deque exceed max history length
         if len(self.deque) >= self.max_length:
             # Remove the last item from the deque
             self.deque.remove_tail()
@@ -199,27 +206,25 @@ class History:
         :param position: Current position of history
         :return: Nothing
         """
+        # Header
         print(f"\nCurrent History Position: {position}/{len(self.deque)}")
         # Labels for each row
         labels = ['Variable:', 'Expression:', 'Evaluated Value:', 'Timestamp:']
         # Data corresponding to each label
-        data = self.deque.current.data 
-
+        data = self.deque.get_current()
         # Find the maximum length for the labels and data
         max_label_len = max(len(label) for label in labels)
         max_data_len = max(len(str(d)) for d in data)
-
         # Construct the horizontal border
-        total_length = max_label_len + max_data_len + 5  # Additional spaces for padding and separator
+        total_length = max_label_len + max_data_len + 5
         horizontal_border = '#' + '=' * total_length + '#'
-
         # Print the formatted table
         print(horizontal_border)
         for label, value in zip(labels, data):
             # Format each row with label and data in two columns
             row = f'{label.ljust(max_label_len)} | {str(value).ljust(max_data_len)}'
             print(f'| {row} |')
-            print(horizontal_border)  # Add this line to create a row of '=' characters between each row
+            print(horizontal_border)
 
     # Import variable & relevant variables if necessary - Done by Edward
     def import_variables(self): 
@@ -239,7 +244,7 @@ class History:
             # Count of items imported
             count = 0
             # Current variable they want to import
-            current_variable = self.deque.current.data[0]
+            current_variable = self.deque.get_current()[0]
             # If they decide to import relevant variables
             if load_relevant:
                 # Get relevant variables
@@ -259,6 +264,7 @@ class History:
                         print(f'\nFailed to import variable "{variable}".')
             # Get expression of current variable
             expression = self.deque[current_variable][1]
+            # Validate the current variable and its expression
             if self.expression_handler.validate_key_and_value(current_variable, expression,self.hash_table):
                 # Add current variable they wanted to import
                 self.hash_table[current_variable] = expression

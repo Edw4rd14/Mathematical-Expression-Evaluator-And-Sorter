@@ -25,6 +25,7 @@ class ExpressionHandler(InputHandler):
         :param self: Refer to the instance of the class
         :return: Nothing
         """
+        # Initialize super handler class
         super().__init__()
         # Initialize regular expression
         self.parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
@@ -98,17 +99,20 @@ class ExpressionHandler(InputHandler):
         :param expression: str: Store the expression that is passed into the function
         :return: True if there is an operand without operands on both sides, and false otherwise
         """
-        # Check for an operand without operands on both sides
+        # Check for an operator without operator on both sides
         previous_char = ""
         # For each character in expression
         for char in expression:
             # If character is an operator
             if self.contain_operator(char):
-                # And if previous character is empty, or is an operand, return True
-                if previous_char == "" or previous_char in '+-':
+                # And if previous character is empty, or is an operator, return True
+                if previous_char == "" or previous_char in '+-/':
                     return True
             # Set previous character of next character as current character
             previous_char = char
+        # After looping through all characters, check for consecutive asterisks "***"
+        if '***' in expression:
+            return True
         # After looping through all characters, and no return True has occured, this means there are no consecutive operands, hence return False
         return False
 
@@ -154,7 +158,7 @@ class ExpressionHandler(InputHandler):
         for i in range(len(expression) - 1):
             if (expression[i] in self.operators and expression[i+1] == ')') or (expression[i] == '(' and expression[i+1] in self.operators):
                 return True
-        
+        # Return False otherwise
         return False
     
     def check_float(self, expression:str)->bool:
@@ -180,8 +184,8 @@ class ExpressionHandler(InputHandler):
     def check_parenthesis(self, expression: str) -> bool:
         """
         The check_parenthesis function checks if the expression is valid.
-        It checks that each opening parenthesis has a closing one, and that there are no operators outside of parentheses.
-        The function also checks for unbalanced parentheses and multiple operators inside a single set of parentheses, such as (a+b+c)
+        It checks that each opening parenthesis has a closing one, and that there are no operators outside of parenthesis.
+        The function also checks for unbalanced parenthesis and multiple operators inside a single set of parenthesis, such as (a+b+c)
         
         :param self: Refer to the instance of the class
         :param expression: str: Expression to be validated
@@ -189,29 +193,36 @@ class ExpressionHandler(InputHandler):
         """
         # Remove whitespace from the expression
         expression = expression.replace(' ', '')
-        # Initialize a stack to keep track of parentheses and operators
+        # Initialize a stack to keep track of parenthesis and operators
         stack = Stack()
         # Get tokens
         tokens = self.tokenize(expression)
         # For each token in expression tokens
         for t in tokens:
+            # If it is a (
             if t == '(':
-                # Push a tuple to stack: (opening bracket, operator flag reset)
+                # Push a tuple to stack (opening bracket, operator flag reset)
                 stack.push(('(', False))
+            # Else if it is an operator
             elif self.contain_operator(t):
+                # If stack is empty
                 if stack.is_empty:
-                    # Operator found outside of any parentheses
-                    return False
+                    # Operator found outside of any parenthesis
+                    return True
+                # Else
                 else:
                     # Update the top element of the stack to set operator flag to True
                     top = stack.pop()
-                    if top[1]:  # There's already an operator inside these parentheses
-                        return False
+                    # If there is already an operator inside the parenthesis
+                    if top[1]:
+                        return True
                     stack.push((top[0], True))
+            # Else if it is a )
             elif t == ')':
-                if stack.is_empty or not stack.pop()[1]:  # Parentheses are unbalanced or no operator inside
-                    return False
-        # Check if there are any unclosed parentheses left in the stack
+                # If parenthesis is unbalanced or no operator inside
+                if stack.is_empty or not stack.pop()[1]: 
+                    return True
+        # Check if there are any unclosed parenthesis left in the stack
         return all(item[0] != '(' for item in stack.items)
     
     # Check circular dependency - Done by Edward

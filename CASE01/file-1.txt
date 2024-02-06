@@ -26,23 +26,23 @@ Strawberry=(Pear*1)
 Variable Dependency List
 ========================
 
-Apple is dependent on Apple, Durian and Pear.
+Apple is dependent on Pear
 
 Banana is independent.
 
-Blueberry is dependent on Apple, Durian and Pear.
+Blueberry is dependent on Pear
 
-Cherry is dependent on Durian, Lemon, Apple, Tangerine and Pear.
+Cherry is dependent on Lemon, Pear and Tangerine.
 
 Coconut is independent.
 
-Durian is dependent on Apple, Durian and Pear.
+Durian is dependent on Apple and Pear.
 
-Lemon is dependent on Durian, Apple, Tangerine and Pear.
+Lemon is dependent on Tangerine and Pear.
 
-Mango is dependent on Coconut, Apple, Durian, Blueberry, Strawberry and Pear.
+Mango is dependent on Pear, Strawberry, Blueberry, Apple, Coconut and Durian.
 
 Starfruit is independent.
 
-Strawberry is dependent on Apple, Durian and Pear.
+Strawberry is dependent on Pear
 

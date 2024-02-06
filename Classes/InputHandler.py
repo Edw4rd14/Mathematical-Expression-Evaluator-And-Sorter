@@ -28,9 +28,11 @@ class InputHandler:
         
         :param self: Refer to the instance of the class
         :param error: Error message to be displayed
+        :param menu: Boolean on whether to include "Returning back to main menu..."
         :param var: Specify the variable name in the error message
-        :return: A string of error message
+        :return: Error message string formatted
         """
+        # Return formatted error message
         return f"\nInvalid format{' for variable ' + var if var else ''}! {error}. {self.err_msg if menu else ''}"
 
     # Prompt polar question (yes/no) - Done by Edward
@@ -45,6 +47,7 @@ class InputHandler:
         :param question:str: Pass the question to be asked to the user
         :return: A boolean value
         """
+        # While loop
         while True:
             # Get user input on overwriting
             user_input = input(question)

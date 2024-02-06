@@ -11,7 +11,6 @@
 from DataStructures.HashTable import HashTable
 from DataStructures.ParseTree import ParseTree
 from DataStructures.SortedList import SortedList
-from DataStructures.Deque import Deque
 # Import Classes
 from Classes.History import History
 from Classes.ExpressionHandler import ExpressionHandler
@@ -42,7 +41,7 @@ class AssignmentStatement:
         self.expression_handler = ExpressionHandler()
         self.input_handler = InputHandler()
         self.file_handler = FileHandler()
-        # Sorted List
+        # Initialize Sorted List
         self.sorted_list = SortedList()
     
     # Option 1: Add/modify assignment statement - Done by Edward
@@ -194,24 +193,29 @@ class AssignmentStatement:
     def sort_statements(self):
         """
         The sort_statements function is for option 5 where users sort their assignment statements and outputs them
-        into a text file, and utilizes file operations handled by the Utilities file as well.
+        into a text file.
         
         :param self: Refer to the instance of the class
         :return: Nothing
         """
-        # While loop until valid user input or user force exits
-        while True:
-            try:
-                # Get and validate file path
-                output_file = self.file_handler.validate_file(question='Please enter output file: ')
-                # Process assignment statements and write to file
-                self.file_handler.file_operation(file_path=output_file, mode='w',content=self.sorted_list.print_sorted())
-                break
-            except AttributeError:
-                print("\nPlease ensure that there are assignment statements added before sorting.")
-                break
-            except Exception as e:
-                print(e)
+        # If there are no assignment statements
+        if self.sorted_list.is_empty:
+            # Print error
+            print("\nThere are no assignment statements to sort. Returning back to main menu...")
+        else:
+            # While loop until valid user input or user force exits
+            while True:
+                # Try and except to catch errors
+                try:
+                    # Get and validate file path
+                    output_file = self.file_handler.validate_file(question='Please enter output file: ')
+                    # Process assignment statements and write to file
+                    self.file_handler.file_operation(file_path=output_file, mode='w',content=self.sorted_list.print_sorted())
+                    # Break out of loop
+                    break
+                # Print error received
+                except Exception as e:
+                    print(e)
 
     # Option 6: Batch process files - Done by Edward
     def batch_process(self):
@@ -276,7 +280,7 @@ class AssignmentStatement:
                             evaluated = ParseTree(variable=key, expression=value, hash_table=temp_hashtable).evaluate()
                             sorted_list.insert(new_data=((key,value), evaluated))
                             # Get dependencies of the current variable
-                            relevant_vars = self.expression_handler.get_related_variables(key, key_value_pairs)
+                            relevant_vars = self.expression_handler.get_related_variables(key, [(key, value) for key, value in zip(temp_hashtable.keys, temp_hashtable.buckets) if key is not None])
                             var_dependency += self.expression_handler.format_dependency(variable=key, dependencies=relevant_vars)
                         except ValueError as ve:
                             # Accumulate errors encountered during evaluation

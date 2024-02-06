@@ -40,6 +40,49 @@ class Deque:
         """
         # Return length
         return self.length
+    
+    # Get item function - Done by Edward
+    def __getitem__(self, variable):
+        """
+        The __getitem__ function is a special function that overrides the get item built-in function, list[item].
+        
+        :param self: Refer to the instance of the class
+        :param variable: Variable to be referred to
+        :return: A tuple
+        """
+        # Get all items
+        all_items = self.items
+        # Iterate through each item and check if variables matches, return item
+        for item in all_items:
+            if item[0] == variable:
+                return item
+            
+    # Contains function - Done by Edward
+    def __contains__(self, item):
+        """
+        The __contains__ function takes in a tuple of the form (key, value) and returns True if the key is present in the Deque.
+        If it is not present, then it returns False.
+        
+        :param self: Refer to the instance of the class
+        :param item: Item to be checked on whether it is present in the Deque
+        :return: True if the item is in the Deque, and false otherwise
+        """
+        # Set current node
+        current_node = self.head
+        # Loop through each current node that is not None
+        while current_node:
+            # If first item of current node data matches first item (variable)
+            if current_node.data[0] == item[0]:
+                # Return true
+                return True
+            # Point to next node
+            current_node = current_node.next_node
+        # If item has not been found, return false
+        return False
+        
+    # Getter for current deque item - Done by Edward
+    def get_current(self):
+        return self.current.data
 
     # Is empty function - Done by Edward
     @property
@@ -65,7 +108,6 @@ class Deque:
         """
         # Create new node of data
         new_node = Node(data)
-
         # Check for duplicates and replace if found
         current_node = self.head
         while current_node:
@@ -74,7 +116,6 @@ class Deque:
                 current_node.data = data  
                 return 
             current_node = current_node.next_node
-
         # If head is None or no duplicates found, add a new node
         if not self.head:
             # Set head, tail, and current to new node
@@ -104,7 +145,6 @@ class Deque:
         """
         # Create new node of data
         new_node = Node(data)
-
         # Check for duplicates and replace if found
         current_node = self.head
         while current_node:
@@ -112,7 +152,6 @@ class Deque:
                 current_node.data = data 
                 return 
             current_node = current_node.next_node
-
         # If head is None or no duplicates found, add a new node
         if not self.head:
             # Set head, tail, and current to new node
@@ -238,38 +277,15 @@ class Deque:
     # Clear function - Done by Edward
     def clear(self):
         """
-        The __clear function sets the head and tail to None, and resets the length of the Deque to 0.
+        The __clear function sets the head, tail and current to None, and resets the length of the Deque to 0.
         
         :param self: Refer to the instance of the class
         :return: Nothing
         """
         # Set head and tail to None
-        self.head = self.tail = None
-        # Set length to 0 (reset Deque)
+        self.head = self.tail = self.current = None
+        # Set length to 0 
         self.length = 0
-
-    # Contains function - Done by Edward
-    def __contains__(self, item):
-        """
-        The __contains__ function takes in a tuple of the form (key, value) and returns True if the key is present in the Deque.
-        If it is not present, then it returns False.
-        
-        :param self: Refer to the instance of the class
-        :param item: Item to be checked on whether it is present in the Deque
-        :return: True if the item is in the Deque, and false otherwise
-        """
-        # Set current node
-        current_node = self.head
-        # Loop through each current node that is not None
-        while current_node:
-            # If first item of current node data matches first item (variable)
-            if current_node.data[0] == item[0]:
-                # Return true
-                return True
-            # Point to next node
-            current_node = current_node.next_node
-        # If item has not been found, return false
-        return False
     
     # Reset to head function - Done by Edward
     def reset_to_head(self):
@@ -280,6 +296,7 @@ class Deque:
         :param self: Refer to the instance of the class
         :return: Nothing
         """
+        # If deque is empty
         if self.is_empty:
             raise IndexError("Deque is empty")
         # Set current to head

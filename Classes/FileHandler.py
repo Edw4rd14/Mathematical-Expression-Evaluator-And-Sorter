@@ -25,6 +25,7 @@ class FileHandler(InputHandler):
         :param self: Refer to the instance of the class
         :return: Nothing
         """
+        # Initialize super handler class
         super().__init__()
 
     # Prompt and validate file path - Done by Edward
@@ -126,7 +127,9 @@ class FileHandler(InputHandler):
             if mode == 'w' and os.path.exists(file_path):
                 # New line outside of loop
                 print()
+                # Prompt to overwrite file
                 overwrite = self.prompt_polar_question(question=f"File '{file_path}' already exists. Overwrite? (Y/N): ")
+                # If no overwrite, cancel operation
                 if not overwrite:
                     print("\nWrite operation cancelled." + (" Returning back to main menu..." if menu else ""))
                     return
@@ -134,9 +137,11 @@ class FileHandler(InputHandler):
             with open(file_path, mode, encoding='utf-8') as file:
                 # If mode is write
                 if mode == 'w':
+                    # Write content to file
                     file.write(content)
                 # Else mode is read
                 else:
+                    # Read line
                     return file.readlines()
         # Catch any errors
         except Exception:

@@ -30,7 +30,7 @@ class Node:
     def __lt__(self, other):
         """
         The __lt__ function is a special function that allows us to compare two objects of the same class.
-        The __lt__ function returns True if the first object (self) is less than the second object (other) 
+        The __lt__ function returns True if the first object is less than the second object
         and we compare nodes based on their value part of their tuple data attribute.
         
         :param self: Refer to the instance of the class

@@ -13,7 +13,7 @@ import math
 # Hashtable Class
 class HashTable:
     # Initialization
-    def __init__(self, size=11):
+    def __init__(self, size=16):
         """
         The __init__ function is called when the class is instantiated.
         It initializes all of the attributes that are required for this class.
