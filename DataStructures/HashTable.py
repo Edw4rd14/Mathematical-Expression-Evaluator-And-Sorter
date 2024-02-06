@@ -17,6 +17,7 @@ class HashTable:
         """
         The __init__ function is called when the class is instantiated.
         It initializes all of the attributes that are required for this class.
+        Size is kept at power of 2 to accommodate multiplication method for hashing.
         
         :param self: Refer to the instance of the class
         :param size: Set size of hash table

@@ -110,10 +110,10 @@ class Main:
                     break
                 # Else print error message (user option is not valid)
                 else:
-                    print("\nOnly options between 1 and 10 are available. Please try again.\n")
+                    print("\nOnly options between 1 and 10 are available. Please try again or CRTL+C to exit the application.\n")
             # Handle ValueError (user choice is not integer)
             except ValueError:
-                print("\nInput must be an integer. Please try again.\n")
+                print("\nInput must be an integer. Please try again or CRTL+C to exit the application.\n")
             # Handle Keyboard Interrupt (CRTL + C)
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")

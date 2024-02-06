@@ -27,9 +27,6 @@ class ExpressionHandler(InputHandler):
         """
         # Initialize super handler class
         super().__init__()
-        # Initialize regular expression
-        self.parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
-        self.operator_regex = re.compile(r'\*\*|[\+\-\*/]')
         # Operators list
         self.operators = ["+","-","**","*","/"]
 
@@ -38,58 +35,67 @@ class ExpressionHandler(InputHandler):
     def tokenize(expression:str)->list:
         """
         The tokenize function takes a string and returns a list of tokens.
-        The tokenize function uses the regular expression r'(\b\d+\.\d+\b|\b\w+\b|[^ \t]+)' to match:
-        - decimal numbers, e.g., 3.15;
-        - whole words, e.g., 'apple';
-        - operators and single characters, e.g., '*', '/', '('.  
         
         :param expression:str: Expression to be tokenized
         :return: A list of tokens
         """
+        # Tokens list
         tokens = []
+        # Current token
         current = ''
-        last_char_was_operator = False  # Track if the last character processed was part of an operator
-
+        # Track if the last character processed was part of an operator
+        last_char_was_operator = False  
+        # Index counter
         i = 0
+        # While index is less than total expression length
         while i < len(expression):
+            # Set character to character at index
             char = expression[i]
-
             # Check for floating point numbers and alphanumeric tokens
             if char.isdigit() or char.isalpha():
+                # If previous character was operator
                 if last_char_was_operator:
-                    if current:  # If there's something in current (it could be an operator), add it to tokens
+                    # If current is not empty
+                    if current: 
+                        # Add to tokens
                         tokens.append(current)
+                        # Reset current
                         current = ''
-                    last_char_was_operator = False  # Reset flag since we're now processing a digit/alpha
+                    # Reset flag
+                    last_char_was_operator = False
+                # Current string concatenate character
                 current += char
+            # Else if character is '.' and current string is a digit (It is a float)
             elif char == '.' and current.isdigit():
-                current += char  # Continue building a floating point number
+                # Continue building the float
+                current += char
+            # Else if it is an asterisk, and the next character is also an asterisk (for **)
             elif char == '*' and i + 1 < len(expression) and expression[i + 1] == '*':
-                # For '**' operator, append current if it's not empty and reset current
+                # Append current if it is not empty and reset current
                 if current:
                     tokens.append(current)
                 tokens.append('**')
                 current = ''
-                i += 1  # Skip the next '*' as it's already processed
+                # Skip the next '*' as it is already processed for the **
+                i += 1 
+                # Set operator flag to True
                 last_char_was_operator = True
+            # Else
             else:
-                if char.strip():  # This checks if char is not whitespace
-                    if current:  # Add the current token if it exists
-                        tokens.append(current)
-                        current = ''
-                    if char != '*' or not last_char_was_operator:  # Avoid adding '*' if it's part of '**'
-                        tokens.append(char)
-                    last_char_was_operator = (char in ['*', '+', '-', '/', '='])  # Update flag based on current char
-                else:
-                    last_char_was_operator = False  # Reset if we encounter whitespace
-
-            i += 1  # Move to the next character
-
-        if current:  # Add any remaining token
+                # Finalize current token if it exists
+                if current:
+                    tokens.append(current)
+                    current = ''
+                # Ignore whitespace
+                if not char.isspace():
+                    tokens.append(char)
+            # Move to the next character
+            i += 1 
+        # Add any remaining token     
+        if current:  
             tokens.append(current)
-
+        # Return tokens
         return tokens
-
     
     # Get key and value from statement - Done by Edward
     @staticmethod
@@ -112,8 +118,16 @@ class ExpressionHandler(InputHandler):
         :param expression: str: Pass in the expression that is being evaluated
         :return: A boolean value of whether the expression contains operators
         """
-        return bool(self.operator_regex.search(expression))
-
+        # Check for '**' separately
+        if '**' in expression:
+            return True
+        # Check for any of the single-character operators
+        for operators in self.operators:
+            if operators in expression:
+                return True
+        # If not present, return False
+        return False
+    
     # Check juxtaposition of parenthesis in expression - Done by Edward
     def check_juxtaposition_parenthesis(self, expression: str) -> bool:
         """
@@ -125,7 +139,18 @@ class ExpressionHandler(InputHandler):
         :return: True if the expression contains juxtaposition of variables or number next to ( or after ), or )(
         """
         # Check for juxtaposition of variables or number next to ( or after ), or )(
-        return bool(self.parenthesis_regex.search(expression))
+        for i in range(len(expression) - 1):
+            # Set current character and next character
+            current_char = expression[i]
+            next_char = expression[i + 1]
+            # Check for digit or alphabet followed by '('
+            if (current_char.isdigit() or current_char.isalpha()) and next_char == '(':
+                return True
+            # Check for ')' followed by digit or '(' or letter
+            elif current_char == ')' and (next_char.isdigit() or next_char == '(' or next_char.isalpha()):
+                return True
+        # If no errors, return False
+        return False
 
     # Check if there are consecutive operators in the expression - Done by Edward
     def check_consecutive_operators(self, expression: str) -> bool:
@@ -242,7 +267,7 @@ class ExpressionHandler(InputHandler):
             if t == '(':
                 # Push a tuple to stack: (opening bracket, operator flag reset)
                 stack.push(('(', False))
-            elif self.operator_regex.search(t):
+            elif self.contain_operator(t):
                 if stack.is_empty:
                     # Operator found outside of any parentheses
                     return False
@@ -304,6 +329,7 @@ class ExpressionHandler(InputHandler):
         :param token:str: Token to be checked
         :return: True if the token is a float, and false otherwise
         """
+        # Try and except to catch error when converting to float
         try:
             # Try to convert to float, if no error, return True
             float(token)
@@ -325,7 +351,7 @@ class ExpressionHandler(InputHandler):
         # For each token
         for t in self.tokenize(expression):
             # Check that it is a valid character
-            if not self.operator_regex.search(t) and not t.isalpha() and not t.isdigit() and not self.is_float(t) and t not in "()":
+            if not self.contain_operator(t) and not t.isalpha() and not t.isdigit() and not self.is_float(t) and t not in "()":
                 return True 
         # Return False if all characters are valid
         return False
@@ -350,20 +376,20 @@ class ExpressionHandler(InputHandler):
         if not key or not value:
             print(self.format_error("Both left-hand side and right-hand side of the statement should not be empty",menu,key))
             return False
-
-        # Check if expression is incomplete
-        if self.check_incomplete_expression(value):
-            print(self.format_error("Expression is incomplete",menu,key))
-            return False
         
         # Check if there are invalid characters in expression
         if self.check_invalid_characters(value):
             print(self.format_error("Expression has invalid characters",menu,key))
             return False
-
+        
         # Check if key only contain letters
         if not key.isalpha():
             print(self.format_error("Variable names should only contain letters",menu,key))
+            return False
+        
+        # Check if expression is incomplete
+        if self.check_incomplete_expression(value):
+            print(self.format_error("Expression is incomplete",menu,key))
             return False
 
         # Check for consecutive operators
@@ -376,14 +402,14 @@ class ExpressionHandler(InputHandler):
             print(self.format_error("Variable should not reference itself",menu,key))
             return False
         
-        # Check for any unmatched parenthesis
-        if not self.check_parenthesis(value):
-            print(self.format_error("Please check that the expression is fully parenthesized",menu,key))
-            return False
-        
         # Check juxtaposition of parenthesis
         if self.check_juxtaposition_parenthesis(value):
             print(self.format_error("Please check juxtaposition of variables and numbers to parenthesis",menu,key))
+            return False
+        
+        # Check for any unmatched parenthesis
+        if not self.check_parenthesis(value):
+            print(self.format_error("Please check that the expression is fully parenthesized",menu,key))
             return False
         
         # Check float formatting
@@ -438,12 +464,13 @@ class ExpressionHandler(InputHandler):
         """
         # List of dependencies
         dependency_list = list(dependencies)
+        dependency_length = len(dependency_list)
         # If list is more than 1, format with an "and"
-        if len(dependency_list) > 1:
+        if dependency_length > 1:
             result_string = ', '.join(dependency_list[:-1]) + f' and {dependency_list[-1]}.'
         # Else just format with the dependency
-        elif len(dependency_list) == 1:
-            result_string = dependency_list[0]
+        elif dependency_length == 1:
+            result_string = dependency_list[0] + "."
         # Return formatted string, with "is independent" if there is no dependency for that variable
         return f"{variable} {'is dependent on ' + result_string if dependency_list else 'is independent.'}\n\n"
     

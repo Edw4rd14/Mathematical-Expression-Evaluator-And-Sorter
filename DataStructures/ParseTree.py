@@ -110,7 +110,7 @@ class ParseTree:
         :return: The value of the root node
         """
         evaluated_value = self._evaluate_tree(tree=self.root)
-        return round(evaluated_value,3) if isinstance(evaluated_value,float) else evaluated_value
+        return round(evaluated_value,2) if isinstance(evaluated_value,float) else evaluated_value
 
     # Evaluate tree function - Done by Edward
     def _evaluate_tree(self,tree):

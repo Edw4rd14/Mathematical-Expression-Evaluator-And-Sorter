@@ -217,7 +217,7 @@ class AssignmentStatement:
                 except Exception as e:
                     print(e)
 
-    # Option 6: Batch process files - Done by Edward
+    # Option 6: Batch process files - Done by Edward (Additional)
     def batch_process(self):
         """
         The batch_process function is used to process multiple files at once.
@@ -246,8 +246,6 @@ class AssignmentStatement:
                 var_dependency = ""  
                 # Get the next file's name and content
                 file_name, file_content = file_deque.remove_head() 
-                # Get each key value pair 
-                key_value_pairs = [self.expression_handler.get_key_and_value(stmt) for stmt in file_content]
                 # Prepare a sorted list for evaluated expressions
                 sorted_list = SortedList()  
                 # String to accumulate errors found during processing

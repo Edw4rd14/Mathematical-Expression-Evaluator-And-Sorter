@@ -158,13 +158,23 @@ class SortedList:
         self._length += 1
         # Check if the key already exists, and replace it if found
         current = self.head_node
+        prev = None
         while current:
-            # If current key matches new key, replace old key and value
             if current.data[0][0] == key:
-                current.data = new_data
-                return
-            # Point to next node
+                # Point previous to current node's next node if previous exists
+                if prev:
+                    prev.next_node = current.next_node
+                # Else set head node as current node's next node (as the new node will replace the head node's position)
+                else:
+                    self.head_node = current.next_node
+                # Exit after finding and removing the node with the same key
+                break  
+            # Set previous node to current node and current node to current node's next node
+            prev = current
             current = current.next_node
+        # If did not remove a node (as the variable was already inside), adjust the length
+        if current:
+            self._length -= 1
         # If there is no head node, set head node to new node
         if self.head_node is None:
             self.head_node = new_node
