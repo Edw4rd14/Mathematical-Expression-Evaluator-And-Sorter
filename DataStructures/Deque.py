@@ -194,42 +194,6 @@ class Deque:
         # Else raise error
         else:
             raise IndexError("Deque is empty")
-    
-    # Remove current function - Done by Edward
-    def remove_current(self):
-        """
-        The remove_current function removes the current node from the Deque.
-        If there is no current node, it raises an IndexError.
-        Otherwise, it returns the data of the removed node and sets self.current to None if there are no nodes left in 
-        self after removal.
-        
-        :param self: Refer to the instance of the class
-        :return: The data of the node that was removed
-        """
-        if self.current is None:
-            raise IndexError("No current item to remove.")
-        removed_data = self.current.data
-        if self.current.prev_node:
-            self.current.prev_node.next_node = self.current.next_node
-        else:
-            # Current is at head
-            self.head = self.current.next_node
-
-        if self.current.next_node:
-            self.current.next_node.prev_node = self.current.prev_node
-        else:
-            # Current is at tail
-            self.tail = self.current.prev_node
-
-        if self.current.next_node:
-            self.current = self.current.next_node
-        elif self.current.prev_node:
-            self.current = self.current.prev_node
-        else:
-            self.current = None
-
-        self.length -= 1
-        return removed_data
 
     # Go back function - Done by Edward
     def go_back(self):
@@ -294,11 +258,17 @@ class Deque:
         :param item: Item to be checked on whether it is present in the Deque
         :return: True if the item is in the Deque, and false otherwise
         """
+        # Set current node
         current_node = self.head
+        # Loop through each current node that is not None
         while current_node:
+            # If first item of current node data matches first item (variable)
             if current_node.data[0] == item[0]:
+                # Return true
                 return True
+            # Point to next node
             current_node = current_node.next_node
+        # If item has not been found, return false
         return False
     
     # Reset to head function - Done by Edward
@@ -324,16 +294,31 @@ class Deque:
         :param self: Refer to the instance of the class
         :return: An array containing all objects in the Deque
         """
+        # Initialize list
         all_objects = []
+        # Set current node to head node
         current_node = self.head
+        # Iterate through all possible nodes
         while current_node:
+            # Append current node data to list
             all_objects.append(current_node.data)
+            # Point to next node
             current_node = current_node.next_node
+        # Return list of all node data
         return all_objects
     
     # Get item function - Done by Edward
     def __getitem__(self, variable):
+        """
+        The __getitem__ function is a special function that overrides the get item built-in function, list[item].
+        
+        :param self: Refer to the instance of the class
+        :param variable: Variable to be referred to
+        :return: A tuple
+        """
+        # Get all items
         all_items = self.items
+        # Iterate through each item and check if variables matches, return item
         for item in all_items:
             if item[0] == variable:
                 return item

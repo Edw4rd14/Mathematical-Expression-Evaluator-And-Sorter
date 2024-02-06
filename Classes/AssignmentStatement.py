@@ -6,11 +6,6 @@
 # =================================================================================================
 # FILENAME: AssignmentStatement.py
 # =================================================================================================
-'''
-Description:
-This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
-and running the Class methods to perform the menu option's functions.
-'''
 
 # Import Data Structures
 from DataStructures.HashTable import HashTable
@@ -47,6 +42,8 @@ class AssignmentStatement:
         self.expression_handler = ExpressionHandler()
         self.input_handler = InputHandler()
         self.file_handler = FileHandler()
+        # Sorted List
+        self.sorted_list = SortedList()
     
     # Option 1: Add/modify assignment statement - Done by Edward
     def add_modify_statement(self):
@@ -72,43 +69,33 @@ class AssignmentStatement:
                 continue
             # Add to hash table
             self.hash_table[key] = value
-            # Update sorted statements in SortedList for option 5 and 7
-            self.update_statements()
+            # Evaluate and update history and sorted list
+            self.evaluate_and_store_statement()
             break
-
-    # Evaluate current assignment statements - Done by Edward
-    def sort_and_evaluate_statements(self):
+    
+    # Evaluate and store assignment statements in history and sorted list
+    def evaluate_and_store_statement(self):
         """
-        The sort_and_evaluate_statements function will take the hash table keys (variables) that are not none, use the merge sort algorithm
-        to sort them in an ascending alphabetical order, then evaluate each variable and store them in an deque that is returned
+        The evaluate_and_store_statement function evaluates every assignment statement in the hash table, 
+        and stores the information in the sorted list and history.
+
+        We chose to evaluate all the statements at once as we want to keep the evaluation most updated after adding
+        every assignment statement, as if it is done when every assignment statement is added, it will need to be 
+        re-evaluated to accommodate for newly added assignment statements to update previous added assignment statements.
         
         :param self: Refer to the instance of the class
-        :return: A deque with the expressions and evaluated values
+        :return: Nothing
         """
-        # Deque
-        deque = Deque()
-        # Loop each sorted key from merge sort
-        for key in MergeSort.sort(self.hash_table.filtered_keys):
-            # If key is not None and is an assignment statement
-            if key is not None:
-                # Catch errors with try
-                try:
-                    # Try grabbing the assignment statement value
-                    value = self.hash_table[key]
-                    # Evaluate value of expression with ParseTree
-                    tree = ParseTree(variable=key, expression=value, hash_table=self.hash_table)
-                    # Get evaluated value of expression
-                    evaluated_value = tree.evaluate()
-                    # Add to stack
-                    deque.add_head(data=(key,value,evaluated_value))
-                # Catch value error
-                except ValueError as e:
-                    print(e)
-                # If an error occurs, pass
-                except Exception:
-                    print("An occurred while trying to display and sort assignment statements. Please try again or restart the application.")
-                    pass
-        return deque
+        # Loop through each existing key
+        for key in self.hash_table.filtered_keys:
+            # Get value
+            value = self.hash_table[key]
+            # Evaluate statement
+            tree = ParseTree(variable=key, expression=value, hash_table=self.hash_table)
+            evaluated = tree.evaluate()
+            # Store in sorted list and history
+            self.sorted_list.insert(new_data=((key,value), evaluated))
+            self.history.add_history(item=(key, value, evaluated, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
     # Option 2: Display current assignment statements - Done by Edward
     def display_statements(self):
@@ -119,28 +106,19 @@ class AssignmentStatement:
         :param self: Refer to the instance of the class
         :return: Nothing
         """
-        deque = self.sort_and_evaluate_statements()
+        # deque = self.sort_and_evaluate_statements()
         print('\nCURRENT ASSIGNMENTS:\n' + "*"*20)
-        if deque.is_empty:
+        if self.sorted_list.is_empty:
             print("There are no current assignment statements.")
-        while not deque.is_empty:
-            key, value, evaluated = deque.remove_tail()
-            print(f"{key}={value}=> {evaluated}")
-
-    # Update history and sorted list - Done by Edward
-    def update_statements(self):
-        """
-        The update_statements function is responsible for updating the sorted_list and history.
-        
-        :param self: Refer to the instance of the class
-        :return: Nothing
-        """
-        deque = self.sort_and_evaluate_statements()
-        self.sorted_list = SortedList()
-        while not deque.is_empty:
-            key, value, evaluated = deque.remove_head()
-            self.sorted_list.insert(new_data=(f"{key}={value}", evaluated))
-            self.history.add_history(item=(key, value, evaluated, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        else:
+            # All statements
+            all_statements = self.sorted_list.items
+            # Sort variables
+            sorted_variables = MergeSort.sort(list(all_statements.keys()))
+            # Iterate through sorted variables and print statements
+            for variable in sorted_variables:
+                expression, evaluated = all_statements[variable]
+                print(f'{variable}={expression}=> {evaluated}')
 
     # Option 3: Evaluate and print parse tree for an individual variable - Done by Edward & Ashwin
     def evaluate_single_variable(self):
@@ -179,9 +157,7 @@ class AssignmentStatement:
     # Option 4: Read statements from a file - Done by Edward & Ashwin
     def read_statements_from_file(self):
         """
-        The read_statements_from_file function is for option 4 where users read assignment statements from a file. This option
-                includes file operations handled by the Utilities file (Utils.py), and reads the file and validates 
-                and adds each assignment statement into the HashTable, then displays the statements (Option 2)
+        The read_statements_from_file function is for option 4 where users read assignment statements from a file.
         
         :param self: Refer to the instance of the class
         :return: Nothing
@@ -204,25 +180,15 @@ class AssignmentStatement:
                         if self.expression_handler.validate_key_and_value(key,value,self.hash_table,False):
                             # Expression satisfies all conditions, add to HashTable
                             self.hash_table[key] = value
-                # Display the list of current assignments (same as Option 2) and store new statements
+                # Evaluate and update history and sorted list
+                self.evaluate_and_store_statement()
+                # Display the list of current assignments (same as Option 2)
                 self.display_statements()
-                self.update_statements()
+                # Break out of loop
                 break
             # Catch any errors
             except Exception as e:
                 print(e)
-
-    def add_many_statements(self, hash_table, statements):
-        # Loop each statement
-        for statement in statements:
-            # Check equal sign
-            if self.expression_handler.check_eq_sign(statement, False):
-                # Get key and value from statement
-                key, value = self.expression_handler.get_key_and_value(statement)
-                # Validate key and value
-                if self.expression_handler.validate_key_and_value(key,value,hash_table,False):
-                    # Expression satisfies all conditions, add to HashTable
-                    hash_table[key] = value
 
     # Option 5: Sort assignment statements - Done by Edward
     def sort_statements(self):
@@ -275,7 +241,9 @@ class AssignmentStatement:
                 # String to hold variable dependencies
                 var_dependency = ""  
                 # Get the next file's name and content
-                file_name, file_content = file_deque.remove_head()  
+                file_name, file_content = file_deque.remove_head() 
+                # Get each key value pair 
+                key_value_pairs = [self.expression_handler.get_key_and_value(stmt) for stmt in file_content]
                 # Prepare a sorted list for evaluated expressions
                 sorted_list = SortedList()  
                 # String to accumulate errors found during processing
@@ -306,9 +274,8 @@ class AssignmentStatement:
                             # Evaluate the expression for the current key and add to sorted list
                             value = temp_hashtable[key]
                             evaluated = ParseTree(variable=key, expression=value, hash_table=temp_hashtable).evaluate()
-                            sorted_list.insert(new_data=(f"{key}={value}", evaluated))
+                            sorted_list.insert(new_data=((key,value), evaluated))
                             # Get dependencies of the current variable
-                            key_value_pairs = [self.expression_handler.get_key_and_value(stmt) for stmt in file_content]
                             relevant_vars = self.expression_handler.get_related_variables(key, key_value_pairs)
                             var_dependency += self.expression_handler.format_dependency(variable=key, dependencies=relevant_vars)
                         except ValueError as ve:
@@ -359,92 +326,16 @@ class AssignmentStatement:
     # Option 7: Manage assignment statement history - Done by Edward
     def manage_history(self):
         """
-        The manage_history function allows the user to view, import, and clear their history of assignment statements.
-            The function will print out a list of all the assignment statements in order from oldest to newest.
-            The user can then choose whether they want to go forward or backward through this list using option 1 or 2 respectively.
-            If they wish to import one of these variables into their current session, they can use option 3 which will return them back 
-            to the main menu with that variable imported into their current session.
-        
+        The manage_history function calls the submenu of the history to allow users to view and manage their 
+        assignment statement history.
+    
         :param self: Refer to the current instance of the class
         :return: Nothing
-        :doc-author: Trelent
         """
-        # If history is not empty
-        if not self.history.deque.is_empty:
-            # Initialize index
-            index = 1
-            # Total length of history
-            total = len(self.history)
-            # While loop
-            while True:
-                # Try
-                try:
-                    # Next message if at first index
-                    next_msg = "" if index < total else " (At the end of the list)"
-                    # Previous message if at last index
-                    prev_msg = "" if index > 1 else " (At the start of the list)"
-                    # Print history with current index position
-                    self.history.print_history(position=index)
-                    # Get input for menu action
-                    action = int(input(f"\n1. Next{next_msg}\n2. Previous{prev_msg}\n3. Import this variable\n4. Clear History \n5. Exit\nSelect your choice: "))
-                    # If menu action is 1, go forward in history list
-                    if action == 1:
-                        # Change current data to next node
-                        self.history.forward()
-                        # If index is not at total yet, means not at end of history list
-                        if index != total:
-                            # Increment index by 1
-                            index += 1
-                    # Else if action is 2, go back in history list 
-                    elif action == 2:
-                        # Change current data to previous node
-                        self.history.backward()
-                        # If index is not 1, meaning the start of the list
-                        if index != 1:
-                            # Decrement index by 1
-                            index -= 1
-                    # Else if action is 3, import variable
-                    elif action == 3:
-                        # Import statements
-                        self.history.import_variables()
-                        # Reset history back to head
-                        self.history.reset_to_head()
-                        return
-                    # Else if action is 4, clear history
-                    elif action == 4:
-                        # Clear history
-                        self.history.clear_history()
-                        # Print statement and return back to main menu
-                        print("\nAssignment statement history cleared. Returning back to main menu...")
-                        return
-                    # Else if action is 5, return back to main menu
-                    elif action == 5:
-                        # Reset history back to head
-                        self.history.reset_to_head()
-                        return
-                # If user input is not integer
-                except ValueError:
-                    print(f"\nInput must be an integer. {self.input_handler.err_msg}")
-                # If keyboard interrupt
-                except KeyboardInterrupt:
-                    print("\nReturning back to main menu...")
-                    # Reset history back to head
-                    self.history.reset_to_head()
-                    break
-        # Print error message if history is empty
-        else:
-            print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 4.")
-
-    # Update history function - Done by Edward
-    def update_history(self):
-        """
-        The update_history function is the public interface method for the
-        history function to update the file
-        
-        :param self: Refer to the instance of the class
-        :return: Nothing
-        """
-        self.history.update_file()
+        # Call history submenu
+        self.history.submenu()
+        # Re-evaluate statements if there was any imported
+        self.evaluate_and_store_statement()
 
     # Option 8: Remove all assignment statements - Done by Aswhin
     def remove_all_statements(self):
@@ -464,7 +355,7 @@ class AssignmentStatement:
                 # Clear the sorted list
                 self.sorted_list.clear()
                 # Clear the history
-                self.history.clear_history()
+                self.history.deque.clear()
                 # Display a message indicating that all statements have been removed
                 print("\nAll assignment statements have been removed.")
             except:
@@ -481,12 +372,13 @@ class AssignmentStatement:
         :param self: Refer to the instance of the class
         :return: Nothing
         """
+        # Get total statement count
         total_statements = sum(1 for bucket in self.hash_table.buckets if bucket is not None)
-        
+        # Total length of expressions
         total_length = sum(len(bucket) for bucket in self.hash_table.buckets if bucket is not None)
-
+        # Average length of expressions
         average_length = total_length / total_statements if total_statements > 0 else 0
-
+        # Print results
         print(f"\nBasic Statistics:")
         print(f"Total Assignment Statements: {total_statements}")
         print(f"Average Length of Statements: {average_length:.2f} characters")

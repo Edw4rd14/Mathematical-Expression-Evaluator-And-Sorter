@@ -6,11 +6,6 @@
 # =================================================================================================
 # FILENAME: Main.py
 # =================================================================================================
-'''
-Description:
-This is the Main file which handles the main application, inclusive of the printing of the banner, handling user choices for the menu of the application,
-and running the Class methods to perform the menu option's functions.
-'''
 
 # Import Classes
 from Classes.AssignmentStatement import AssignmentStatement
@@ -113,9 +108,9 @@ class Main:
                 # Else print error message (user option is not valid)
                 else:
                     print("\nOnly options between 1 and 10 are available. Please try again.\n")
-            # # Handle ValueError (user choice is not integer)
-            # except ValueError:
-            #     print("\nInput must be an integer. Please try again.\n")
+            # Handle ValueError (user choice is not integer)
+            except ValueError:
+                print("\nInput must be an integer. Please try again.\n")
             # Handle Keyboard Interrupt (CRTL + C)
             except KeyboardInterrupt:
                 print(f"\n{self._exit}")
@@ -124,7 +119,7 @@ class Main:
             # except Exception:
             #     print("\nAn error has occurred with the application. Try restarting the application.\n")
         # Update history
-        self.assignment_statement.update_history()
+        self.assignment_statement.history.update_history()
 
 # Instantiate Main class
 main = Main()

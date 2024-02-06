@@ -26,8 +26,7 @@ class ExpressionHandler(InputHandler):
         :return: Nothing
         """
         super().__init__()
-        # Initialize regular expressions
-        self.operator_regex = re.compile(r'\*\*|[\+\-\*/]')
+        # Initialize regular expression
         self.parenthesis_regex = re.compile(r'(\d\(|\)\d|\)\(|[a-zA-Z]\(|\)[a-zA-Z])')
         # Operators list
         self.operators = ["+","-","**","*","/"]
@@ -74,7 +73,7 @@ class ExpressionHandler(InputHandler):
         :param expression: str: Pass in the expression that is being evaluated
         :return: A boolean value of whether the expression contains operators
         """
-        return bool(self.operator_regex.search(expression))
+        return any(operator in expression for operator in self.operators)
 
     # Check juxtaposition of parenthesis in expression - Done by Edward
     def check_juxtaposition_parenthesis(self, expression: str) -> bool:
@@ -139,7 +138,7 @@ class ExpressionHandler(InputHandler):
         The function returns True for an incomplete expression, otherwise False.
         
         :param self: Refer to the instance of the class
-        :param expression: str: Expression to check
+        :param expression: str: Expression to be validated
         :return: True if the expression is incomplete and false otherwise
         """
         # Check if the expression starts or ends with an operator
@@ -157,6 +156,25 @@ class ExpressionHandler(InputHandler):
                 return True
         
         return False
+    
+    def check_float(self, expression:str)->bool:
+        """
+        The check_float function checks if every '.' is both preceded and followed by a digit.
+        
+        :param self: Refer to the instance of the class
+        :param expression: Expression to be validated
+        :return: False if the expression is properly formatted and True otherwise
+        """
+        # Check if every '.' is both preceded and followed by a digit
+        for i, char in enumerate(expression):
+            # If character is '.'
+            if char == '.':
+                # Check if '.' is at the start, the end, or the preceding/following character is not a digit
+                if i == 0 or not expression[i-1].isdigit():
+                    return True 
+                if i == len(expression) - 1 or not expression[i+1].isdigit():
+                    return True 
+        return False  # Return True if all '.' are properly formatted
 
     # Check parenthesis in expression - Done by Edward
     def check_parenthesis(self, expression: str) -> bool:
@@ -166,7 +184,7 @@ class ExpressionHandler(InputHandler):
         The function also checks for unbalanced parentheses and multiple operators inside a single set of parentheses, such as (a+b+c)
         
         :param self: Refer to the instance of the class
-        :param expression: str: Pass in the expression to be evaluated
+        :param expression: str: Expression to be validated
         :return: True if the expression is valid, and false otherwise
         """
         # Remove whitespace from the expression
@@ -180,7 +198,7 @@ class ExpressionHandler(InputHandler):
             if t == '(':
                 # Push a tuple to stack: (opening bracket, operator flag reset)
                 stack.push(('(', False))
-            elif self.operator_regex.search(t):
+            elif self.contain_operator(t):
                 if stack.is_empty:
                     # Operator found outside of any parentheses
                     return False
@@ -196,6 +214,43 @@ class ExpressionHandler(InputHandler):
         # Check if there are any unclosed parentheses left in the stack
         return all(item[0] != '(' for item in stack.items)
     
+    # Check circular dependency - Done by Edward
+    def has_circular_dependency(self, variable, hash_table, seen=None):
+        """
+        The has_circular_dependency function takes a variable and hash_table as input.
+        It returns True if the variable has a circular dependency, False otherwise.
+        A circular dependency example is where A depends on B, B depends on A
+        
+        :param self: Refer to the instance of the class
+        :param variable: Variable to be checked
+        :param hash_table: Hash table of all statements to be checked against
+        :param seen: Keep track of the variables that have been seen so far
+        :return: True if a circular dependency is detected, False if there is no circular dependency
+        """
+        # Initialize seen if it has not been initialized
+        if seen is None:
+            seen = set()
+        # Check if the current variable has already been seen, indicating circular dependency
+        if variable in seen:
+            return True 
+        # Check if the variable is not in the hash_table, meaning it is undefined and has no circular dependency
+        if variable not in hash_table:
+            return False 
+        # Add the current variable to the seen set
+        seen.add(variable)
+        # Tokenize the expression to get tokens
+        tokens = self.tokenize(hash_table[variable])
+        # Iterate over each token to check for circular dependencies
+        for token in tokens:
+            # If token is a variable in hash_table, recursively check for circular dependencies
+            if token in hash_table and self.has_circular_dependency(token, hash_table, seen.copy()):
+                return True 
+        # Remove the current variable from the 'seen' set after checking all referenced variables
+        seen.remove(variable)
+        # Return False if no circular dependencies are detected after checking all referenced variables
+        return False
+
+    
     # Run key and value through all validation - Done by Edward
     def validate_key_and_value(self, key: str, value: str, hash_table, menu:bool=True) -> tuple:
         """
@@ -209,6 +264,7 @@ class ExpressionHandler(InputHandler):
         :param self: Refer to the instance of the class
         :param key: str: Check if the key is empty
         :param value: str: Check if the expression is incomplete
+        :param hashtable: Hash table to be used to validate circular dependency
         :return: A boolean value where True is valid and False is invalid key and value
         """
         # Check if key or value is empty
@@ -231,7 +287,7 @@ class ExpressionHandler(InputHandler):
             print(self.format_error("Variable should not reference itself",menu,key))
             return False
 
-        # Check if key matches regex to only contain letters
+        # Check if key only contain letters
         if not key.isalpha():
             print(self.format_error("Variable names should only contain letters",menu,key))
             return False
@@ -241,10 +297,16 @@ class ExpressionHandler(InputHandler):
             print(self.format_error("Please check that the expression is fully parenthesized",menu,key))
             return False
         
+        # Check juxtaposition of parenthesis
         if self.check_juxtaposition_parenthesis(value):
             print(self.format_error("Please check juxtaposition of variables and numbers to parenthesis",menu,key))
             return False
-
+        
+        # Check float formatting
+        if self.check_float(value):
+            print(self.format_error("Please check formatting of float",menu,key))
+            return False
+        
         # Checks for circular dependency
         # Add to hash table first
         hash_table[key] = value
@@ -336,39 +398,3 @@ class ExpressionHandler(InputHandler):
                         related_variables.update(self.get_related_variables(v, statements, explored))
         # Return the set of related variables
         return related_variables
-
-    # Check circular dependency - Done by Edward
-    def has_circular_dependency(self, variable, hash_table, seen=None):
-        """
-        The has_circular_dependency function takes a variable and hash_table as input.
-        It returns True if the variable has a circular dependency, False otherwise.
-        A circular dependency example is where A depends on B, B depends on A
-        
-        :param self: Refer to the instance of the class
-        :param variable: Variable to be checked
-        :param hash_table: Hash table of all statements to be checked against
-        :param seen: Keep track of the variables that have been seen so far
-        :return: True if a circular dependency is detected, False if there is no circular dependency
-        """
-        # Initialize seen if it has not been initialized
-        if seen is None:
-            seen = set()
-        # Check if the current variable has already been seen, indicating circular dependency
-        if variable in seen:
-            return True 
-        # Check if the variable is not in the hash_table, meaning it is undefined and has no circular dependency
-        if variable not in hash_table:
-            return False 
-        # Add the current variable to the seen set
-        seen.add(variable)
-        # Tokenize the expression to get tokens
-        tokens = self.tokenize(hash_table[variable])
-        # Iterate over each token to check for circular dependencies
-        for token in tokens:
-            # If token is a variable in hash_table, recursively check for circular dependencies
-            if token in hash_table and self.has_circular_dependency(token, hash_table, seen.copy()):
-                return True 
-        # Remove the current variable from the 'seen' set after checking all referenced variables
-        seen.remove(variable)
-        # Return False if no circular dependencies are detected after checking all referenced variables
-        return False

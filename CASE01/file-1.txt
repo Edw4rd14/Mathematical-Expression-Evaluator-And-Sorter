@@ -1,0 +1,48 @@
+Original Filename: test_3.txt
+
+====================
+Evaluated Statements
+====================
+
+*** Statements with value=> 116.5
+Banana=(2*(55.5+2.75))
+
+*** Statements with value=> 16
+Starfruit=(2**4)
+
+*** Statements with value=> 1
+Coconut=(1+0)
+
+*** Statements with value=> None
+Apple=(Pear*2)
+Blueberry=(Pear+0)
+Cherry=(Lemon/2)
+Durian=(Apple*Pear)
+Lemon=(Pear+Tangerine)
+Mango=((Apple+(Durian+(Pear*(Blueberry*(Coconut/Strawberry)))))/2)
+Strawberry=(Pear*1)
+
+========================
+Variable Dependency List
+========================
+
+Apple is dependent on Apple, Durian and Pear.
+
+Banana is independent.
+
+Blueberry is dependent on Apple, Durian and Pear.
+
+Cherry is dependent on Durian, Lemon, Apple, Tangerine and Pear.
+
+Coconut is independent.
+
+Durian is dependent on Apple, Durian and Pear.
+
+Lemon is dependent on Durian, Apple, Tangerine and Pear.
+
+Mango is dependent on Coconut, Apple, Durian, Blueberry, Strawberry and Pear.
+
+Starfruit is independent.
+
+Strawberry is dependent on Apple, Durian and Pear.
+

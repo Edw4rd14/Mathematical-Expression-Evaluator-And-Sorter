@@ -64,14 +64,42 @@ class SortedList:
         # If current_node exists (which means it is not the end of the iteration),
         if self.current_node:
             # Set data to be returned to current node's tuple data
-            data = self.current_node.data
+            current_node = self.current_node
             # Set current node variable to next node for next iteration
             self.current_node = self.current_node.next_node
             # Return current node's tuple data to be accessed
-            return data
+            return current_node
         # Else if current_node is None (indicating the end of iteration), raise StopIteration exception
         else:
             raise StopIteration
+        
+    # Get all items function - Done by Edward
+    @property
+    def items(self):
+        """
+        The items function returns all objects in the Deque as an array.
+        
+        :param self: Refer to the instance of the class
+        :return: An array containing all objects in the Deque
+        """
+        # Initialize list
+        all_objects = {}
+        # Iterate and add to list
+        for node in self:
+            data = node.data
+            all_objects[data[0][0]] = (data[0][1],data[1])
+        # Return list of all node data
+        return all_objects
+    
+    @property
+    def is_empty(self):
+        """
+        The is_empty function checks to see if the length of the sorted list is 0.
+
+        :param self: Refer to the instance of the class
+        :return: True if the sorted list is empty and false otherwise
+        """
+        return self._length == 0
         
     # Format and print sorted list items - Done by Ashwin
     def print_sorted(self): 
@@ -91,9 +119,9 @@ class SortedList:
         # Flag to indicate if current_value has been set
         is_current_value_set = False
         # For each assignment statement
-        for node_data in self:
+        for node in self:
             # Extract statement and value from the node data
-            statement, value = node_data
+            statement, value = node.data
             # Check if still in the same group, if new group,
             if current_value != value or not is_current_value_set:
                 # And it is not the very first loop
@@ -107,84 +135,49 @@ class SortedList:
                 # Set flag
                 is_current_value_set = True
             # Add the current statement
-            output_lines.append(statement)
+            output_lines.append(f'{statement[0]}={statement[1]}')
         # Join all the lines into a single string with newlines between them
         output_string = "\n".join(output_lines)
         # Return output string
         return output_string
-
-    # Append to head - Done by Ashwin
-    def __append_to_head(self, new_node): 
+        
+    # Insert into sorted list - Done by Ashwin
+    def insert(self, new_data):
         """
-        The __append_to_head function is a private function that appends a new node to the head of the sorted list.
-        It does this by storing the old head node, setting the new head node to be the new_node parameter, 
-        setting next_node of our newly set head_node (new_node) to the oldHeadNode and finally incrementing length by 1.
+        The insert function inserts the new data into the sorted list and keeps a sorted order
+        within its list, sorted by the evaluated value of the expression.
         
         :param self: Refer to the instance of the class
-        :param new_node: Set the new head node
-        :return: Nothing
-        """
-        # Store old head node
-        oldHeadNode = self.head_node
-        # Set new head node to new node
-        self.head_node = new_node
-        # Set the next node of the new head node to the old head node
-        self.head_node.next_node = oldHeadNode
-        # Increment length by 1
-        self._length += 1
-
-    # Insert to sorted list - Done by Ashwin
-    def insert(self, new_data): 
-        """
-        The insert function takes in a new_data parameter, which is a tuple of the form (key, value).
-        The function then creates a new node with this data. It then checks if the list is empty and inserts it as head node if so.
-        If not, it checks whether or not the key of the new data is None; if so, it appends to end of list. If not, 
-        it compares its key to that of head node's and inserts before or after accordingly.
-        
-        :param self: Refer to the instance of the class
-        :param new_data: Insert a new node into the sortedlist
+        :param new_data: Create a new node with the data
         :return: None
         """
-        # Make new data a node
         new_node = Node(new_data)
-        # Increment length by 1
         self._length += 1
-        # If there is no head node (empty SortedList), set head node to new node
-        if self.head_node is None: 
+
+        if self.head_node is None:
             self.head_node = new_node
             return
-        # If new data's value is None, append to the end of the list
-        if new_node.data[1] is None:
-            current = self.head_node
-            while current.next_node:
-                current = current.next_node
-            current.next_node = new_node
-            return
-        # Check if it is going to be new head
-        if self.head_node.data[1] is None or new_node.data[1] > self.head_node.data[1]:
-            self.__append_to_head(new_node)
-            return
-        # Set left and right node for traversal
-        left_node = self.head_node
-        right_node = self.head_node.next_node
-        # Iterate through nodes while it has not reached the end
-        while right_node is not None:
-            # Check if right node's data is None
-            if right_node.data[1] is None:
-                # If it is, append the new node at the end of the list
-                left_node.next_node = new_node
-                new_node.next_node = right_node
+
+        # Use iterator to find where to insert new node
+        previous_node = None
+        for current_node in self:
+            # Update existing node if keys match
+            if current_node.data[0][0] == new_data[0][0]:
+                current_node.data = new_data
                 return
-            # If correct position of node has been found, insert between left and right node
-            if new_node.data[1] > right_node.data[1]:
-                left_node.next_node = new_node 
-                new_node.next_node = right_node
-                return
-            # Traverse to the next pair of nodes
-            left_node = right_node
-            right_node = right_node.next_node
-        # If end of the list is reached, new node is appended to the end
-        left_node.next_node = new_node
+            # If new data should be inserted before the current node
+            if new_data[1] is not None and (current_node.data[1] is None or new_data[1] > current_node.data[1]):
+                break
+            previous_node = current_node
+
+        # Insert new node at the beginning if previous_node is None
+        if previous_node is None:
+            new_node.next_node = self.head_node
+            self.head_node = new_node
+        else:
+            # Insert new_node in the found position
+            new_node.next_node = previous_node.next_node
+            previous_node.next_node = new_node
 
     # Clear sorted list - Done by Ashwin
     def clear(self):

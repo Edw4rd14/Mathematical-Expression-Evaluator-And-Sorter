@@ -44,11 +44,92 @@ class History:
         :return: The length of the deque
         """
         return len(self.deque)
-
-    # Update file - Done by Edward
-    def update_file(self):
+    
+    def submenu(self):
         """
-        The update_file function is used to update the JSON file with the current history.
+        The submenu function is a menu that allows the user to navigate through their history of assignment statements.
+        The history shows information of assignment statements such as variable, expression, evaluated value and timestamp at which the statement was created.
+        The user can then choose whether they want to go forward or backward through this list using option 1 or 2 respectively.
+        If they wish to import one of these variables into their current session, they can use option 3 which will return them back 
+        to the main menu with that variable imported into their current session.
+        Option 4 allows users to clear their history, and lastly option 5 returns the users back to the main menu
+        
+        :param self: Represent the instance of the class
+        :return: Nothing
+        """
+        # If history is not empty
+        if not self.deque.is_empty:
+            # Initialize index
+            index = 1
+            # Total length of history
+            total = len(self.deque)
+            # While loop
+            while True:
+                # Try
+                try:
+                    # Next message if at first index
+                    next_msg = "" if index < total else " (At the end of the list)"
+                    # Previous message if at last index
+                    prev_msg = "" if index > 1 else " (At the start of the list)"
+                    # Print history with current index position
+                    self.print_history(position=index)
+                    # Get input for menu action
+                    action = int(input(f"\n1. Next{next_msg}\n2. Previous{prev_msg}\n3. Import this variable\n4. Clear History \n5. Exit\nSelect your choice: "))
+                    # If menu action is 1, go forward in history list
+                    if action == 1:
+                        # Change current data to next node
+                        self.deque.go_forward()
+                        # If index is not at total yet, means not at end of history list
+                        if index != total:
+                            # Increment index by 1
+                            index += 1
+                    # Else if action is 2, go back in history list 
+                    elif action == 2:
+                        # Change current data to previous node
+                        self.deque.go_back()
+                        # If index is not 1, meaning the start of the list
+                        if index != 1:
+                            # Decrement index by 1
+                            index -= 1
+                    # Else if action is 3, import variable
+                    elif action == 3:
+                        # Import statements
+                        self.import_variables()
+                        # Reset history back to head
+                        self.deque.reset_to_head()
+                        return
+                    # Else if action is 4, clear history
+                    elif action == 4:
+                        # Clear history
+                        self.deque.clear()
+                        # Print statement and return back to main menu
+                        print("\nAssignment statement history cleared. Returning back to main menu...")
+                        return
+                    # Else if action is 5, return back to main menu
+                    elif action == 5:
+                        # Reset history back to head
+                        self.deque.reset_to_head()
+                        return
+                    # Else if action is not between 1 and 5, print error message
+                    else:
+                        print(f"\nOnly options between 1 and 5 are available. {self.input_handler.err_msg}\n")
+                # If user input is not integer
+                except ValueError:
+                    print(f"\nInput must be an integer. {self.input_handler.err_msg}")
+                # If keyboard interrupt
+                except KeyboardInterrupt:
+                    print("\nReturning back to main menu...")
+                    # Reset history back to head
+                    self.deque.reset_to_head()
+                    break
+        # Print error message if history is empty
+        else:
+            print("\nAssignment statement history is empty. Assignment statements can be added through options 1 and 4.")
+
+    # Update history - Done by Edward
+    def update_history(self):
+        """
+        The update_history function is used to update the JSON file with the current history.
         It does this by first emptying out the deque and storing it in a list, then
         writing that list to a json file.
         
@@ -108,16 +189,6 @@ class History:
         # Add the new item to the head of the deque
         self.deque.add_head(data=item)
 
-    # Remove history - Done by Edward
-    def remove_history(self):
-        """
-        The remove_history function is a public interface for removing the current item from the deque.   
-        
-        :param self: Refer to the instance of the class
-        :return: Removed data
-        """
-        self.deque.remove_current()
-
     # Print history - Done by Edward
     def print_history(self, position):
         """
@@ -176,8 +247,9 @@ class History:
                 # For each relevant variable
                 for variable in relevant_variables:
                     try:
+                        # Get expression of relevant variable
                         expression = self.deque[variable][1]
-                        if not self.expression_handler.validate_key_and_value(variable, expression):
+                        if self.expression_handler.validate_key_and_value(variable, expression, self.hash_table):
                             # Add relevant variable and its expression into the hash table
                             self.hash_table[variable] = expression
                             # Increment count 
@@ -185,8 +257,9 @@ class History:
                     except:
                         # Catch errors for missing variables in history
                         print(f'\nFailed to import variable "{variable}".')
+            # Get expression of current variable
             expression = self.deque[current_variable][1]
-            if not self.expression_handler.validate_key_and_value(current_variable, expression):
+            if self.expression_handler.validate_key_and_value(current_variable, expression,self.hash_table):
                 # Add current variable they wanted to import
                 self.hash_table[current_variable] = expression
                 # Increment count
@@ -196,45 +269,3 @@ class History:
         except:
             # Print random error message if error occurs
             print("\nAn error occurred while importing statements. Please restart the application or try again. Returning back to main menu...")
-
-    # Public interface for forward in deque - Done by Edward
-    def forward(self):
-        """
-        The forward function moves the Deque forward one position.
-                
-        :param self: Refer to the instance of the class
-        :return: Item after moving forward
-        """
-        self.deque.go_forward()
-
-    # Public interface for backwards in deque - Done by Edward
-    def backward(self):
-        """
-        The backward function moves the Deque backwards one position.
-                
-        :param self: Refer to the instance of the class
-        :return: Item after moving backwards
-        """
-        self.deque.go_back()
-
-    # Public interface clearing deque - Done by Edward
-    def clear_history(self):
-        """
-        The clear_history function clears the Deque storing the history
-        
-        :param self: Refer to the instance of the class
-        :return: Nothing
-        """
-        self.deque.clear()
-
-    # Public interface for resetting deque to head - Done by Edward
-    def reset_to_head(self):
-        """
-        The reset_to_head function resets the current node to the head of the Deque.
-                
-        :param self: Refer to the instance of the class
-        :return: Nothing
-        """
-        self.deque.reset_to_head()
-
-

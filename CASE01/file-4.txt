@@ -1,0 +1,47 @@
+Original Filename: test.txt
+
+====================
+Evaluated Statements
+====================
+
+*** Statements with value=> 63
+Pineapple=(Peach * Grape)
+
+*** Statements with value=> 9
+Grape=(3 ** 2)
+
+*** Statements with value=> 8
+Kiwi=(4 * 2)
+
+*** Statements with value=> 7
+Peach=(5 + 2)
+
+*** Statements with value=> None
+Blackberry=(Raspberry - Kiwi)
+Fig=(Kiwi + Starfruit)
+Papaya=((Watermelon / 2) + Pomegranate)
+Pomegranate=((Pineapple + Fig) / Coconut)
+Watermelon=(3 * (Pineapple + Blackberry))
+
+========================
+Variable Dependency List
+========================
+
+Blackberry is dependent on Raspberry, Grape, Kiwi and Peach.
+
+Fig is dependent on Kiwi and Starfruit.
+
+Grape is independent.
+
+Kiwi is independent.
+
+Papaya is dependent on Raspberry, Coconut, Kiwi, Pomegranate, Fig, Blackberry, Grape, Watermelon, Peach, Pineapple and Starfruit.
+
+Peach is independent.
+
+Pineapple is dependent on Grape and Peach.
+
+Pomegranate is dependent on Coconut, Grape, Kiwi, Peach, Pineapple, Fig and Starfruit.
+
+Watermelon is dependent on Raspberry, Kiwi, Blackberry, Grape, Peach and Pineapple.
+
